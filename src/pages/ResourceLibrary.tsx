@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
+import { ResourceCard, type UiResource } from '@/components/ResourceCard'
 import {
   listResources,
   listMyResources,
@@ -13,19 +14,6 @@ import { listCategories, type Category } from '@/api/category'
 import { formatPlatform } from '@/utils/platform'
 
 const FALLBACK_THUMB = 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&h=400&fit=crop'
-
-type UiResource = {
-  id: number
-  title: string
-  summary: string
-  categoryLabel: string
-  categoryColor: string
-  platform: string
-  platformLabel: string
-  typeLabel: string
-  thumbnail: string
-  resource_type: string
-}
 
 function getCategoryColor(category?: string): string {
   const key = String(category || '').trim().toLowerCase() || 'other'
@@ -74,82 +62,6 @@ function SkeletonCard() {
   )
 }
 
-function ResourceCard({
-  resource,
-  onOpen,
-  onAdd,
-  saving,
-  saved,
-}: {
-  resource: UiResource
-  onOpen: () => void
-  onAdd: () => void
-  saving: boolean
-  saved: boolean
-}) {
-  return (
-    <article className="group border border-stone-100 bg-white hover:border-stone-200 hover:shadow-md transition-all duration-500 rounded-xl overflow-hidden flex flex-col cursor-pointer"
-      onClick={onOpen}
-    >
-      {/* Thumbnail */}
-      <div className="relative bg-stone-100 overflow-hidden" style={{ width: '100%', aspectRatio: '16 / 9' }}>
-        <img
-          src={resource.thumbnail}
-          alt={resource.title}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        {/* Type badge */}
-        <div className="absolute top-2 left-2">
-          <Badge variant="secondary" className="text-[9px] uppercase tracking-wider">
-            {resource.typeLabel}
-          </Badge>
-        </div>
-        {/* Platform badge */}
-        <div className="absolute top-2 right-2">
-          <Badge className="text-[9px] uppercase tracking-wider bg-white/90 backdrop-blur-sm border-white/20">
-            {resource.platformLabel}
-          </Badge>
-        </div>
-        {/* Difficulty badge */}
-        <div className="absolute bottom-2 left-2">
-          <span
-            className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm"
-            style={{ backgroundColor: resource.categoryColor + '18', color: resource.categoryColor }}
-          >
-            {resource.categoryLabel}
-          </span>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="p-4 flex-1 flex flex-col">
-        <h3
-          className="text-sm font-semibold text-stone-900 line-clamp-2 leading-snug group-hover:text-amber-600 transition-colors flex-1"
-          title={resource.title}
-        >
-          {resource.title}
-        </h3>
-        <p className="text-xs text-stone-500 line-clamp-2 mt-2">{resource.summary || 'No description available.'}</p>
-        <div className="flex items-center justify-between mt-3 pt-2 border-t border-stone-50">
-          <span className="text-[10px] text-stone-400">{resource.platformLabel}</span>
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onAdd() }}
-            disabled={saving || saved}
-            className={`text-[10px] font-semibold uppercase tracking-wider transition-colors ${
-              saved ? 'text-emerald-500' : 'text-amber-600 hover:text-amber-700'
-            } disabled:opacity-50`}
-          >
-            {saved ? 'Saved' : saving ? 'Saving…' : '+ Save'}
-          </button>
-        </div>
-      </div>
-    </article>
-  )
-}
-
 function HeroCard({
   resource,
   onOpen,
@@ -165,11 +77,11 @@ function HeroCard({
 }) {
   return (
     <article
-      className="group border border-stone-100 bg-white hover:border-stone-200 hover:shadow-xl transition-all duration-500 rounded-xl overflow-hidden cursor-pointer flex gap-0"
+      className="group border border-stone-100 bg-white hover:border-stone-200 hover:shadow-xl transition-all duration-500 rounded-xl overflow-hidden cursor-pointer flex flex-col md:flex-row"
       onClick={onOpen}
     >
       {/* Thumbnail */}
-      <div className="relative bg-stone-100 overflow-hidden shrink-0" style={{ width: '50%', aspectRatio: '16 / 9' }}>
+      <div className="relative bg-stone-100 overflow-hidden shrink-0 w-full md:w-1/2" style={{ aspectRatio: '16 / 9' }}>
         <img
           src={resource.thumbnail}
           alt={resource.title}
@@ -186,7 +98,7 @@ function HeroCard({
       </div>
 
       {/* Content */}
-      <div className="p-6 flex-1 flex flex-col justify-between">
+      <div className="p-4 md:p-6 flex-1 flex flex-col justify-between">
         <div className="space-y-3">
           <span
             className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm"
@@ -195,14 +107,14 @@ function HeroCard({
             {resource.categoryLabel}
           </span>
           <h3
-            className="text-lg font-bold text-stone-900 line-clamp-2 leading-tight group-hover:text-amber-600 transition-colors"
+            className="text-base md:text-lg font-bold text-stone-900 line-clamp-2 leading-tight group-hover:text-amber-600 transition-colors"
             title={resource.title}
           >
             {resource.title}
           </h3>
-          <p className="text-sm text-stone-500 line-clamp-3">{resource.summary || 'No description available.'}</p>
+          <p className="text-xs md:text-sm text-stone-500 line-clamp-2 md:line-clamp-3">{resource.summary || 'No description available.'}</p>
         </div>
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-stone-50">
+        <div className="flex items-center justify-between mt-3 md:mt-4 pt-3 md:pt-4 border-t border-stone-50">
           <div className="flex items-center gap-3">
             <span className="text-xs text-stone-400">{resource.platformLabel}</span>
             <span className="text-xs text-stone-300">·</span>
@@ -212,7 +124,7 @@ function HeroCard({
             type="button"
             onClick={(e) => { e.stopPropagation(); onAdd() }}
             disabled={saving || saved}
-            className={`text-xs font-semibold uppercase tracking-wider transition-colors ${
+            className={`text-[10px] md:text-xs font-semibold uppercase tracking-wider transition-colors ${
               saved ? 'text-emerald-500' : 'text-amber-600 hover:text-amber-700'
             } disabled:opacity-50`}
           >

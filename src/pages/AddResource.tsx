@@ -429,61 +429,50 @@ export default function AddResource() {
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Live preview</span>
               </div>
-              <div className={`w-full rounded-md border-2 overflow-hidden transition-all duration-300 ${weightPreviewClass}`}>
-                <div className="h-full flex flex-col">
-                  {/* Header */}
-                  <div className="px-4 py-3 border-b flex items-center justify-between bg-stone-50/50">
-                    <span
-                      className="text-[10px] font-bold uppercase tracking-wider"
-                      style={{ color: '#8b5cf6' }}
-                    >
+              <article className={`group border overflow-hidden transition-all duration-500 rounded-md bg-white hover:shadow-md flex flex-col ${weightPreviewClass}`}>
+                {/* Thumbnail */}
+                <div className="relative bg-stone-100 overflow-hidden" style={{ width: '100%', aspectRatio: '16 / 9' }}>
+                  {extractedMeta?.thumbnail_url ? (
+                    <img
+                      src={extractedMeta.thumbnail_url}
+                      alt={extractedMeta?.title || 'thumbnail'}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div
+                        className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-black text-white"
+                        style={{ backgroundColor: '#8b5cf6' }}
+                      >
+                        {(extractedMeta?.title || 'R').charAt(0)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="p-4 flex-1 flex flex-col">
+                  {/* Type & Platform row */}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider rounded bg-violet-50 text-violet-700">
                       {selectedPlatformLabel || 'video'}
                     </span>
-                    <span className="text-[10px] text-stone-400 font-mono">
-                      #{extractedMeta?.video_id?.slice(0, 6) || '------'}
+                    <span className="text-[9px] font-semibold uppercase tracking-wider text-stone-400">
+                      {extractedMeta?.author || '—'}
                     </span>
                   </div>
-                  {/* Thumbnail */}
-                  <div className="relative aspect-video bg-stone-100">
-                    {extractedMeta?.thumbnail_url ? (
-                      <img
-                        src={extractedMeta.thumbnail_url}
-                        alt={extractedMeta?.title || 'thumbnail'}
-                        className="w-full h-full object-contain"
-                        style={{ objectFit: 'contain', backgroundColor: '#f7f7f7' }}
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div
-                          className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-black text-white"
-                          style={{ backgroundColor: '#8b5cf6' }}
-                        >
-                          {(extractedMeta?.title || 'R').charAt(0)}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  {/* Title */}
-                  <div className="px-4 py-3 border-b bg-white">
-                    <h3 className="text-sm font-bold text-stone-900 line-clamp-1">
-                      {extractedMeta?.title || 'Untitled'}
-                    </h3>
-                  </div>
-                  {/* Summary */}
-                  <div className="px-4 py-3 flex-1 bg-stone-50/30">
-                    <p className="text-xs text-stone-500 line-clamp-2">
-                      {extractedMeta?.description || 'No description'}
-                    </p>
-                  </div>
-                  {/* Footer */}
-                  <div className="px-4 py-3 border-t bg-stone-50/50 flex items-center justify-between">
-                    <span className="text-[11px] text-stone-400">{extractedMeta?.author || '—'}</span>
-                    <span className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider">
-                      {formatExtractDate(extractedMeta?.publish_date) || '—'}
-                    </span>
-                  </div>
+
+                  <h3
+                    className="text-sm font-semibold text-stone-900 line-clamp-2 leading-snug group-hover:text-amber-600 transition-colors flex-1"
+                    title={extractedMeta?.title || 'Untitled'}
+                  >
+                    {extractedMeta?.title || 'Untitled'}
+                  </h3>
+                  <p className="text-xs text-stone-500 line-clamp-2 mt-2">
+                    {extractedMeta?.description || 'No description'}
+                  </p>
                 </div>
-              </div>
+              </article>
             </div>
           </div>
         </div>

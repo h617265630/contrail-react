@@ -60,7 +60,7 @@ function mapDbToPool(p: PublicLearningPath): PoolPath {
 
 function SkeletonCard() {
   return (
-    <div className="border border-stone-100 bg-white rounded-xl overflow-hidden animate-pulse">
+    <div className="border border-stone-100 bg-white rounded-md overflow-hidden animate-pulse">
       <div className="bg-stone-100" style={{ width: '100%', aspectRatio: '16 / 9' }} />
       <div className="p-5 space-y-3">
         <div className="h-3 bg-stone-100 rounded w-1/3" />
@@ -78,7 +78,7 @@ function SkeletonCard() {
 function PathCard({ path }: { path: PoolPath }) {
   return (
     <Link to={`/learningpath/${path.id}`} className="group block">
-      <article className="border border-stone-100 bg-white hover:border-stone-200 hover:shadow-md transition-all duration-500 rounded-xl overflow-hidden h-full flex flex-col">
+      <article className="border border-stone-100 bg-white hover:border-stone-200 hover:shadow-md transition-all duration-500 rounded-md overflow-hidden h-full flex flex-col">
         {/* Thumbnail */}
         <div className="relative bg-stone-100" style={{ width: '100%', aspectRatio: '16 / 9' }}>
           <img
@@ -279,7 +279,7 @@ export default function LearningPool() {
                 to={`/learningpath/${p.id}`}
                 className="group shrink-0 w-56 block"
               >
-                <div className="bg-stone-100 rounded-xl mb-3 overflow-hidden" style={{ width: '14rem', aspectRatio: '16 / 9' }}>
+                <div className="bg-stone-100 rounded-md mb-3 overflow-hidden" style={{ width: '14rem', aspectRatio: '16 / 9' }}>
                   <img
                     src={p.thumbnail || FALLBACK_THUMB}
                     alt={p.title}

@@ -287,19 +287,21 @@ export default function Home() {
                 <Link
                   key={path.id}
                   to={`/learningpath/${path.id}`}
-                  className="group flex gap-3 items-center bg-white rounded-md border border-stone-100 p-3 hover:border-stone-200 hover:shadow-sm transition-all"
+                  className="group flex overflow-hidden bg-white rounded-md border border-stone-100 hover:border-stone-200 hover:shadow-sm transition-all"
                 >
-                  <div className="w-16 h-16 rounded-[12px] overflow-hidden bg-stone-100 shrink-0">
+                  <div className="w-24 shrink-0 bg-stone-100 overflow-hidden">
                     <img
                       src={path.thumbnail || FALLBACK_THUMB}
                       alt={path.title}
                       loading="lazy"
-                      className="block w-full h-full object-cover"
+                      className="block w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      style={{ width: 96, height: 96, objectFit: 'cover' }}
                     />
                   </div>
-                  <div className="min-w-0">
+                  <div className="flex flex-col justify-center p-3 min-w-0">
                     <h3 className="text-sm font-semibold text-stone-800 line-clamp-1 group-hover:text-amber-600 transition-colors">{path.title}</h3>
-                    <p className="text-xs text-stone-400 mt-0.5">{path.level}</p>
+                    <p className="text-xs text-stone-400 mt-1 line-clamp-2">{path.description}</p>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-500 mt-1">{path.level}</span>
                   </div>
                 </Link>
               ))}

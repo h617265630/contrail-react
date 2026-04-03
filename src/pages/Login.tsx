@@ -103,6 +103,10 @@ export default function Login() {
       setToken(token, remember)
       try {
         await fetchProfile(true)
+        const userData = (res as any)?.user
+        if (userData) {
+          setUser(userData, remember)
+        }
       } catch (profileError) {
         console.warn('Failed to sync user profile:', profileError)
       }
@@ -124,6 +128,10 @@ export default function Login() {
       setToken(token, remember)
       try {
         await fetchProfile(true)
+        const userData = (res as any)?.user
+        if (userData) {
+          setUser(userData, remember)
+        }
       } catch (profileError) {
         console.warn('Failed to sync user profile:', profileError)
       }

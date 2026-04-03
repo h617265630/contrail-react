@@ -370,39 +370,40 @@ export default function LearningPathDetail() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {modules.map(m => (
                 <article
                   key={m.id}
-                  className="rounded-md overflow-hidden bg-white border border-stone-100 hover:border-stone-200 hover:shadow-md transition-all cursor-pointer"
+                  className="group border border-stone-100 bg-white hover:border-stone-200 hover:shadow-md transition-all duration-500 rounded-md overflow-hidden flex flex-col cursor-pointer"
                   onClick={() => openResource(m)}
                 >
-                  <div className="overflow-hidden">
-                    <div className="relative bg-stone-100 overflow-hidden" style={{ aspectRatio: '16/9', width: '100%' }}>
-                      <img
-                        src={moduleThumb(m)}
-                        alt={m.title}
-                        loading="lazy"
-                        className="block w-full h-full object-contain"
-                        style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#f7f7f7' }}
-                      />
-                      <div className="absolute top-3 left-3">
-                        <span className={`px-2 py-1 text-xs font-semibold rounded ${typeBadgeClass(m.type)}`}>
-                          {m.type}
-                        </span>
-                      </div>
+                  {/* Thumbnail */}
+                  <div className="relative bg-stone-100 overflow-hidden" style={{ width: '100%', aspectRatio: '16 / 9' }}>
+                    <img
+                      src={moduleThumb(m)}
+                      alt={m.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-4 flex-1 flex flex-col">
+                    {/* Type badge */}
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={`px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider rounded ${typeBadgeClass(m.type)}`}>
+                        {m.type}
+                      </span>
+                      <span className="text-[10px] text-stone-400">{m.level}</span>
                     </div>
 
-                    <div className="p-5">
-                      <div className="min-w-0">
-                        <h3 className="text-foreground font-semibold line-clamp-2" title={m.title}>
-                          {m.title}
-                        </h3>
-                        <p className="text-muted-foreground text-sm mt-1 line-clamp-2" title={m.summary}>
-                          {m.summary || 'No summary.'}
-                        </p>
-                      </div>
-                    </div>
+                    <h3
+                      className="text-sm font-semibold text-stone-900 line-clamp-2 leading-snug group-hover:text-amber-600 transition-colors flex-1"
+                      title={m.title}
+                    >
+                      {m.title}
+                    </h3>
+                    <p className="text-xs text-stone-500 line-clamp-2 mt-2">{m.summary || 'No description.'}</p>
                   </div>
                 </article>
               ))}

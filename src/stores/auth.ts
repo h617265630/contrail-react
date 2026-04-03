@@ -72,6 +72,7 @@ function readUser(): UserProfile | null {
   try {
     const local = getLocalStorage()
     const session = getSessionStorage()
+    // Prefer localStorage (persistent) over sessionStorage
     const raw = local?.getItem(USER_KEY) || session?.getItem(USER_KEY)
     return raw ? (JSON.parse(raw) as UserProfile) : null
   } catch {
@@ -79,7 +80,7 @@ function readUser(): UserProfile | null {
   }
 }
 
-function persistUser(next: UserProfile | null) {
+function persistUser(next: UserProfile | null, remember = false) {
   try {
     const local = getLocalStorage()
     const session = getSessionStorage()
@@ -88,8 +89,14 @@ function persistUser(next: UserProfile | null) {
       session?.removeItem(USER_KEY)
       return
     }
-    session?.setItem(USER_KEY, JSON.stringify(next))
-    local?.removeItem(USER_KEY)
+
+    if (remember) {
+      local?.setItem(USER_KEY, JSON.stringify(next))
+      session?.removeItem(USER_KEY)
+    } else {
+      session?.setItem(USER_KEY, JSON.stringify(next))
+      local?.removeItem(USER_KEY)
+    }
   } catch {
     // ignore storage errors
   }
@@ -118,8 +125,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ token: next, isAuthed: !!next })
   },
 
-  setUser: (next) => {
-    persistUser(next)
+  setUser: (next, remember = false) => {
+    persistUser(next, remember)
     set({ user: next, isAuthed: !!next || !!get().token })
   },
 

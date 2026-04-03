@@ -153,7 +153,7 @@ export function NavBar() {
             <span className="hidden md:inline">Learn structured, learn better.</span>
             <span className="hidden md:inline text-slate-200">·</span>
             <a
-              href="https://github.com"
+              href="https://github.com/h617265630/contrail-react"
               target="_blank"
               rel="noopener"
               className="hover:text-slate-600 transition-colors"

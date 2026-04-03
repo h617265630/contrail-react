@@ -245,36 +245,17 @@ export default function MyLearningPath() {
                   {linearPaths.map(path => (
                     <article
                       key={path.id}
-                      className="group rounded-md overflow-hidden bg-white border border-stone-100 hover:border-stone-200 hover:shadow-lg transition-all duration-200 cursor-pointer"
+                      className="group rounded-md overflow-hidden bg-white border-t border-b border-stone-200 hover:border-stone-300 hover:shadow-lg transition-all duration-200 cursor-pointer"
                       onClick={() => openDetail(path.id)}
                     >
                       <div className="relative aspect-video bg-stone-100 overflow-hidden transition-transform duration-500 group-hover:scale-105">
-                        {path._coverUrl ? (
-                          <>
-                            <img
-                              src={path._coverUrl}
-                              alt=""
-                              aria-hidden="true"
-                              className="absolute inset-0 w-full h-full object-cover scale-110 blur-xl opacity-30"
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                            <img
-                              src={path._coverUrl}
-                              alt={path.title}
-                              className="block w-full h-full object-contain"
-                              style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#f7f7f7' }}
-                            />
-                          </>
-                        ) : (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-stone-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-stone-300">
-                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                              <circle cx="8.5" cy="8.5" r="1.5" />
-                              <polyline points="21 15 16 10 5 21" />
-                            </svg>
-                            <span className="text-[10px] font-semibold text-stone-400 mt-2 uppercase tracking-wider">{path.category_name || 'Path'}</span>
-                          </div>
-                        )}
+                        <img
+                          src={path._coverUrl || FALLBACK_THUMB}
+                          alt={path.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover"
+                        />
                         <div className="absolute top-2 right-2">
                           <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm border border-white/20 ${typeColor(path.type)}`}>
                             {typeLabel(path.type)}
@@ -322,36 +303,17 @@ export default function MyLearningPath() {
                   {structuredPaths.map(path => (
                     <article
                       key={path.id}
-                      className="group rounded-md overflow-hidden bg-white border border-stone-100 hover:border-stone-200 hover:shadow-lg transition-all duration-200 cursor-pointer"
+                      className="group rounded-md overflow-hidden bg-white border-t border-b border-stone-200 hover:border-stone-300 hover:shadow-lg transition-all duration-200 cursor-pointer"
                       onClick={() => openDetail(path.id)}
                     >
                       <div className="relative aspect-video bg-stone-100 overflow-hidden transition-transform duration-500 group-hover:scale-105">
-                        {path._coverUrl ? (
-                          <>
-                            <img
-                              src={path._coverUrl}
-                              alt=""
-                              aria-hidden="true"
-                              className="absolute inset-0 w-full h-full object-cover scale-110 blur-xl opacity-30"
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                            <img
-                              src={path._coverUrl}
-                              alt={path.title}
-                              className="block w-full h-full object-contain"
-                              style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#f7f7f7' }}
-                            />
-                          </>
-                        ) : (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-stone-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-stone-300">
-                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                              <circle cx="8.5" cy="8.5" r="1.5" />
-                              <polyline points="21 15 16 10 5 21" />
-                            </svg>
-                            <span className="text-[10px] font-semibold text-stone-400 mt-2 uppercase tracking-wider">{path.category_name || 'Path'}</span>
-                          </div>
-                        )}
+                        <img
+                          src={path._coverUrl || FALLBACK_THUMB}
+                          alt={path.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover"
+                        />
                         <div className="absolute top-2 right-2">
                           <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm border border-white/20 ${typeColor(path.type)}`}>
                             {typeLabel(path.type)}
@@ -399,36 +361,17 @@ export default function MyLearningPath() {
                   {poolPaths.map(path => (
                     <article
                       key={path.id}
-                      className="group rounded-md overflow-hidden bg-white border border-stone-100 hover:border-stone-200 hover:shadow-lg transition-all duration-200 cursor-pointer"
+                      className="group rounded-md overflow-hidden bg-white border-t border-b border-stone-200 hover:border-stone-300 hover:shadow-lg transition-all duration-200 cursor-pointer"
                       onClick={() => openDetail(path.id)}
                     >
                       <div className="relative aspect-video bg-stone-100 overflow-hidden transition-transform duration-500 group-hover:scale-105">
-                        {path._coverUrl ? (
-                          <>
-                            <img
-                              src={path._coverUrl}
-                              alt=""
-                              aria-hidden="true"
-                              className="absolute inset-0 w-full h-full object-cover scale-110 blur-xl opacity-30"
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                            <img
-                              src={path._coverUrl}
-                              alt={path.title}
-                              className="block w-full h-full object-contain"
-                              style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#f7f7f7' }}
-                            />
-                          </>
-                        ) : (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-stone-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-stone-300">
-                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                              <circle cx="8.5" cy="8.5" r="1.5" />
-                              <polyline points="21 15 16 10 5 21" />
-                            </svg>
-                            <span className="text-[10px] font-semibold text-stone-400 mt-2 uppercase tracking-wider">{path.category_name || 'Path'}</span>
-                          </div>
-                        )}
+                        <img
+                          src={path._coverUrl || FALLBACK_THUMB}
+                          alt={path.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover"
+                        />
                         <div className="absolute top-2 right-2">
                           <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm border border-white/20 ${typeColor(path.type)}`}>
                             {typeLabel(path.type)}
