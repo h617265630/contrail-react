@@ -63,6 +63,7 @@ export function NavBar() {
   const { user, isAuthed, logout } = useAuthStore()
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false)
   const [createMenuOpen, setCreateMenuOpen] = useState(false)
   const [langMenuOpen, setLangMenuOpen] = useState(false)
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false)
@@ -83,6 +84,7 @@ export function NavBar() {
     logout()
     setDesktopMenuOpen(false)
     setMobileMenuOpen(false)
+    setMobileUserMenuOpen(false)
     navigate('/home')
   }, [logout, navigate])
 
@@ -346,20 +348,62 @@ export function NavBar() {
 
               {/* Auth: logged in - mobile avatar */}
               {isAuthed && (
-                <button
-                  type="button"
-                  className="md:hidden flex items-center justify-center h-9 w-9 rounded-full overflow-hidden border border-slate-200 bg-white"
-                  aria-label="Account menu"
-                  onClick={() => setMobileMenuOpen(true)}
-                >
-                  <div className="h-7 w-7 shrink-0 overflow-hidden rounded-full bg-blue-500 flex items-center justify-center text-white text-[10px] font-bold">
-                    {user?.avatar_url ? (
-                      <img src={user.avatar_url} alt={displayName} referrerPolicy="no-referrer" className="h-full w-full object-cover" />
-                    ) : (
-                      userInitials
-                    )}
-                  </div>
-                </button>
+                <div className="relative md:hidden">
+                  <button
+                    type="button"
+                    className="flex items-center justify-center h-9 w-9 rounded-full overflow-hidden border border-slate-200 bg-white"
+                    aria-label="Account menu"
+                    onClick={() => setMobileUserMenuOpen(!mobileUserMenuOpen)}
+                  >
+                    <div className="h-7 w-7 shrink-0 overflow-hidden rounded-full bg-blue-500 flex items-center justify-center text-white text-[10px] font-bold">
+                      {user?.avatar_url ? (
+                        <img src={user.avatar_url} alt={displayName} referrerPolicy="no-referrer" className="h-full w-full object-cover" />
+                      ) : (
+                        userInitials
+                      )}
+                    </div>
+                  </button>
+
+                  {mobileUserMenuOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                      />
+                      <div className="absolute right-0 top-full mt-2 w-56 rounded-md border border-slate-100 bg-white shadow-xl z-50 py-1">
+                        <div className="px-4 py-3 border-b border-slate-50 mb-1">
+                          <p className="text-sm font-semibold text-slate-900">{displayName}</p>
+                          <p className="text-xs text-slate-400 mt-0.5">{userEmail}</p>
+                        </div>
+                        <div className="py-1">
+                          {USER_MENU_ITEMS.map((item) => (
+                            <Link
+                              key={item.to}
+                              to={item.to}
+                              role="menuitem"
+                              className="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                              onClick={() => setMobileUserMenuOpen(false)}
+                            >
+                              <item.icon className="w-4 h-4 text-slate-400" />
+                              {item.label}
+                            </Link>
+                          ))}
+                        </div>
+                        <div className="border-t border-slate-50 mt-1 pt-1 pb-1">
+                          <button
+                            type="button"
+                            className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                            role="menuitem"
+                            onClick={handleLogout}
+                          >
+                            <LogOut className="w-4 h-4" />
+                            Log out
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               )}
 
               {/* Auth: logged out */}
