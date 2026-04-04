@@ -80,7 +80,7 @@ function PathCard({ path }: { path: PoolPath }) {
     <Link to={`/learningpath/${path.id}`} className="group block">
       <article className="border border-stone-100 bg-white hover:border-stone-200 hover:shadow-md transition-all duration-500 rounded-md overflow-hidden h-full flex flex-col">
         {/* Thumbnail */}
-        <div className="relative bg-stone-100" style={{ width: '100%', aspectRatio: '16 / 9' }}>
+        <div className="relative bg-stone-100 border-t border-b border-black" style={{ width: '100%', aspectRatio: '16 / 9' }}>
           <img
             src={path.thumbnail || FALLBACK_THUMB}
             alt={path.title}
@@ -221,6 +221,7 @@ export default function LearningPool() {
                 value={searchInput}
                 onChange={handleSearchChange}
                 placeholder="Search paths..."
+                aria-label="Search learning paths"
                 className="w-full rounded-full border border-stone-200 bg-white pl-9 pr-4 py-2.5 text-sm text-stone-700 placeholder:text-stone-400 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all"
               />
             </div>

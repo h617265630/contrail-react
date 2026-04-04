@@ -38,7 +38,7 @@ export function ResourceCard({ resource, onOpen, onAdd, saving, saved }: Resourc
       onClick={onOpen}
     >
       {/* Type & Category row - top */}
-      <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+      <div className="px-3 pt-2 pb-1 flex items-center justify-between">
         <Badge variant="secondary" className="text-[9px] uppercase tracking-wider">
           {resource.typeLabel}
         </Badge>

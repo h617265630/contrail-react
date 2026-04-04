@@ -93,6 +93,7 @@ export default function AccountMyResources() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search my resources…"
+          aria-label="Search my resources"
           className="w-full pl-10 pr-4 py-3 bg-white border border-stone-200 text-stone-900 text-sm placeholder:text-stone-400 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all rounded-sm"
         />
       </div>

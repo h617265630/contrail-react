@@ -65,8 +65,8 @@ export default function ParticalImage() {
                   <img
                     src={img.image_url}
                     alt={img.title || 'image'}
-                    className="h-full w-full object-contain"
-                    style={{ objectFit: 'contain', backgroundColor: '#f7f7f7' }}
+                    className="h-full w-full object-contain bg-stone-50"
+                    style={{ objectFit: 'contain' }}
                     loading="lazy"
                   />
                 </div>

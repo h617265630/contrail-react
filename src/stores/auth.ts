@@ -108,7 +108,7 @@ interface AuthState {
   isAuthed: boolean
   avatarBuster: number
   setToken: (next: string | null, remember?: boolean) => void
-  setUser: (next: UserProfile | null) => void
+  setUser: (next: UserProfile | null, remember?: boolean) => void
   bumpAvatarBuster: () => void
   logout: () => void
   fetchProfile: (force?: boolean) => Promise<UserProfile | null>

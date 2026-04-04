@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default function Creator() {
   return (
     <div className="min-h-screen bg-stone-50">

@@ -77,11 +77,11 @@ function HeroCard({
 }) {
   return (
     <article
-      className="group border border-stone-100 bg-white hover:border-stone-200 hover:shadow-xl transition-all duration-500 rounded-xl overflow-hidden cursor-pointer flex flex-col md:flex-row"
+      className="group border border-stone-100 bg-white hover:border-stone-200 hover:shadow-xl transition-all duration-500 rounded-xl overflow-hidden cursor-pointer flex flex-col sm:flex-row"
       onClick={onOpen}
     >
       {/* Thumbnail */}
-      <div className="relative bg-stone-100 overflow-hidden shrink-0 w-full md:w-1/2" style={{ aspectRatio: '16 / 9' }}>
+      <div className="relative bg-stone-100 overflow-hidden shrink-0 w-full sm:w-1/2" style={{ aspectRatio: '16 / 9' }}>
         <img
           src={resource.thumbnail}
           alt={resource.title}
@@ -89,46 +89,46 @@ function HeroCard({
           decoding="async"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute top-3 left-3 flex gap-2">
-          <Badge variant="secondary" className="text-[9px] uppercase tracking-wider">Hero</Badge>
-          <Badge className="text-[9px] uppercase tracking-wider bg-white/90 backdrop-blur-sm border-white/20">
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex gap-1.5 sm:gap-2">
+          <Badge variant="secondary" className="text-[9px] sm:text-[10px] uppercase tracking-wider">Hero</Badge>
+          <Badge className="text-[9px] sm:text-[10px] uppercase tracking-wider bg-white border-white/20">
             {resource.typeLabel}
           </Badge>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4 md:p-6 flex-1 flex flex-col justify-between">
-        <div className="space-y-3">
+      <div className="p-3 sm:p-4 md:p-6 flex-1 flex flex-col justify-between">
+        <div className="space-y-2 sm:space-y-3">
           <span
-            className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm"
+            className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-sm"
             style={{ backgroundColor: resource.categoryColor + '18', color: resource.categoryColor }}
           >
             {resource.categoryLabel}
           </span>
           <h3
-            className="text-base md:text-lg font-bold text-stone-900 line-clamp-2 leading-tight group-hover:text-amber-600 transition-colors"
+            className="text-sm sm:text-base md:text-lg font-bold text-stone-900 line-clamp-2 leading-tight group-hover:text-amber-600 transition-colors"
             title={resource.title}
           >
             {resource.title}
           </h3>
-          <p className="text-xs md:text-sm text-stone-500 line-clamp-2 md:line-clamp-3">{resource.summary || 'No description available.'}</p>
+          <p className="text-xs sm:text-xs md:text-sm text-stone-500 line-clamp-2 sm:line-clamp-3">{resource.summary || 'No description available.'}</p>
         </div>
-        <div className="flex items-center justify-between mt-3 md:mt-4 pt-3 md:pt-4 border-t border-stone-50">
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-stone-400">{resource.platformLabel}</span>
-            <span className="text-xs text-stone-300">·</span>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">{resource.typeLabel}</span>
+        <div className="flex items-center justify-between mt-2 sm:mt-3 md:mt-4 pt-2 sm:pt-3 md:pt-4 border-t border-stone-50">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="text-[10px] sm:text-xs text-stone-400">{resource.platformLabel}</span>
+            <span className="text-xs text-stone-300 hidden sm:inline">·</span>
+            <span className="text-[10px] sm:text-[10px] font-semibold uppercase tracking-wider text-stone-500">{resource.typeLabel}</span>
           </div>
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); onAdd() }}
             disabled={saving || saved}
-            className={`text-[10px] md:text-xs font-semibold uppercase tracking-wider transition-colors ${
+            className={`text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-colors ${
               saved ? 'text-emerald-500' : 'text-amber-600 hover:text-amber-700'
             } disabled:opacity-50`}
           >
-            {saved ? 'Saved' : saving ? 'Saving…' : '+ Add to my resources'}
+            {saved ? 'Saved' : saving ? 'Saving…' : '+ Add'}
           </button>
         </div>
       </div>
@@ -262,61 +262,76 @@ export default function ResourceLibrary() {
     <div className="min-h-screen bg-white">
       {/* Masthead header */}
       <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-6 md:py-8">
-          <div className="flex items-end justify-between gap-6">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 py-4 sm:py-6 md:py-8">
+          <div className="flex items-end justify-between gap-4 sm:gap-6">
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="h-px w-8 bg-amber-500"></span>
+              <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                <span className="h-px w-6 sm:w-8 bg-amber-500"></span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400">Discover</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-stone-900 leading-[0.92]">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-stone-900 leading-[0.92]">
                 Resource<br /><span className="text-amber-600">Library.</span>
               </h1>
             </div>
-            <p className="hidden md:block text-sm leading-relaxed text-stone-500 max-w-xs">
+            <p className="hidden lg:block text-sm leading-relaxed text-stone-500 max-w-xs">
               Browse and discover public resources. Add them to your personal library with one click.
             </p>
           </div>
 
           {/* Filter bar */}
-          <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <div className="mt-4 sm:mt-6 flex flex-col gap-2 sm:gap-3">
             {/* Search */}
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+            <div className="relative">
+              <Search className="absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search resources, topics..."
-                className="h-10 w-full rounded-none border border-stone-200 bg-white pl-10 pr-4 text-sm text-stone-900 placeholder:text-stone-400 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-100 transition-colors"
+                aria-label="Search resources"
+                className="h-11 sm:h-11 w-full rounded-none border border-stone-200 bg-white pl-9 sm:pl-10 pr-3 sm:pr-4 text-sm text-stone-900 placeholder:text-stone-400 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-100 transition-colors"
               />
             </div>
 
-            {/* Category filter */}
-            <div className="relative">
-              <select
-                value={selectedCategory}
-                onChange={e => setSelectedCategory(e.target.value)}
-                className="appearance-none h-10 rounded-none border border-stone-200 bg-white pl-4 pr-10 text-sm text-stone-700 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-100 transition-colors cursor-pointer"
-              >
-                {categoryOptions.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-              <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
+            {/* Category and clear filters row */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Category filter */}
+              <div className="relative flex-1">
+                <select
+                  value={selectedCategory}
+                  onChange={e => setSelectedCategory(e.target.value)}
+                  className="appearance-none h-11 rounded-none border border-stone-200 bg-white pl-3 sm:pl-4 pr-8 sm:pr-10 text-sm text-stone-700 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-100 transition-colors cursor-pointer w-full"
+                >
+                  {categoryOptions.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+                <svg className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+
+              {/* Clear filters - visible when filters active */}
+              {(searchQuery || selectedCategory !== 'All') && (
+                <button
+                  type="button"
+                  onClick={() => { setSearchQuery(''); setSelectedCategory('All') }}
+                  className="h-11 px-3 sm:px-4 rounded-none border border-stone-200 bg-white text-xs sm:text-sm font-semibold text-stone-500 hover:border-stone-400 hover:text-stone-700 transition-colors shrink-0"
+                >
+                  Clear
+                </button>
+              )}
             </div>
           </div>
 
           {/* Type pills */}
-          <div className="mt-4 flex gap-2 flex-wrap">
+          <div className="mt-3 sm:mt-4 flex gap-1.5 sm:gap-2 flex-wrap">
             {typeFilters.map(t => (
               <button
                 key={t.value}
                 type="button"
                 onClick={() => setActiveType(t.value)}
-                className={`h-7 rounded-sm border px-3 text-[11px] font-semibold uppercase tracking-wider transition-all ${
+                className={`h-9 sm:h-9 px-2.5 sm:px-3 rounded-sm border text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-all ${
                   activeType === t.value
                     ? 'border-stone-900 bg-stone-900 text-white'
                     : 'border-stone-200 bg-white text-stone-500 hover:border-stone-400'
@@ -330,7 +345,7 @@ export default function ResourceLibrary() {
       </header>
 
       {/* Main content */}
-      <main className="mx-auto max-w-7xl px-4 py-8">
+      <main className="mx-auto max-w-7xl px-3 sm:px-4 py-6 sm:py-8">
         {/* Loading */}
         {loading && (
           <div className="py-20 text-center">
@@ -356,21 +371,14 @@ export default function ResourceLibrary() {
         {!loading && filteredResources.length > 0 && (
           <div>
             {/* Results count */}
-            <div className="mb-6 flex items-center justify-between">
-              <p className="text-xs text-stone-400">
+            <div className="mb-4 sm:mb-6 flex items-center justify-between">
+              <p className="text-xs sm:text-sm text-stone-400">
                 <span className="font-semibold text-stone-600">{filteredResources.length}</span> resources
               </p>
-              <button
-                type="button"
-                onClick={() => { setSearchQuery(''); setSelectedCategory('All') }}
-                className="text-[11px] font-semibold uppercase tracking-wider text-stone-400 hover:text-stone-600 transition-colors"
-              >
-                Clear filters
-              </button>
             </div>
 
             {/* Editorial grid: alternating hero and standard cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
               {filteredResources.map((resource, idx) => {
                 const isHero = idx % 7 === 0 && idx > 0
                 const saving = !!addingToMy[resource.id]
@@ -378,7 +386,7 @@ export default function ResourceLibrary() {
 
                 if (isHero) {
                   return (
-                    <div key={resource.id} className="col-span-5">
+                    <div key={resource.id} className="col-span-2 sm:col-span-3 md:col-span-3 lg:col-span-4 xl:col-span-5">
                       <HeroCard
                         resource={resource}
                         onOpen={() => openCard(resource)}
@@ -409,10 +417,10 @@ export default function ResourceLibrary() {
 
       {/* Detail modal */}
       {activeResource && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={closeActiveResource}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" onClick={closeActiveResource}>
           <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-sm"></div>
           <div
-            className="relative w-full max-w-lg rounded-md overflow-hidden bg-white shadow-2xl border border-stone-100"
+            className="relative w-full max-w-xs sm:max-w-sm md:max-w-md rounded-md overflow-hidden bg-white shadow-2xl border border-stone-100"
             onClick={e => e.stopPropagation()}
           >
             {/* Image header */}
@@ -424,20 +432,20 @@ export default function ResourceLibrary() {
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
               <button
-                className="absolute top-3 right-3 w-8 h-8 rounded-sm bg-white/90 backdrop-blur-sm flex items-center justify-center text-stone-500 hover:text-stone-900 hover:bg-white transition"
+                className="absolute top-2 right-2 sm:top-3 sm:right-3 w-8 h-8 rounded-sm bg-white flex items-center justify-center text-stone-500 hover:text-stone-900 hover:bg-stone-50 transition"
                 onClick={closeActiveResource}
                 aria-label="Close"
               >
                 <X className="w-4 h-4" />
               </button>
               {/* Category badge */}
-              <div className="absolute bottom-3 left-3">
+              <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
                 {(() => {
                   const catLabel = String((activeResource as any).category_name || '').trim() || 'Other'
                   const catColor = getCategoryColor(catLabel)
                   return (
                     <span
-                      className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm"
+                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-sm"
                       style={{ backgroundColor: catColor + '18', color: catColor }}
                     >
                       {catLabel}
@@ -448,16 +456,16 @@ export default function ResourceLibrary() {
             </div>
 
             {/* Content */}
-            <div className="p-6">
-              <div className="flex items-start justify-between gap-3 mb-3">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-start justify-between gap-3 mb-2 sm:mb-3">
                 <div>
                   <span className="text-[10px] text-stone-400">#{String(activeResource.id).padStart(3, '0')}</span>
-                  <h2 className="text-xl font-bold text-stone-900 leading-tight mt-1">{activeResource.title}</h2>
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold text-stone-900 leading-tight mt-0.5 sm:mt-1">{activeResource.title}</h2>
                 </div>
               </div>
-              <p className="text-sm leading-relaxed text-stone-600">{activeResource.summary || 'No description available.'}</p>
+              <p className="text-xs sm:text-sm leading-relaxed text-stone-600 line-clamp-3 sm:line-clamp-none">{activeResource.summary || 'No description available.'}</p>
 
-              <div className="flex items-center gap-4 mt-4 text-xs text-stone-400">
+              <div className="flex items-center gap-3 sm:gap-4 mt-3 sm:mt-4 text-xs text-stone-400">
                 <span>{formatPlatform((activeResource as any).platform)}</span>
                 <span className="text-stone-200">·</span>
                 <span className="font-medium text-stone-600 uppercase text-[10px] tracking-wider">
@@ -467,10 +475,10 @@ export default function ResourceLibrary() {
             </div>
 
             {/* Actions */}
-            <div className="px-6 pb-6 flex flex-col gap-2">
+            <div className="px-4 pb-4 sm:px-6 sm:pb-6 flex flex-col gap-2">
               <Button
                 onClick={() => seeDetail(mapDbToUi(activeResource))}
-                className="w-full rounded-sm bg-stone-900 text-white hover:bg-stone-800 font-semibold text-sm transition-all"
+                className="w-full rounded-sm bg-stone-900 text-white hover:bg-stone-800 font-semibold text-xs sm:text-sm transition-all"
               >
                 View details
               </Button>
@@ -478,7 +486,7 @@ export default function ResourceLibrary() {
                 variant="outline"
                 onClick={() => seeDetail(mapDbToUi(activeResource))}
                 disabled={addingToMy[activeResource.id] || addedToMy[activeResource.id]}
-                className="w-full rounded-sm border border-stone-200 text-stone-600 hover:border-stone-900 hover:text-stone-900 font-semibold text-sm transition-all"
+                className="w-full rounded-sm border border-stone-200 text-stone-600 hover:border-stone-900 hover:text-stone-900 font-semibold text-xs sm:text-sm transition-all"
               >
                 {addedToMy[activeResource.id] ? 'Already saved' : (addingToMy[activeResource.id] ? 'Saving…' : '+ Save to my resources')}
               </Button>
@@ -494,7 +502,7 @@ export default function ResourceLibrary() {
             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <span className="text-sm font-semibold">{toastMessage}</span>
-          <button className="text-stone-400 hover:text-white transition-colors ml-1" onClick={() => setShowToast(false)}>
+          <button className="text-stone-400 hover:text-white transition-colors ml-1" onClick={() => setShowToast(false)} aria-label="Dismiss notification">
             <X className="w-4 h-4" />
           </button>
         </div>

@@ -415,9 +415,10 @@ export default function MyLearningPath() {
             <div className="px-6 py-5 border-b border-stone-100 flex items-center justify-between">
               <h2 className="text-base font-bold text-stone-900">Delete learning path?</h2>
               <button
-                className="w-7 h-7 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-600 transition"
+                className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-600 transition"
                 onClick={closeDeleteConfirm}
                 disabled={deleteConfirming}
+                aria-label="Close"
               >
                 ×
               </button>

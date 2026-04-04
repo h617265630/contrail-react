@@ -108,6 +108,7 @@ export default function UserManagement() {
             value={search}
             onChange={handleSearchChange}
             placeholder="Search users..."
+            aria-label="Search users"
             className="h-10 w-64 px-3 pl-10 border border-stone-200 rounded-md bg-white text-sm text-stone-900 placeholder:text-stone-400 outline-none focus:border-amber-400"
           />
           <svg

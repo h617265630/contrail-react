@@ -6,11 +6,6 @@ export default function About() {
 
       {/* Editorial hero */}
       <section className="relative overflow-hidden bg-stone-50 border-b border-stone-200">
-        {/* Decorative large background text */}
-        <div className="absolute inset-0 flex items-center justify-end pr-8 pointer-events-none select-none" aria-hidden="true">
-          <span className="text-[20vw] font-black text-stone-100 leading-none tracking-tighter">LP</span>
-        </div>
-
         <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
           <div className="max-w-2xl">
             <div className="flex items-center gap-3 mb-8">
@@ -56,8 +51,7 @@ export default function About() {
             <div className="grid grid-cols-12 gap-6">
               {/* Resources */}
               <div className="col-span-12 sm:col-span-4 group relative">
-                <div className="absolute -left-3 top-0 text-[80px] font-black text-stone-100 leading-none select-none pointer-events-none" aria-hidden="true">1</div>
-                <div className="relative pt-14">
+                <div className="relative pt-0">
                   <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                   </div>
@@ -72,8 +66,7 @@ export default function About() {
 
               {/* Learning Paths */}
               <div className="col-span-12 sm:col-span-4 group relative">
-                <div className="absolute -left-3 top-0 text-[80px] font-black text-stone-100 leading-none select-none pointer-events-none" aria-hidden="true">2</div>
-                <div className="relative pt-14">
+                <div className="relative pt-0">
                   <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 text-sky-700">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                   </div>
@@ -88,8 +81,7 @@ export default function About() {
 
               {/* Progress */}
               <div className="col-span-12 sm:col-span-4 group relative">
-                <div className="absolute -left-3 top-0 text-[80px] font-black text-stone-100 leading-none select-none pointer-events-none" aria-hidden="true">3</div>
-                <div className="relative pt-14">
+                <div className="relative pt-0">
                   <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-700">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                   </div>

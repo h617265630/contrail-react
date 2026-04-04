@@ -289,8 +289,8 @@ export default function AddResource() {
                       <img
                         src={extractedMeta.thumbnail_url}
                         alt={extractedMeta.title || 'thumbnail'}
-                        className="w-full h-full object-contain"
-                        style={{ objectFit: 'contain', backgroundColor: '#f7f7f7' }}
+                        className="w-full h-full object-contain bg-stone-50"
+                        style={{ objectFit: 'contain' }}
                       />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -441,8 +441,7 @@ export default function AddResource() {
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-black text-white"
-                        style={{ backgroundColor: '#8b5cf6' }}
+                        className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-black text-white bg-violet-600"
                       >
                         {(extractedMeta?.title || 'R').charAt(0)}
                       </div>
@@ -485,7 +484,7 @@ export default function AddResource() {
             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <span className="text-sm font-semibold">{successToastText}</span>
-          <button className="text-stone-400 hover:text-white ml-1" onClick={() => setShowSuccessToast(false)}>
+          <button className="text-stone-400 hover:text-white ml-1" onClick={() => setShowSuccessToast(false)} aria-label="Dismiss notification">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>

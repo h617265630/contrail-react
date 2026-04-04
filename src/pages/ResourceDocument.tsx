@@ -344,7 +344,7 @@ export default function ResourceDocument() {
               <>
                 {resource.thumbnail ? (
                   <div className="w-full h-64 bg-slate-100 overflow-hidden">
-                    <img src={resource.thumbnail} alt={resource.title} className="w-full h-full object-cover" />
+                    <img src={resource.thumbnail} alt={resource.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   </div>
                 ) : (
                   <div className="w-full h-64 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">

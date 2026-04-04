@@ -256,6 +256,7 @@ export default function MyResource() {
                 value={searchKeyword}
                 onChange={e => setSearchKeyword(e.target.value)}
                 placeholder="Search your resources..."
+                aria-label="Search your resources"
                 className="h-10 w-full rounded-none border border-stone-200 bg-white pl-10 pr-4 text-sm text-stone-900 placeholder:text-stone-400 outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-100 transition-colors"
               />
             </div>
@@ -328,47 +329,47 @@ export default function MyResource() {
 
             {/* Expanded grid */}
             {isDeckExpanded(deckIndex) && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
                 {deck.cards.map((resource) => (
                   <article
                     key={resource.id}
                     onClick={() => openCard(resource)}
-                    className={`aspect-[4/5] rounded-md overflow-hidden bg-white border border-stone-100 hover:border-stone-200 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col ${getWeightCardClass(resource)}`}
+                    className={`aspect-[4/5] rounded-sm overflow-hidden bg-white border border-stone-100 hover:border-stone-200 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col ${getWeightCardClass(resource)}`}
                   >
                     {/* Thumbnail */}
                     <div className="relative bg-stone-100 overflow-hidden transition-transform duration-500" style={{ width: '100%', aspectRatio: '16 / 9' }}>
                       <img
                         src={resource.thumbnail}
                         alt={resource.title}
-                        className="block w-full h-full object-contain"
-                        style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#f7f7f7' }}
+                        className="block w-full h-full object-contain bg-stone-50"
+                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                       />
                       {/* Type badge */}
-                      <div className="absolute top-2 left-2">
-                        <Badge variant="secondary" className="text-[9px] uppercase tracking-wider">
+                      <div className="absolute top-1.5 left-1.5">
+                        <Badge variant="secondary" className="text-[8px] uppercase tracking-wider px-1.5 py-0.5">
                           {resource.type}
                         </Badge>
                       </div>
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 p-3.5 flex flex-col">
+                    <div className="flex-1 p-2 flex flex-col">
                       <span
-                        className="text-[10px] font-semibold uppercase tracking-wider mb-1.5"
+                        className="text-[9px] font-semibold uppercase tracking-wider mb-1"
                         style={{ color: resource.categoryColor }}
                       >
                         {resource.category}
                       </span>
                       <h3
-                        className="text-sm font-semibold text-stone-800 leading-snug line-clamp-2 group-hover:text-amber-700 transition-colors"
+                        className="text-[11px] font-semibold text-stone-800 leading-snug line-clamp-2 group-hover:text-amber-700 transition-colors"
                         title={resource.title}
                       >
                         {resource.title}
                       </h3>
-                      <p className="text-xs text-stone-400 mt-1 line-clamp-2 flex-1">{resource.summary}</p>
-                      <div className="flex items-center justify-between mt-3 pt-2 border-t border-stone-50">
-                        <span className="text-[10px] text-stone-400">{formatPlatform(resource.platform)}</span>
-                        <span className="text-[10px] font-semibold text-stone-400">#{resource.user_seq ?? resource.id}</span>
+                      <p className="text-[10px] text-stone-400 mt-0.5 line-clamp-2 flex-1">{resource.summary}</p>
+                      <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-stone-50">
+                        <span className="text-[9px] text-stone-400">{formatPlatform(resource.platform)}</span>
+                        <span className="text-[9px] font-semibold text-stone-400">#{resource.user_seq ?? resource.id}</span>
                       </div>
                     </div>
                   </article>
@@ -379,17 +380,17 @@ export default function MyResource() {
             {/* Collapsed fan view */}
             {!isDeckExpanded(deckIndex) && (
               <div
-                className="relative h-64 overflow-visible cursor-pointer"
+                className="relative h-52 overflow-visible cursor-pointer"
                 onClick={() => toggleDeck(deckIndex)}
               >
-                <div className="inline-flex items-center h-full" style={{ paddingLeft: '16px' }}>
+                <div className="inline-flex items-center h-full" style={{ paddingLeft: '12px' }}>
                   {deck.cards.slice(0, 5).map((resource, cardIndex) => (
                     <div
                       key={resource.id}
                       onClick={e => { e.stopPropagation(); openCard(resource) }}
-                      className={`shrink-0 w-52 rounded-md overflow-hidden bg-white border border-stone-100 shadow-sm transition-all duration-300 cursor-pointer hover:shadow-xl flex flex-col ${getWeightCardClass(resource)}`}
+                      className={`shrink-0 w-44 rounded-sm overflow-hidden bg-white border border-stone-100 shadow-sm transition-all duration-300 cursor-pointer hover:shadow-xl flex flex-col ${getWeightCardClass(resource)}`}
                       style={{
-                        marginLeft: cardIndex === 0 ? '0' : '-208px',
+                        marginLeft: cardIndex === 0 ? '0' : '-176px',
                         zIndex: cardIndex,
                         transform: `rotate(${(5 - 1 - cardIndex) * 0.3}deg)`,
                       }}
@@ -398,29 +399,29 @@ export default function MyResource() {
                         <img
                           src={resource.thumbnail}
                           alt={resource.title}
-                          className="block w-full h-full object-contain"
-                          style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#f7f7f7' }}
+                          className="block w-full h-full object-contain bg-stone-50/50"
+                          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                         />
-                        <div className="absolute top-2 left-2">
-                          <Badge variant="secondary" className="text-[9px] uppercase tracking-wider">
+                        <div className="absolute top-1.5 left-1.5">
+                          <Badge variant="secondary" className="text-[8px] uppercase tracking-wider px-1.5 py-0.5">
                             {resource.type}
                           </Badge>
                         </div>
                       </div>
-                      <div className="flex-1 p-3 flex flex-col">
+                      <div className="flex-1 p-2.5 flex flex-col">
                         <span
-                          className="text-[10px] font-semibold uppercase tracking-wider mb-1"
+                          className="text-[9px] font-semibold uppercase tracking-wider mb-0.5"
                           style={{ color: resource.categoryColor }}
                         >
                           {resource.category}
                         </span>
-                        <h3 className="text-xs font-semibold text-stone-800 leading-snug line-clamp-2" title={resource.title}>
+                        <h3 className="text-[11px] font-semibold text-stone-800 leading-snug line-clamp-2" title={resource.title}>
                           {resource.title}
                         </h3>
-                        <p className="text-[11px] text-stone-400 mt-1 line-clamp-2 flex-1">{resource.summary}</p>
-                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-stone-50">
-                          <span className="text-[10px] text-stone-400">{formatPlatform(resource.platform)}</span>
-                          <span className="text-[10px] text-stone-400">#{resource.user_seq ?? resource.id}</span>
+                        <p className="text-[10px] text-stone-400 mt-0.5 line-clamp-2 flex-1">{resource.summary}</p>
+                        <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-stone-50">
+                          <span className="text-[9px] text-stone-400">{formatPlatform(resource.platform)}</span>
+                          <span className="text-[9px] text-stone-400">#{resource.user_seq ?? resource.id}</span>
                         </div>
                       </div>
                     </div>
@@ -428,8 +429,6 @@ export default function MyResource() {
                 </div>
               </div>
             )}
-
-            <p className="text-xs text-stone-400 mt-4">{deck.cards.length} cards</p>
           </div>
         ))}
       </main>
@@ -446,12 +445,13 @@ export default function MyResource() {
               <img
                 src={activeResource.thumbnail || FALLBACK_THUMB}
                 alt={activeResource.title}
-                className="block w-full h-full object-contain"
-                style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#f7f7f7' }}
+                className="block w-full h-full object-contain bg-stone-50"
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
               <button
-                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-stone-500 hover:text-stone-900 transition"
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center text-stone-500 hover:text-stone-900 hover:bg-stone-50 transition"
                 onClick={closeActiveResource}
+                aria-label="Close"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -496,10 +496,9 @@ export default function MyResource() {
                   aria-label="Toggle privacy"
                 >
                   <span
-                    className="absolute inset-y-0.5 left-0.5 w-[calc(50%-0.25rem)] rounded-full shadow-sm transition-transform duration-200"
+                    className={`absolute inset-y-0.5 left-0.5 w-[calc(50%-0.25rem)] rounded-full shadow-sm transition-transform duration-200 ${activeResource.is_system_public ? 'bg-red-400' : 'bg-indigo-400'}`}
                     style={{
                       transform: activeResource.is_system_public ? 'translateX(calc(100% + 0.25rem))' : 'translateX(0)',
-                      backgroundColor: activeResource.is_system_public ? '#f87171' : '#818cf8',
                     }}
                   />
                   <span className="relative z-10 flex w-full text-[11px] font-semibold">
@@ -540,9 +539,10 @@ export default function MyResource() {
             <div className="px-6 py-5 border-b border-stone-100 flex items-center justify-between">
               <h2 className="text-base font-bold text-stone-900">Delete resource?</h2>
               <button
-                className="w-7 h-7 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-600 transition"
+                className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-600 transition"
                 onClick={closeDeleteConfirm}
                 disabled={deletingId !== null}
+                aria-label="Close"
               >
                 <X className="w-4 h-4" />
               </button>

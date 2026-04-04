@@ -305,7 +305,7 @@ export default function LearningPathDetail() {
                     size="sm"
                     className={
                       fromMyPaths
-                        ? 'bg-[#8ecbff] text-white hover:bg-[#8ecbff]/90 hover:text-white border-0'
+                        ? 'bg-sky-300 text-white hover:bg-sky-300/90 hover:text-white border-0'
                         : 'bg-foreground text-background hover:bg-foreground/90 hover:text-background'
                     }
                     disabled={fromMyPaths ? false : usingThisPath}
@@ -429,9 +429,10 @@ export default function LearningPathDetail() {
                 {useModalTitle}
               </h2>
               <button
-                className="w-7 h-7 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-600 transition"
+                className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-600 transition"
                 onClick={closeUseModal}
                 disabled={usingThisPath}
+                aria-label="Close"
               >
                 ×
               </button>

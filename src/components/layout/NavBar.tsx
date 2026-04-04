@@ -248,6 +248,7 @@ export function NavBar() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     type="text"
                     placeholder="Search..."
+                    aria-label="Search"
                     className="w-40 h-full text-xs text-slate-900 placeholder:text-slate-400 bg-transparent outline-none"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') submitSearch()

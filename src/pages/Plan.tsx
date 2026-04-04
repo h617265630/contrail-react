@@ -196,8 +196,7 @@ export default function Plan() {
 
           {/* Free — 01 */}
           <div className="col-span-12 lg:col-span-3 relative">
-            <span className="absolute -top-4 -left-2 text-[100px] font-black leading-none text-stone-100 select-none pointer-events-none" aria-hidden="true">01</span>
-            <div className="relative pt-12">
+            <div className="relative pt-4">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-1 h-5 bg-stone-300 rounded-full"></div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Free</span>
@@ -214,7 +213,7 @@ export default function Plan() {
                   {freePlan.features.map((feat) => (
                     <li key={feat.label} className="flex items-start gap-2.5">
                       <span className="mt-0.5 shrink-0 rounded-full bg-stone-100 p-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                       </span>
                       <span className="text-sm text-stone-600 leading-snug">{feat.label}</span>
                     </li>
@@ -234,11 +233,7 @@ export default function Plan() {
 
           {/* Pro — 02 (dominant) */}
           <div className="col-span-12 lg:col-span-6 relative">
-            <span className="absolute -top-4 -left-2 text-[100px] font-black leading-none text-blue-50 select-none pointer-events-none" aria-hidden="true">02</span>
-            <div className="relative pt-12 rounded-md border-2 border-blue-500 bg-white shadow-xl shadow-blue-500/5 overflow-hidden">
-              {/* Decorative background */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-blue-50 to-transparent rounded-bl-full opacity-60 pointer-events-none"></div>
-              <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-amber-50 to-transparent rounded-tr-full opacity-40 pointer-events-none"></div>
+            <div className="relative pt-4 rounded-md border-2 border-blue-500 bg-white shadow-xl shadow-blue-500/5 overflow-hidden">
 
               <div className="relative p-8">
                 <div className="flex items-start justify-between mb-6">
@@ -277,7 +272,7 @@ export default function Plan() {
                     {proPlan.features.map((feat) => (
                       <li key={feat.label} className="flex items-start gap-2.5">
                         <span className="mt-0.5 shrink-0 rounded-full bg-blue-50 p-0.5">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </span>
                         <span className="text-sm font-semibold text-stone-800 leading-snug">{feat.label}</span>
                       </li>
@@ -299,8 +294,7 @@ export default function Plan() {
 
           {/* Basic — 03 */}
           <div className="col-span-12 lg:col-span-3 relative">
-            <span className="absolute -top-4 -left-2 text-[100px] font-black leading-none text-stone-100 select-none pointer-events-none" aria-hidden="true">03</span>
-            <div className="relative pt-12">
+            <div className="relative pt-4">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-1 h-5 bg-amber-500 rounded-full"></div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Basic</span>
@@ -319,7 +313,7 @@ export default function Plan() {
                   {basicPlan.features.map((feat) => (
                     <li key={feat.label} className="flex items-start gap-2.5">
                       <span className="mt-0.5 shrink-0 rounded-full bg-amber-50 p-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                       </span>
                       <span className="text-sm text-stone-600 leading-snug">{feat.label}</span>
                     </li>

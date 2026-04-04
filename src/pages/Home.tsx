@@ -184,13 +184,13 @@ export default function Home() {
                   </Link>
                   <Link
                     to="/about"
-                    className="rounded-full border border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm px-6 py-2.5 text-sm font-semibold transition-all"
+                    className="rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 px-6 py-2.5 text-sm font-semibold transition-all"
                   >
                     About
                   </Link>
                   <Link
                     to="/createpath"
-                    className="rounded-full border border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm px-6 py-2.5 text-sm font-semibold transition-all"
+                    className="rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 px-6 py-2.5 text-sm font-semibold transition-all"
                   >
                     Create path
                   </Link>
@@ -214,7 +214,7 @@ export default function Home() {
                   </Link>
                   <Link
                     to="/createpath"
-                    className="rounded-full border border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm px-6 py-2.5 text-sm font-semibold transition-all"
+                    className="rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 px-6 py-2.5 text-sm font-semibold transition-all"
                   >
                     Create one
                   </Link>

@@ -253,12 +253,12 @@ export default function LearningPathLinear() {
                 <img
                   src={moduleThumb(current)}
                   alt={current.title}
-                  className="block w-full h-full object-contain"
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#f7f7f7' }}
+                  className="block w-full h-full object-contain bg-stone-50"
+                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                 <div className="absolute bottom-4 left-4">
-                  <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-xs font-semibold text-stone-700 uppercase tracking-wider">
+                  <span className="px-3 py-1 rounded-full bg-white text-xs font-semibold text-stone-700 uppercase tracking-wider">
                     {typeLabel(current.type)}
                   </span>
                 </div>
