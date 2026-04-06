@@ -3,19 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { Search, Plus } from 'lucide-react'
 import { listPublicLearningPaths, mapPublicLearningPathToDisplayBase, type PublicLearningPath } from '@/api/learningPath'
 import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-
-type PoolPath = {
-  id: string
-  title: string
-  description: string
-  category: string
-  typeLabel: string
-  level: string
-  items: number
-  thumbnail: string
-  hotScore: number
-}
+import { PathCard, type PoolPath } from '@/components/PathCard'
 
 const FALLBACK_THUMB = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=900&h=506&fit=crop'
 
@@ -72,47 +60,6 @@ function SkeletonCard() {
         </div>
       </div>
     </div>
-  )
-}
-
-function PathCard({ path }: { path: PoolPath }) {
-  return (
-    <Link to={`/learningpath/${path.id}`} className="group block">
-      <article className="border border-stone-100 bg-white hover:border-stone-200 hover:shadow-md transition-all duration-500 rounded-md overflow-hidden h-full flex flex-col">
-        {/* Thumbnail */}
-        <div className="relative bg-stone-100 border-t border-b border-black" style={{ width: '100%', aspectRatio: '16 / 9' }}>
-          <img
-            src={path.thumbnail || FALLBACK_THUMB}
-            alt={path.title}
-            loading="lazy"
-            decoding="async"
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          {path.typeLabel && path.typeLabel !== 'Path' && (
-            <span className="absolute right-3 top-3 px-2 py-1 rounded-full border border-stone-200 bg-white/90 text-[10px] font-semibold tracking-[0.14em] uppercase text-stone-700">
-              {path.typeLabel}
-            </span>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="p-5 flex-1 flex flex-col">
-          <div className="flex items-start justify-between gap-2 mb-2">
-            <h3
-              className="text-sm font-semibold text-stone-900 line-clamp-2 leading-snug group-hover:text-amber-600 transition-colors"
-              title={path.title}
-            >
-              {path.title}
-            </h3>
-          </div>
-          <p className="text-xs text-stone-500 line-clamp-2 mt-1 flex-1">{path.description}</p>
-          <div className="flex flex-wrap items-center gap-2 mt-4">
-            <Badge variant="secondary" className="text-[10px]">{path.category}</Badge>
-            <span className="text-[10px] text-stone-400">{path.level}</span>
-          </div>
-        </div>
-      </article>
-    </Link>
   )
 }
 

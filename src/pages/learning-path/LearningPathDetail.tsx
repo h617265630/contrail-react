@@ -10,6 +10,7 @@ import {
 } from '@/api/learningPath'
 import { getResourceDetail, getMyResourceDetail, type DbResourceDetail } from '@/api/resource'
 import { Button } from '@/components/ui/Button'
+import { ResourceCard, type UiResource } from '@/components/ResourceCard'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -49,6 +50,28 @@ function inferModuleType(item: unknown, r: unknown): ModuleType {
   }
 
   return 'unknown'
+}
+
+function moduleToUiResource(m: Module, cache: Record<string, DbResourceDetail | null>): UiResource {
+  const r = cache[m.resourceId]
+  return {
+    id: Number(m.resourceId) || 0,
+    title: m.title,
+    summary: m.summary,
+    categoryLabel: '',
+    categoryColor: '',
+    platform: '',
+    platformLabel: '',
+    typeLabel: m.type,
+    thumbnail: moduleThumb(m, cache),
+    resource_type: m.type,
+  }
+}
+
+function moduleThumb(m: Module, cache: Record<string, DbResourceDetail | null>): string {
+  const r = cache[m.resourceId]
+  const url = String(r?.thumbnail || '').trim()
+  return url || FALLBACK_THUMB
 }
 
 function typeBadgeClass(type: ModuleType): string {
@@ -101,7 +124,7 @@ export default function LearningPathDetail() {
   const [showUseModal, setShowUseModal] = useState(false)
   const [useModalState, setUseModalState] = useState<'confirm' | 'done' | 'error'>('confirm')
   const [useModalTitle, setUseModalTitle] = useState('Use this path')
-  const [useModalMessage, setUseModalMessage] = useState('将该路径保存到你的 My Paths？')
+  const [useModalMessage, setUseModalMessage] = useState('Save this path to your My Paths?')
   const [useModalHint, setUseModalHint] = useState('')
 
   const loadDetail = useCallback(async () => {
@@ -164,12 +187,6 @@ export default function LearningPathDetail() {
     void loadDetail()
   }, [loadDetail])
 
-  function moduleThumb(m: Module): string {
-    const r = resourceCache[m.resourceId]
-    const url = String(r?.thumbnail || '').trim()
-    return url || FALLBACK_THUMB
-  }
-
   function openResource(m: Module) {
     if (!m.resourceId) return
     const query: Record<string, string> = {}
@@ -205,8 +222,8 @@ export default function LearningPathDetail() {
     } catch (e: any) {
       setShowUseModal(true)
       setUseModalState('error')
-      setUseModalTitle('保存失败')
-      setUseModalMessage(String(e?.response?.data?.detail || e?.message || '保存失败'))
+      setUseModalTitle('Failed to save')
+      setUseModalMessage(String(e?.response?.data?.detail || e?.message || 'Failed to save'))
       setUseModalHint('')
     } finally {
       setUsingThisPath(false)
@@ -221,8 +238,8 @@ export default function LearningPathDetail() {
     setShowUseModal(true)
     setUseModalState('confirm')
     setUseModalTitle('Use this path')
-    setUseModalMessage('将该路径保存到你的 My Paths？')
-    setUseModalHint('保存后可在 My Paths 中查看与编辑。')
+    setUseModalMessage('Save this path to your My Paths?')
+    setUseModalHint('After saving, you can view and edit it in My Paths.')
   }
 
   function closeUseModal() {
@@ -240,8 +257,8 @@ export default function LearningPathDetail() {
       const nid = Number(id)
       const res = await attachPublicLearningPathToMe(nid)
       setUseModalState('done')
-      setUseModalTitle(res?.already_exists ? '已保存' : '保存成功')
-      setUseModalMessage(res?.already_exists ? '该路径已经在 My Paths 里了。' : '已保存到 My Paths。')
+      setUseModalTitle(res?.already_exists ? 'Already saved' : 'Saved')
+      setUseModalMessage(res?.already_exists ? 'This path is already in your My Paths.' : 'Saved to My Paths.')
       setUseModalHint('')
       const nextId = res?.learning_path?.id
       if (typeof nextId === 'number') {
@@ -249,8 +266,8 @@ export default function LearningPathDetail() {
       }
     } catch (e: any) {
       setUseModalState('error')
-      setUseModalTitle('保存失败')
-      setUseModalMessage(String(e?.response?.data?.detail || e?.message || '保存失败'))
+      setUseModalTitle('Failed to save')
+      setUseModalMessage(String(e?.response?.data?.detail || e?.message || 'Failed to save'))
       setUseModalHint('')
     } finally {
       setUsingThisPath(false)
@@ -296,7 +313,7 @@ export default function LearningPathDetail() {
                     className="border-stone-200 text-stone-600 hover:border-stone-400 hover:text-stone-900"
                   >
                     <Link to={fromMyPaths ? '/my-paths' : '/learningpool'}>
-                      {fromMyPaths ? '返回 My Paths' : '返回 LearningPool'}
+                      {fromMyPaths ? 'Back to My Paths' : 'Back to LearningPool'}
                     </Link>
                   </Button>
                   <Button
@@ -364,7 +381,7 @@ export default function LearningPathDetail() {
             <div className="flex items-end justify-between gap-4">
               <div>
                 <h2 className="text-sm font-medium tracking-[0.14em] uppercase text-foreground">
-                  路径内容
+                  Path Content
                 </h2>
                 <p className="text-sm text-muted-foreground">{modules.length} modules</p>
               </div>
@@ -372,40 +389,14 @@ export default function LearningPathDetail() {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {modules.map(m => (
-                <article
+                <ResourceCard
                   key={m.id}
-                  className="group border border-stone-100 bg-white hover:border-stone-200 hover:shadow-md transition-all duration-500 rounded-md overflow-hidden flex flex-col cursor-pointer"
-                  onClick={() => openResource(m)}
-                >
-                  {/* Thumbnail */}
-                  <div className="relative bg-stone-100 overflow-hidden" style={{ width: '100%', aspectRatio: '16 / 9' }}>
-                    <img
-                      src={moduleThumb(m)}
-                      alt={m.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-4 flex-1 flex flex-col">
-                    {/* Type badge */}
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider rounded ${typeBadgeClass(m.type)}`}>
-                        {m.type}
-                      </span>
-                      <span className="text-[10px] text-stone-400">{m.level}</span>
-                    </div>
-
-                    <h3
-                      className="text-sm font-semibold text-stone-900 line-clamp-2 leading-snug group-hover:text-amber-600 transition-colors flex-1"
-                      title={m.title}
-                    >
-                      {m.title}
-                    </h3>
-                    <p className="text-xs text-stone-500 line-clamp-2 mt-2">{m.summary || 'No description.'}</p>
-                  </div>
-                </article>
+                  resource={moduleToUiResource(m, resourceCache)}
+                  onOpen={() => openResource(m)}
+                  onAdd={() => {}}
+                  saving={false}
+                  saved={false}
+                />
               ))}
             </div>
           </section>
@@ -415,7 +406,7 @@ export default function LearningPathDetail() {
       {!loading && !error && !path && (
         <div className="rounded-md border border-stone-100 p-5">
           <div className="text-sm text-muted-foreground">
-            未找到该 learning path（id: {id}）。你可以先从 LearningPool 里选择一个已有的卡片进入。
+            Learning path not found (id: {id}). You can select an existing card from LearningPool to enter.
           </div>
         </div>
       )}
@@ -454,7 +445,7 @@ export default function LearningPathDetail() {
                     onClick={closeUseModal}
                     disabled={usingThisPath}
                   >
-                    取消
+                    Cancel
                   </Button>
                   <Button
                     type="button"
@@ -463,7 +454,7 @@ export default function LearningPathDetail() {
                     onClick={confirmUseThisPath}
                     disabled={usingThisPath}
                   >
-                    {usingThisPath ? 'Saving…' : '保存到 My Paths'}
+                    {usingThisPath ? 'Saving…' : 'Save to My Paths'}
                   </Button>
                 </>
               )}
@@ -476,7 +467,7 @@ export default function LearningPathDetail() {
                   className="border-stone-200 text-stone-600 hover:border-stone-400"
                   onClick={closeUseModal}
                 >
-                  确定
+                  OK
                 </Button>
               )}
             </div>

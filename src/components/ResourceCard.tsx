@@ -34,11 +34,11 @@ interface ResourceCardProps {
 export function ResourceCard({ resource, onOpen, onAdd, saving, saved }: ResourceCardProps) {
   return (
     <article
-      className="group border border-stone-100 bg-white hover:border-stone-200 hover:shadow-md transition-all duration-500 rounded-xl overflow-hidden flex flex-col cursor-pointer"
+      className="group border border-stone-200 bg-white hover:border-stone-300 shadow-lg hover:shadow-2xl transition-all duration-500 rounded-xl overflow-hidden flex flex-col cursor-pointer"
       onClick={onOpen}
     >
       {/* Type & Category row - top */}
-      <div className="px-3 pt-2 pb-1 flex items-center justify-between">
+      <div className="px-3 py-1.5 flex items-center justify-between border-b border-stone-100">
         <Badge variant="secondary" className="text-[9px] uppercase tracking-wider">
           {resource.typeLabel}
         </Badge>
@@ -51,18 +51,18 @@ export function ResourceCard({ resource, onOpen, onAdd, saving, saved }: Resourc
       </div>
 
       {/* Thumbnail */}
-      <div className="relative bg-stone-100 overflow-hidden" style={{ width: '100%', aspectRatio: '16 / 9' }}>
+      <div className="relative bg-white overflow-hidden p-2" style={{ width: '100%', aspectRatio: '16 / 9' }}>
         <img
           src={resource.thumbnail || FALLBACK_THUMB}
           alt={resource.title}
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover rounded-sm transition-transform duration-500 group-hover:scale-105"
         />
       </div>
 
       {/* Content */}
-      <div className="p-4 flex-1 flex flex-col">
+      <div className="p-3 flex-1 flex flex-col border-t border-stone-100">
         <h3
           className="text-sm font-semibold text-stone-900 line-clamp-2 leading-snug group-hover:text-amber-600 transition-colors flex-1"
           title={resource.title}
@@ -70,8 +70,8 @@ export function ResourceCard({ resource, onOpen, onAdd, saving, saved }: Resourc
           {resource.title}
         </h3>
         <p className="text-xs text-stone-500 line-clamp-2 mt-2">{resource.summary || 'No description available.'}</p>
-        <div className="flex items-center justify-between mt-3 pt-2 border-t border-stone-50">
-          <span className="text-[10px] text-stone-400">{resource.platformLabel}</span>
+        <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-stone-100">
+          <span className="text-[10px] text-stone-500 font-medium">{resource.platformLabel}</span>
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); onAdd() }}

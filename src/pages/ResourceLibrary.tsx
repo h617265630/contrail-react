@@ -4,6 +4,7 @@ import { Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { ResourceCard, type UiResource } from '@/components/ResourceCard'
+import { CardHero } from '@/components/CardHero'
 import {
   listResources,
   listMyResources,
@@ -48,93 +49,6 @@ function mapDbToUi(r: DbResource): UiResource {
     thumbnail: String(r.thumbnail || '').trim() || FALLBACK_THUMB,
     resource_type: r.resource_type,
   }
-}
-
-function SkeletonCard() {
-  return (
-    <div className="border border-stone-100 bg-white rounded-xl overflow-hidden animate-pulse">
-      <div className="bg-stone-100" style={{ width: '100%', aspectRatio: '16 / 9' }} />
-      <div className="p-4 space-y-2">
-        <div className="h-3 bg-stone-100 rounded w-1/3" />
-        <div className="h-4 bg-stone-100 rounded w-3/4" />
-        <div className="h-3 bg-stone-100 rounded w-full" />
-      </div>
-    </div>
-  )
-}
-
-function HeroCard({
-  resource,
-  onOpen,
-  onAdd,
-  saving,
-  saved,
-}: {
-  resource: UiResource
-  onOpen: () => void
-  onAdd: () => void
-  saving: boolean
-  saved: boolean
-}) {
-  return (
-    <article
-      className="group border border-stone-100 bg-white hover:border-stone-200 hover:shadow-xl transition-all duration-500 rounded-xl overflow-hidden cursor-pointer flex flex-col sm:flex-row"
-      onClick={onOpen}
-    >
-      {/* Thumbnail */}
-      <div className="relative bg-stone-100 overflow-hidden shrink-0 w-full sm:w-1/2" style={{ aspectRatio: '16 / 9' }}>
-        <img
-          src={resource.thumbnail || FALLBACK_THUMB}
-          alt={resource.title}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex gap-1.5 sm:gap-2">
-          <Badge variant="secondary" className="text-[9px] sm:text-[10px] uppercase tracking-wider">Hero</Badge>
-          <Badge className="text-[9px] sm:text-[10px] uppercase tracking-wider bg-white border-white/20">
-            {resource.typeLabel}
-          </Badge>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="p-3 sm:p-4 md:p-6 flex-1 flex flex-col justify-between">
-        <div className="space-y-2 sm:space-y-3">
-          <span
-            className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-sm"
-            style={{ backgroundColor: resource.categoryColor + '18', color: resource.categoryColor }}
-          >
-            {resource.categoryLabel}
-          </span>
-          <h3
-            className="text-sm sm:text-base md:text-lg font-bold text-stone-900 line-clamp-2 leading-tight group-hover:text-amber-600 transition-colors"
-            title={resource.title}
-          >
-            {resource.title}
-          </h3>
-          <p className="text-xs sm:text-xs md:text-sm text-stone-500 line-clamp-2 sm:line-clamp-3">{resource.summary || 'No description available.'}</p>
-        </div>
-        <div className="flex items-center justify-between mt-2 sm:mt-3 md:mt-4 pt-2 sm:pt-3 md:pt-4 border-t border-stone-50">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <span className="text-[10px] sm:text-xs text-stone-400">{resource.platformLabel}</span>
-            <span className="text-xs text-stone-300 hidden sm:inline">·</span>
-            <span className="text-[10px] sm:text-[10px] font-semibold uppercase tracking-wider text-stone-500">{resource.typeLabel}</span>
-          </div>
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onAdd() }}
-            disabled={saving || saved}
-            className={`text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-colors ${
-              saved ? 'text-emerald-500' : 'text-amber-600 hover:text-amber-700'
-            } disabled:opacity-50`}
-          >
-            {saved ? 'Saved' : saving ? 'Saving…' : '+ Add'}
-          </button>
-        </div>
-      </div>
-    </article>
-  )
 }
 
 export default function ResourceLibrary() {
@@ -391,7 +305,7 @@ export default function ResourceLibrary() {
                 if (isHero) {
                   return (
                     <div key={resource.id} className="col-span-2 sm:col-span-3 md:col-span-3 lg:col-span-4 xl:col-span-5">
-                      <HeroCard
+                      <CardHero
                         resource={resource}
                         onOpen={() => openCard(resource)}
                         onAdd={() => addToMyResources(resource)}

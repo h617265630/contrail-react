@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { listPublicLearningPaths, type PublicLearningPath } from '@/api/learningPath'
+import { PathCard, type PoolPath } from '@/components/PathCard'
 
 const FALLBACK_THUMB = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=900&h=506&fit=crop'
 
@@ -263,13 +264,13 @@ export default function Home() {
               to={`/learningpath/${featuredPaths[0].id}`}
               className="col-span-12 md:col-span-8 group block"
             >
-              <div className="relative rounded-md overflow-hidden bg-stone-100 aspect-[16/7]">
+              <div className="relative rounded-md overflow-hidden bg-white aspect-16/7">
                 <img
                   src={featuredPaths[0].thumbnail || FALLBACK_THUMB}
                   alt={featuredPaths[0].title}
                   loading="lazy"
                   decoding="async"
-                  className="block w-full h-full object-cover"
+                  className="block w-full h-full object-cover rounded-sm"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-stone-900/20 to-transparent" />
@@ -289,13 +290,13 @@ export default function Home() {
                   to={`/learningpath/${path.id}`}
                   className="group flex overflow-hidden bg-white rounded-md border border-stone-100 hover:border-stone-200 hover:shadow-sm transition-all"
                 >
-                  <div className="w-24 shrink-0 bg-stone-100 overflow-hidden">
+                  <div className="w-36 shrink-0 bg-white overflow-hidden">
                     <img
                       src={path.thumbnail || FALLBACK_THUMB}
                       alt={path.title}
                       loading="lazy"
-                      className="block w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      style={{ width: 96, height: 96, objectFit: 'cover' }}
+                      className="block w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                      style={{ width: 144, height: 96 }}
                     />
                   </div>
                   <div className="flex flex-col justify-center p-3 min-w-0">
@@ -340,42 +341,7 @@ export default function Home() {
         {!loadingPool && randomPoolPaths.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {randomPoolPaths.map((path, idx) => (
-              <Link
-                key={`${path.id}-${idx}`}
-                to={`/learningpath/${path.id}`}
-                className="group block w-full min-w-0"
-              >
-                <div className="rounded-md overflow-hidden border border-stone-100 bg-white hover:border-stone-200 hover:shadow-md transition-all duration-200">
-                  <div className="bg-stone-100" style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: '0.375rem' }}>
-                    <img
-                      src={path.thumbnail || FALLBACK_THUMB}
-                      alt={path.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="block w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3
-                      className="text-sm font-semibold text-stone-800 line-clamp-2 leading-snug group-hover:text-amber-600 transition-colors"
-                      title={path.title}
-                    >
-                      {path.title}
-                    </h3>
-                    <p className="text-xs text-stone-400 mt-1 line-clamp-2">{path.description}</p>
-                    <div className="flex items-center justify-between gap-3 mt-3">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">{path.category}</span>
-                        <span className="text-stone-200">·</span>
-                        <span className="text-[10px] text-stone-400">{path.level}</span>
-                      </div>
-                      <span className="inline-flex items-center rounded-full border border-stone-200 bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-stone-600 shrink-0">
-                        {path.typeLabel}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
+              <PathCard key={`${path.id}-${idx}`} path={path as PoolPath} />
             ))}
           </div>
         ) : !loadingPool ? (

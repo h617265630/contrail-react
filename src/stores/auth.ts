@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { getCurrentUser } from '../api/user'
 
 // Lightweight auth state using zustand
 const TOKEN_KEY = 'learnsmart_token'
@@ -16,7 +17,7 @@ export interface UserProfile {
   id: number
   username: string
   email: string
-  avatar_url?: string
+  avatar_url?: string | null
   is_superuser?: boolean
 }
 
@@ -147,11 +148,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       return null
     }
 
-    // TODO: Implement actual API call to get current user
-    // For now, return stored user
-    const storedUser = readUser()
-    set({ user: storedUser })
-    return storedUser
+    try {
+      const user = await getCurrentUser()
+      set({ user })
+      persistUser(user)
+      return user
+    } catch {
+      const storedUser = readUser()
+      set({ user: storedUser })
+      return storedUser
+    }
   },
 }))
 

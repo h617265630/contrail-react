@@ -10,6 +10,7 @@ import {
 import { getResourceDetail, type DbResource } from '@/api/resource'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
+import { PathCard, type PoolPath } from '@/components/PathCard'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -48,6 +49,24 @@ function coverAccent(raw: unknown): string {
 }
 
 const FALLBACK_THUMB = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=900&h=506&fit=crop'
+
+function mapToPoolPath(p: UiPath): PoolPath {
+  const lpType = normalizePathType((p as any)?.type)
+  let typeLabel = 'Path'
+  if (lpType.includes('linear')) typeLabel = 'Linear'
+  else if (lpType.includes('struct')) typeLabel = 'Structured'
+  else if (lpType.includes('partical') || lpType.includes('pool')) typeLabel = 'Pool'
+
+  return {
+    id: String(p.id),
+    title: String(p.title || '').trim(),
+    description: String(p.description || '').trim(),
+    category: String((p as any)?.category_name || '').trim() || 'General',
+    typeLabel,
+    level: 'Beginner',
+    thumbnail: p._coverUrl || FALLBACK_THUMB,
+  }
+}
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
@@ -242,45 +261,12 @@ export default function MyLearningPath() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {linearPaths.map(path => (
-                    <article
+                    <PathCard
                       key={path.id}
-                      className="group rounded-md overflow-hidden bg-white border-t border-b border-stone-200 hover:border-stone-300 hover:shadow-lg transition-all duration-200 cursor-pointer"
-                      onClick={() => openDetail(path.id)}
-                    >
-                      <div className="relative aspect-video bg-stone-100 overflow-hidden transition-transform duration-500 group-hover:scale-105">
-                        <img
-                          src={path._coverUrl || FALLBACK_THUMB}
-                          alt={path.title}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute top-2 right-2">
-                          <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm border border-white/20 ${typeColor(path.type)}`}>
-                            {typeLabel(path.type)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="p-3.5">
-                        <h3 className="text-sm font-bold text-stone-900 line-clamp-1 group-hover:text-amber-700 transition-colors">{path.title}</h3>
-                        <p className="text-xs text-stone-400 mt-1 line-clamp-2 leading-relaxed">{path.description || 'No description.'}</p>
-                      </div>
-                      <div className="px-3 pb-3 flex gap-2" onClick={e => e.stopPropagation()}>
-                        <Link
-                          to={`/learningpath/${path.id}/edit`}
-                          className="flex items-center justify-center flex-1 h-7 text-[10px] font-semibold uppercase tracking-wider border border-stone-200 text-stone-600 hover:border-stone-400 hover:text-stone-900 transition-colors rounded-sm"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          type="button"
-                          className="h-7 px-2.5 rounded-sm border border-stone-200 text-[10px] font-semibold text-red-400 hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all"
-                          onClick={() => openDeleteConfirm(path.id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </article>
+                      path={mapToPoolPath(path)}
+                      onEdit={(id) => navigate(`/learningpath/${id}/edit`)}
+                      onDelete={(id) => openDeleteConfirm(Number(id))}
+                    />
                   ))}
                 </div>
               </section>
@@ -298,45 +284,12 @@ export default function MyLearningPath() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {structuredPaths.map(path => (
-                    <article
+                    <PathCard
                       key={path.id}
-                      className="group rounded-md overflow-hidden bg-white border-t border-b border-stone-200 hover:border-stone-300 hover:shadow-lg transition-all duration-200 cursor-pointer"
-                      onClick={() => openDetail(path.id)}
-                    >
-                      <div className="relative aspect-video bg-stone-100 overflow-hidden transition-transform duration-500 group-hover:scale-105">
-                        <img
-                          src={path._coverUrl || FALLBACK_THUMB}
-                          alt={path.title}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute top-2 right-2">
-                          <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm border border-white/20 ${typeColor(path.type)}`}>
-                            {typeLabel(path.type)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="p-3.5">
-                        <h3 className="text-sm font-bold text-stone-900 line-clamp-1 group-hover:text-violet-700 transition-colors">{path.title}</h3>
-                        <p className="text-xs text-stone-400 mt-1 line-clamp-2 leading-relaxed">{path.description || 'No description.'}</p>
-                      </div>
-                      <div className="px-3 pb-3 flex gap-2" onClick={e => e.stopPropagation()}>
-                        <Link
-                          to={`/learningpath/${path.id}/edit`}
-                          className="flex items-center justify-center flex-1 h-7 text-[10px] font-semibold uppercase tracking-wider border border-stone-200 text-stone-600 hover:border-stone-400 hover:text-stone-900 transition-colors rounded-sm"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          type="button"
-                          className="h-7 px-2.5 rounded-sm border border-stone-200 text-[10px] font-semibold text-red-400 hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all"
-                          onClick={() => openDeleteConfirm(path.id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </article>
+                      path={mapToPoolPath(path)}
+                      onEdit={(id) => navigate(`/learningpath/${id}/edit`)}
+                      onDelete={(id) => openDeleteConfirm(Number(id))}
+                    />
                   ))}
                 </div>
               </section>
@@ -354,45 +307,12 @@ export default function MyLearningPath() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {poolPaths.map(path => (
-                    <article
+                    <PathCard
                       key={path.id}
-                      className="group rounded-md overflow-hidden bg-white border-t border-b border-stone-200 hover:border-stone-300 hover:shadow-lg transition-all duration-200 cursor-pointer"
-                      onClick={() => openDetail(path.id)}
-                    >
-                      <div className="relative aspect-video bg-stone-100 overflow-hidden transition-transform duration-500 group-hover:scale-105">
-                        <img
-                          src={path._coverUrl || FALLBACK_THUMB}
-                          alt={path.title}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute top-2 right-2">
-                          <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm border border-white/20 ${typeColor(path.type)}`}>
-                            {typeLabel(path.type)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="p-3.5">
-                        <h3 className="text-sm font-bold text-stone-900 line-clamp-1 group-hover:text-amber-700 transition-colors">{path.title}</h3>
-                        <p className="text-xs text-stone-400 mt-1 line-clamp-2 leading-relaxed">{path.description || 'No description.'}</p>
-                      </div>
-                      <div className="px-3 pb-3 flex gap-2" onClick={e => e.stopPropagation()}>
-                        <Link
-                          to={`/learningpath/${path.id}/edit`}
-                          className="flex items-center justify-center flex-1 h-7 text-[10px] font-semibold uppercase tracking-wider border border-stone-200 text-stone-600 hover:border-stone-400 hover:text-stone-900 transition-colors rounded-sm"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          type="button"
-                          className="h-7 px-2.5 rounded-sm border border-stone-200 text-[10px] font-semibold text-red-400 hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all"
-                          onClick={() => openDeleteConfirm(path.id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </article>
+                      path={mapToPoolPath(path)}
+                      onEdit={(id) => navigate(`/learningpath/${id}/edit`)}
+                      onDelete={(id) => openDeleteConfirm(Number(id))}
+                    />
                   ))}
                 </div>
               </section>

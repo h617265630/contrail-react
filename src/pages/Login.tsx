@@ -102,10 +102,12 @@ export default function Login() {
 
       setToken(token, remember)
       try {
-        await fetchProfile(true)
-        const userData = (res as any)?.user
+        const userData = await fetchProfile(true)
         if (userData) {
           setUser(userData, remember)
+        } else {
+          const fallbackUser = (res as any)?.user
+          if (fallbackUser) setUser(fallbackUser, remember)
         }
       } catch (profileError) {
         console.warn('Failed to sync user profile:', profileError)
@@ -127,10 +129,12 @@ export default function Login() {
       if (!token) throw new Error('Google login response did not include access_token')
       setToken(token, remember)
       try {
-        await fetchProfile(true)
-        const userData = (res as any)?.user
+        const userData = await fetchProfile(true)
         if (userData) {
           setUser(userData, remember)
+        } else {
+          const fallbackUser = (res as any)?.user
+          if (fallbackUser) setUser(fallbackUser, remember)
         }
       } catch (profileError) {
         console.warn('Failed to sync user profile:', profileError)
