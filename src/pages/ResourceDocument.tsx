@@ -231,7 +231,9 @@ export default function ResourceDocument() {
   }
 
   useEffect(() => {
-    load()
+    if (resourceIdNumber != null) {
+      load()
+    }
     document.addEventListener('visibilitychange', onVisibilityChange)
     return () => {
       stopProgressTimer()

@@ -208,7 +208,9 @@ export default function ResourceVideo() {
   }
 
   useEffect(() => {
-    load()
+    if (resourceIdNumber != null) {
+      load()
+    }
   }, [id])
 
   useEffect(() => {

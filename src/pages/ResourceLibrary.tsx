@@ -196,16 +196,16 @@ export default function ResourceLibrary() {
   }, [activeResourceId, resources])
 
   useEffect(() => {
-    Promise.all([listResources(), listCategories()])
-      .then(([res, cats]) => {
-        setResources(res || [])
-        setCategories(cats || [])
-      })
-      .catch(() => {
-        setResources([])
-        setCategories([])
-      })
-      .finally(() => setLoading(false))
+    // Fetch resources and categories independently to avoid one failure blocking the other
+    listResources()
+      .then(res => setResources(res || []))
+      .catch(() => setResources([]))
+
+    listCategories()
+      .then(cats => setCategories(cats || []))
+      .catch(() => setCategories([]))
+
+    setLoading(false)
 
     // Sync which resources are already added (only if logged in)
     if (isAuthed) {
