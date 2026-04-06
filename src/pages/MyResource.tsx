@@ -97,7 +97,6 @@ export default function MyResource() {
   const [loading, setLoading] = useState(true)
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [publicUpdatingId, setPublicUpdatingId] = useState<number | null>(null)
-  const [expandAll, setExpandAll] = useState(true)
   const [clickedDeck, setClickedDeck] = useState<number | null>(null)
 
   const [activeResourceId, setActiveResourceId] = useState<number | null>(null)
@@ -110,10 +109,13 @@ export default function MyResource() {
     return resources.find(r => r.id === activeResourceId) || null
   }, [activeResourceId, resources])
 
+  const [selectedCategory, setSelectedCategory] = useState('All')
+
   const filteredResources = useMemo(() => {
     const q = searchKeyword.trim().toLowerCase()
     return resources.filter(r => {
       if (['xiaohongshu', 'xhs'].includes(String(r.platform || '').trim().toLowerCase())) return false
+      if (selectedCategory !== 'All' && r.category !== selectedCategory) return false
       if (!q) return true
       return (
         r.title.toLowerCase().includes(q) ||
@@ -122,7 +124,7 @@ export default function MyResource() {
         r.platform.toLowerCase().includes(q)
       )
     })
-  }, [resources, searchKeyword])
+  }, [resources, searchKeyword, selectedCategory])
 
   type Deck = { key: string; name: string; cards: UiResource[] }
 
@@ -138,6 +140,20 @@ export default function MyResource() {
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map(([name, cards]) => ({ key: name, name, cards }))
   }, [filteredResources])
+
+  // All categories from resources (not filtered) for category tabs
+  const allDecks = useMemo<Deck[]>(() => {
+    const map = new Map<string, UiResource[]>()
+    for (const r of resources) {
+      const key = String(r.category || '').trim() || 'Other'
+      const list = map.get(key)
+      if (list) list.push(r)
+      else map.set(key, [r])
+    }
+    return Array.from(map.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([name, cards]) => ({ key: name, name, cards }))
+  }, [resources])
 
   const totalCards = useMemo(() => decks.reduce((sum, d) => sum + d.cards.length, 0), [decks])
 
@@ -165,12 +181,11 @@ export default function MyResource() {
   }, [load])
 
   useEffect(() => {
-    setExpandAll(true)
     setClickedDeck(null)
   }, [location.pathname])
 
   function isDeckExpanded(deckIndex: number) {
-    return expandAll || clickedDeck === deckIndex
+    return clickedDeck === null || clickedDeck === deckIndex
   }
 
   function toggleDeck(deckIndex: number) {
@@ -263,36 +278,62 @@ export default function MyResource() {
           </div>
 
           {/* Toolbar */}
-          <div className="mt-6 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+          <div className="mt-6 space-y-3">
             {/* Search */}
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-              <input
-                type="text"
-                value={searchKeyword}
-                onChange={e => setSearchKeyword(e.target.value)}
-                placeholder="Search your resources..."
-                aria-label="Search your resources"
-                className="h-10 w-full rounded-none border border-stone-200 bg-white pl-10 pr-4 text-sm text-stone-900 placeholder:text-stone-400 outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-100 transition-colors"
-              />
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                <input
+                  type="text"
+                  value={searchKeyword}
+                  onChange={e => setSearchKeyword(e.target.value)}
+                  placeholder="Search your resources..."
+                  aria-label="Search your resources"
+                  className="h-10 w-full rounded-none border border-stone-200 bg-white pl-10 pr-4 text-sm text-stone-900 placeholder:text-stone-400 outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-100 transition-colors"
+                />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Button
+                  size="sm"
+                  className="rounded-none bg-indigo-600 text-white hover:bg-indigo-700 font-semibold text-xs uppercase tracking-wider px-5"
+                  onClick={() => navigate('/my-resources/add')}
+                >
+                  + Add
+                </Button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setExpandAll(!expandAll)}
-                className="h-10 px-4 text-xs font-semibold uppercase tracking-wider border border-stone-200 bg-white text-stone-600 hover:border-stone-400 hover:text-stone-900 transition-all rounded-none"
-              >
-                {expandAll ? 'Collapse all' : 'Expand all'}
-              </button>
-              <Button
-                size="sm"
-                className="rounded-none bg-indigo-600 text-white hover:bg-indigo-700 font-semibold text-xs uppercase tracking-wider px-5"
-                onClick={() => navigate('/my-resources/add')}
-              >
-                + Add
-              </Button>
-            </div>
+            {/* Category tabs */}
+            {allDecks.length > 1 && (
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                <button
+                  type="button"
+                  onClick={() => setSelectedCategory('All')}
+                  className={`shrink-0 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full transition-all ${
+                    selectedCategory === 'All'
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                  }`}
+                >
+                  All ({totalCards})
+                </button>
+                {allDecks.map(deck => (
+                  <button
+                    key={deck.key}
+                    type="button"
+                    onClick={() => setSelectedCategory(deck.name)}
+                    className={`shrink-0 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full transition-all ${
+                      selectedCategory === deck.name
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                    }`}
+                  >
+                    {deck.name} ({deck.cards.length})
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </header>
