@@ -49,17 +49,17 @@ export function PathCard({ path, onEdit, onDelete, showTypeLabel = true }: PoolP
       {/* 使用 Link 包裹整个可点击区域，提供更好的可访问性 */}
       <Link to={`/learningpath/${path.id}`} className="flex flex-col h-full">
         {/* Thumbnail or Placeholder */}
-        <div className="relative h-36 bg-gray-50 flex items-center justify-center overflow-hidden mt-4 md:mt-0 md:mb-0 mb-4">
+        <div className="relative h-36 md:h-36 bg-gray-50 overflow-hidden mt-8 md:mt-0 mb-4 md:mb-0">
           {path.thumbnail ? (
             <img
               src={path.thumbnail}
               alt={path.title}
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
               <span className="text-4xl font-extrabold text-gray-400">{path.title.charAt(0)}</span>
             </div>
           )}

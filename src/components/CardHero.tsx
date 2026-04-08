@@ -14,7 +14,7 @@ interface CardHeroProps {
 export function CardHero({ resource, onOpen, onAdd, saving, saved }: CardHeroProps) {
   return (
     <article
-      className="group border border-stone-300 bg-white hover:border-stone-400 hover:shadow-xl transition-all duration-500 rounded-xl overflow-hidden cursor-pointer flex flex-col sm:flex-row"
+      className="group border border-stone-300 bg-white hover:border-stone-400 hover:shadow-xl hover:scale-[1.02] transition-all duration-500 rounded-xl overflow-hidden cursor-pointer flex flex-col sm:flex-row"
       onClick={onOpen}
     >
       {/* Thumbnail */}
@@ -24,7 +24,7 @@ export function CardHero({ resource, onOpen, onAdd, saving, saved }: CardHeroPro
           alt={resource.title}
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-cover rounded-sm transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover rounded-sm"
         />
         <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-1.5 sm:gap-2">
           <Badge variant="secondary" className="text-[9px] sm:text-[10px] uppercase tracking-wider">Hero</Badge>

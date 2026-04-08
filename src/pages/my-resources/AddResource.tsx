@@ -30,11 +30,42 @@ const PLATFORM_PLACEHOLDERS: Record<string, string> = {
 }
 
 const WEIGHT_OPTIONS = [
+  // Tier (1-4)
+  { value: 'tier-gold', label: 'Tier Gold' },
+  { value: 'tier-diamond', label: 'Tier Diamond' },
+  { value: 'tier-prismatic', label: 'Tier Prismatic' },
+  { value: 'tier-obsidian', label: 'Tier Obsidian' },
+  // Gradient (5-9)
+  { value: 'gradient-emerald', label: 'Gradient Emerald' },
+  { value: 'gradient-sapphire', label: 'Gradient Sapphire' },
+  { value: 'gradient-ruby', label: 'Gradient Ruby' },
+  { value: 'gradient-amethyst', label: 'Gradient Amethyst' },
+  { value: 'gradient-gold', label: 'Gradient Gold' },
+  // Special styles
+  { value: 'neu', label: 'Neumorphism' },
+  { value: 'holo', label: 'Holographic' },
+  { value: 'sketch', label: 'Sketch' },
+  { value: 'newspaper', label: 'Newspaper' },
+  // Neon styles
+  { value: 'neon-cyan', label: 'Neon Cyan' },
+  { value: 'neon-pink', label: 'Neon Pink' },
+  { value: 'neon-green', label: 'Neon Green' },
+  { value: 'neon-purple', label: 'Neon Purple' },
+  { value: 'neon-gold', label: 'Neon Gold' },
+  // Metallic styles
+  { value: 'metallic-steel', label: 'Metallic Steel' },
+  { value: 'metallic-copper', label: 'Metallic Copper' },
+  { value: 'metallic-titanium', label: 'Metallic Titanium' },
+  { value: 'metallic-rose-gold', label: 'Metallic Rose Gold' },
+  { value: 'metallic-gunmetal', label: 'Metallic Gunmetal' },
+  // Papercut styles
+  { value: 'papercut-coral', label: 'Papercut Coral' },
+  { value: 'papercut-sky', label: 'Papercut Sky' },
+  { value: 'papercut-mint', label: 'Papercut Mint' },
+  { value: 'papercut-lavender', label: 'Papercut Lavender' },
+  { value: 'papercut-peach', label: 'Papercut Peach' },
+  // Default
   { value: 'default', label: 'Default' },
-  { value: 'iron', label: 'Iron' },
-  { value: 'bronze', label: 'Bronze' },
-  { value: 'silver', label: 'Silver' },
-  { value: 'gold', label: 'Gold' },
 ]
 
 function detectPlatformFromUrl(url: string) {
@@ -50,11 +81,23 @@ function detectPlatformFromUrl(url: string) {
 }
 
 function toManualWeight(w: string): number {
-  if (w === 'gold') return 5
-  if (w === 'silver') return 4
-  if (w === 'bronze') return 3
-  if (w === 'iron') return 2
-  return 1
+  const weightMap: Record<string, number> = {
+    // Tier (1-4)
+    'tier-gold': 1, 'tier-diamond': 2, 'tier-prismatic': 3, 'tier-obsidian': 4,
+    // Gradient (5-9)
+    'gradient-emerald': 5, 'gradient-sapphire': 6, 'gradient-ruby': 7,
+    'gradient-amethyst': 8, 'gradient-gold': 9,
+    // Special (10-13)
+    'neu': 10, 'holo': 11, 'sketch': 12, 'newspaper': 13,
+    // Neon (14-18)
+    'neon-cyan': 14, 'neon-pink': 15, 'neon-green': 16, 'neon-purple': 17, 'neon-gold': 18,
+    // Metallic (19-23)
+    'metallic-steel': 19, 'metallic-copper': 20, 'metallic-titanium': 21, 'metallic-rose-gold': 22, 'metallic-gunmetal': 23,
+    // Papercut (24-28)
+    'papercut-coral': 24, 'papercut-sky': 25, 'papercut-mint': 26, 'papercut-lavender': 27, 'papercut-peach': 28,
+    'default': 100,
+  }
+  return weightMap[w] ?? 100
 }
 
 function formatExtractDate(iso?: string | null) {
@@ -82,14 +125,6 @@ function getCategoryColor(category?: string): string {
   return palette[hash % palette.length]
 }
 
-function getWeightCardClass(weight: string) {
-  const w = toManualWeight(weight)
-  if (w >= 5) return 'weight-gold'
-  if (w === 4) return 'weight-silver'
-  if (w === 3) return 'weight-bronze'
-  if (w === 2) return 'weight-iron'
-  return ''
-}
 
 export default function AddResource() {
   const navigate = useNavigate()
@@ -106,7 +141,7 @@ export default function AddResource() {
 
   const [dbCategories, setDbCategories] = useState<Category[]>([])
   const [categoryId, setCategoryId] = useState('')
-  const [selectedWeight, setSelectedWeight] = useState('')
+  const [selectedWeight, setSelectedWeight] = useState('default')
 
   const [showSuccessToast, setShowSuccessToast] = useState(false)
   const [successToastText, setSuccessToastText] = useState('')
@@ -114,25 +149,6 @@ export default function AddResource() {
 
   const selectedPlatformLabel = SUPPORTED_PLATFORMS.find(p => p.key === selectedPlatform)?.label || ''
   const selectedPlatformPlaceholder = PLATFORM_PLACEHOLDERS[selectedPlatform] || 'Paste a URL'
-
-  const weightPreviewClass = (() => {
-    const w = selectedWeight
-    if (w === 'default') return 'border-stone-200 bg-stone-50'
-    if (w === 'iron') return 'border-slate-300 bg-slate-50'
-    if (w === 'bronze') return 'border-amber-300 bg-amber-50'
-    if (w === 'silver') return 'border-zinc-200 bg-zinc-50'
-    if (w === 'gold') return 'border-yellow-300 bg-yellow-50'
-    return 'border-stone-200 bg-white'
-  })()
-
-  const weightTextClass = (() => {
-    const w = selectedWeight
-    if (w === 'gold') return 'text-amber-600'
-    if (w === 'silver') return 'text-zinc-500'
-    if (w === 'bronze') return 'text-amber-700'
-    if (w === 'iron') return 'text-slate-500'
-    return 'text-stone-500'
-  })()
 
   const previewResource: RcResource = {
     id: 0,
@@ -413,30 +429,21 @@ export default function AddResource() {
               {/* Weight */}
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-widest text-stone-400 mb-2">Weight</label>
-                <div className="flex gap-3 items-center">
-                  <div className="flex gap-2 flex-wrap">
-                    {WEIGHT_OPTIONS.map(w => (
-                      <button
-                        key={w.value}
-                        type="button"
-                        onClick={() => setSelectedWeight(w.value)}
-                        className={`h-8 px-3 rounded-full border text-[11px] font-bold uppercase tracking-wider transition-all ${
-                          selectedWeight === w.value
-                            ? 'border-stone-900 bg-stone-900 text-white'
-                            : 'border-stone-200 bg-white text-stone-500 hover:border-stone-400'
-                        }`}
-                      >
-                        {w.label}
-                      </button>
-                    ))}
-                  </div>
-                  {selectedWeight && (
-                    <div
-                      className={`ml-auto w-16 h-16 rounded-sm border-2 flex items-center justify-center text-[10px] font-black tracking-widest ${weightPreviewClass}`}
+                <div className="flex gap-2 flex-wrap">
+                  {WEIGHT_OPTIONS.map(w => (
+                    <button
+                      key={w.value}
+                      type="button"
+                      onClick={() => setSelectedWeight(w.value)}
+                      className={`h-8 px-3 rounded-full border text-[11px] font-bold uppercase tracking-wider transition-all ${
+                        selectedWeight === w.value
+                          ? 'border-stone-900 bg-stone-900 text-white'
+                          : 'border-stone-200 bg-white text-stone-500 hover:border-stone-400'
+                      }`}
                     >
-                      <span className={weightTextClass}>{selectedWeight.toUpperCase()}</span>
-                    </div>
-                  )}
+                      {w.label}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -460,13 +467,14 @@ export default function AddResource() {
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Live preview</span>
               </div>
-              <div className={getWeightCardClass(selectedWeight)}>
+              <div className="flex items-center justify-center bg-white border border-stone-200 rounded-lg p-8" style={{ minHeight: '560px' }}>
                 <ResourceCard
                   resource={previewResource}
                   onOpen={() => {}}
                   onAdd={() => {}}
                   saving={false}
                   saved={false}
+                  weight={selectedWeight}
                 />
               </div>
             </div>

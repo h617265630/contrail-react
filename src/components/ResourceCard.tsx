@@ -121,14 +121,14 @@ export function ResourceCard({ resource, onOpen, onAdd, saving, saved, weight }:
 
         {/* Title */}
         <div className="px-3 py-1.5 border-b border-black/10 bg-white">
-          <h3 className="text-sm font-bold text-stone-900 line-clamp-1">
+          <h3 className="text-sm font-bold text-stone-900 truncate">
             {resource.title}
           </h3>
         </div>
 
         {/* Summary */}
         <div className="px-3 py-1.5 flex-1 overflow-hidden bg-stone-50">
-          <p className="text-xs text-stone-500 line-clamp-2">
+          <p className="text-xs text-stone-500">
             {resource.summary || 'No description available.'}
           </p>
         </div>

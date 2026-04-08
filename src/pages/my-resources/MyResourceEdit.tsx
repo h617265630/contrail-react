@@ -284,8 +284,7 @@ export default function MyResourceEdit() {
                     <img
                       src={thumbnail || FALLBACK_THUMB}
                       alt={title || 'thumbnail'}
-                      className="w-full h-full object-contain bg-stone-50"
-                      style={{ objectFit: 'contain' }}
+                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
