@@ -32,7 +32,7 @@ export function normalizePresentedType(raw: unknown): ResourceType {
   return "article";
 }
 
-export function toUiResource(r: { id: number; title?: string; summary?: string; source_url?: unknown; resource_type?: unknown; platform?: string; thumbnail?: unknown }): UiResource {
+export function toUiResource(r: { id: number; title?: string; summary?: string | null; source_url?: unknown; resource_type?: unknown; platform?: string; thumbnail?: unknown }): UiResource {
   return {
     id: Number(r.id),
     title: String(r.title || "").trim() || `Resource ${r.id}`,

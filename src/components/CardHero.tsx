@@ -21,7 +21,7 @@ export function CardHero({
 }: CardHeroProps) {
   return (
     <article
-      className="group border border-stone-300 bg-white hover:border-stone-400 hover:shadow-xl hover:scale-[1.02] transition-all duration-500 rounded-xl overflow-hidden cursor-pointer flex flex-col sm:flex-row"
+      className="group border border-stone-300 bg-white hover:border-stone-400 hover:shadow-xl hover:scale-[1.02] transition-all duration-500 overflow-hidden cursor-pointer flex flex-col sm:flex-row"
       onClick={onOpen}
     >
       {/* Thumbnail */}
@@ -34,7 +34,7 @@ export function CardHero({
           alt={resource.title}
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-cover rounded-sm"
+          className="w-full h-full object-cover"
         />
         <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-1.5 sm:gap-2">
           <Badge

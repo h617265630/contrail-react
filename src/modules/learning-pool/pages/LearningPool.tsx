@@ -276,7 +276,7 @@ export default function LearningPool() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 -mt-4 md:-mt-6">
+    <div className="mx-auto max-w-7xl px-4 py-8 -mt-4 md:-mt-6 bg-gray-50">
       {/* Page header */}
       <section className="mb-12">
         <div className="grid grid-cols-12 gap-6 items-end">
