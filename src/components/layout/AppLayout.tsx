@@ -1,8 +1,8 @@
-import { NavBar } from './NavBar'
-import { AppFooter } from './AppFooter'
+import { NavBar } from "./NavBar";
+import { AppFooter } from "./AppFooter";
 
 interface AppLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
@@ -16,5 +16,5 @@ export function AppLayout({ children }: AppLayoutProps) {
       </main>
       <AppFooter />
     </div>
-  )
+  );
 }

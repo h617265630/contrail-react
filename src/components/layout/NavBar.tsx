@@ -1,150 +1,167 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Library, Plus, Search, User, ChevronDown, LogOut, Globe, Menu, X, PenLine,
-  LayoutDashboard, BookOpen, Settings, CreditCard,
-} from 'lucide-react'
-import { useAuthStore } from '../../stores/auth'
-import { cn } from '../../utils/cn'
+  Library,
+  Plus,
+  Search,
+  User,
+  ChevronDown,
+  LogOut,
+  Globe,
+  Menu,
+  X,
+  PenLine,
+  LayoutDashboard,
+  BookOpen,
+  Settings,
+  CreditCard,
+} from "lucide-react";
+import { useAuthStore } from "../../stores/auth";
+import { cn } from "../../utils/cn";
 
 interface Language {
-  code: string
-  label: string
+  code: string;
+  label: string;
 }
 
 const LANGUAGES: Language[] = [
-  { code: 'en', label: 'EN' },
-  { code: 'zh', label: 'ZH' },
-  { code: 'es', label: 'ES' },
-  { code: 'fr', label: 'FR' },
-]
+  { code: "en", label: "EN" },
+  { code: "zh", label: "ZH" },
+  { code: "es", label: "ES" },
+  { code: "fr", label: "FR" },
+];
 
 interface NavLink {
-  to: string
-  label: string
+  to: string;
+  label: string;
 }
 
 interface MenuItem {
-  to: string
-  label: string
-  icon: React.ComponentType<{ className?: string }>
+  to: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 const MAIN_NAV_LINKS: NavLink[] = [
-  { to: '/learningpool', label: 'Pool' },
-  { to: '/resources', label: 'Resources' },
-  { to: '/ai-path', label: 'AI Path' },
-  { to: '/plan', label: 'Plan' },
-  { to: '/about', label: 'About' },
-  { to: '/notification', label: 'Updates' },
-]
+  { to: "/learningpool", label: "Pool" },
+  { to: "/resources", label: "Resources" },
+  { to: "/ai-path", label: "AI Path" },
+  { to: "/plan", label: "Plan" },
+  { to: "/about", label: "About" },
+  { to: "/notification", label: "Updates" },
+];
 
 const CREATE_MENU_ITEMS: MenuItem[] = [
-  { to: '/createpath', label: 'New learning path', icon: Plus },
-  { to: '/my-resources/add', label: 'Add resource', icon: Library },
-  { to: '/creator?tab=markdown', label: 'Write a note', icon: PenLine },
-]
+  { to: "/createpath", label: "New learning path", icon: Plus },
+  { to: "/my-resources/add", label: "Add resource", icon: Library },
+  { to: "/creator?tab=markdown", label: "Write a note", icon: PenLine },
+];
 
 const USER_MENU_ITEMS: MenuItem[] = [
-  { to: '/account/user-info', label: 'Account', icon: User },
-  { to: '/my-paths', label: 'My Paths', icon: LayoutDashboard },
-  { to: '/my-resources', label: 'My Resources', icon: BookOpen },
-  { to: '/account/plan', label: 'Plan & Billing', icon: CreditCard },
-  { to: '/account', label: 'Settings', icon: Settings },
-]
+  { to: "/account/user-info", label: "Account", icon: User },
+  { to: "/my-paths", label: "My Paths", icon: LayoutDashboard },
+  { to: "/my-resources", label: "My Resources", icon: BookOpen },
+  { to: "/account/plan", label: "Plan & Billing", icon: CreditCard },
+  { to: "/account", label: "Settings", icon: Settings },
+];
 
 function isActivePath(prefix: string, pathname: string) {
-  return pathname === prefix || pathname.startsWith(prefix + '/')
+  return pathname === prefix || pathname.startsWith(prefix + "/");
 }
 
 export function NavBar() {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const { user, isAuthed, logout } = useAuthStore()
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isAuthed, logout } = useAuthStore();
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false)
-  const [createMenuOpen, setCreateMenuOpen] = useState(false)
-  const [langMenuOpen, setLangMenuOpen] = useState(false)
-  const [desktopMenuOpen, setDesktopMenuOpen] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false);
+  const [createMenuOpen, setCreateMenuOpen] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const [currentLang, setCurrentLang] = useState('EN')
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const desktopMenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [currentLang, setCurrentLang] = useState("EN");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const desktopMenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
-  const pathname = location.pathname
+  const pathname = location.pathname;
 
-  const displayName = user?.username || 'User'
-  const userInitials = displayName.slice(0, 2).toUpperCase()
-  const userEmail = user?.email || ''
+  const displayName = user?.username || "User";
+  const userInitials = displayName.slice(0, 2).toUpperCase();
+  const userEmail = user?.email || "";
 
   const handleLogout = useCallback(() => {
-    logout()
-    setDesktopMenuOpen(false)
-    setMobileMenuOpen(false)
-    setMobileUserMenuOpen(false)
-    navigate('/home')
-  }, [logout, navigate])
+    logout();
+    setDesktopMenuOpen(false);
+    setMobileMenuOpen(false);
+    setMobileUserMenuOpen(false);
+    navigate("/home");
+  }, [logout, navigate]);
 
   const openDesktopMenu = useCallback(() => {
     if (desktopMenuTimerRef.current) {
-      clearTimeout(desktopMenuTimerRef.current)
-      desktopMenuTimerRef.current = null
+      clearTimeout(desktopMenuTimerRef.current);
+      desktopMenuTimerRef.current = null;
     }
-    setDesktopMenuOpen(true)
-  }, [])
+    setDesktopMenuOpen(true);
+  }, []);
 
   const scheduleDesktopMenuClose = useCallback(() => {
     desktopMenuTimerRef.current = setTimeout(() => {
-      setDesktopMenuOpen(false)
-      desktopMenuTimerRef.current = null
-    }, 180)
-  }, [])
+      setDesktopMenuOpen(false);
+      desktopMenuTimerRef.current = null;
+    }, 180);
+  }, []);
 
   const closeDesktopMenu = useCallback(() => {
     if (desktopMenuTimerRef.current) {
-      clearTimeout(desktopMenuTimerRef.current)
-      desktopMenuTimerRef.current = null
+      clearTimeout(desktopMenuTimerRef.current);
+      desktopMenuTimerRef.current = null;
     }
-    setDesktopMenuOpen(false)
-  }, [])
+    setDesktopMenuOpen(false);
+  }, []);
 
   const openSearch = useCallback(() => {
-    setSearchOpen(true)
-    setSearchQuery('')
-    setTimeout(() => searchInputRef.current?.focus(), 0)
-  }, [])
+    setSearchOpen(true);
+    setSearchQuery("");
+    setTimeout(() => searchInputRef.current?.focus(), 0);
+  }, []);
 
   const closeSearch = useCallback(() => {
-    setSearchOpen(false)
-    setSearchQuery('')
-  }, [])
+    setSearchOpen(false);
+    setSearchQuery("");
+  }, []);
 
   const submitSearch = useCallback(() => {
-    const q = searchQuery.trim()
-    closeSearch()
+    const q = searchQuery.trim();
+    closeSearch();
     if (q) {
-      navigate({ pathname: '/learningpool', search: `search=${encodeURIComponent(q)}` })
+      navigate({
+        pathname: "/learningpool",
+        search: `search=${encodeURIComponent(q)}`,
+      });
     } else {
-      navigate('/learningpool')
+      navigate("/learningpool");
     }
-  }, [searchQuery, closeSearch, navigate])
+  }, [searchQuery, closeSearch, navigate]);
 
   const selectLang = useCallback((code: string) => {
-    const lang = LANGUAGES.find(l => l.code === code)
-    if (lang) setCurrentLang(lang.label)
-    setLangMenuOpen(false)
-  }, [])
+    const lang = LANGUAGES.find((l) => l.code === code);
+    if (lang) setCurrentLang(lang.label);
+    setLangMenuOpen(false);
+  }, []);
 
   useEffect(() => {
     return () => {
       if (desktopMenuTimerRef.current) {
-        clearTimeout(desktopMenuTimerRef.current)
+        clearTimeout(desktopMenuTimerRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
   return (
     <>
@@ -152,7 +169,9 @@ export function NavBar() {
       <div className="border-b border-slate-100 bg-white">
         <div className="mx-auto max-w-7xl px-4 h-8 flex items-center justify-between">
           <div className="flex items-center gap-4 text-[11px] text-slate-400">
-            <span className="hidden md:inline">Learn structured, learn better.</span>
+            <span className="hidden md:inline">
+              Learn structured, learn better.
+            </span>
             <span className="hidden md:inline text-slate-200">·</span>
             <a
               href="https://github.com/h617265630/contrail-react"
@@ -161,8 +180,15 @@ export function NavBar() {
               className="hover:text-slate-600 transition-colors"
               aria-label="GitHub"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="text-slate-400">
-                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="text-slate-400"
+              >
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
               </svg>
             </a>
           </div>
@@ -185,13 +211,17 @@ export function NavBar() {
                       key={opt.code}
                       type="button"
                       className={cn(
-                        'flex w-full items-center justify-between px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors',
-                        currentLang === opt.label ? 'bg-slate-50 text-slate-900 font-semibold' : ''
+                        "flex w-full items-center justify-between px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors",
+                        currentLang === opt.label
+                          ? "bg-slate-50 text-slate-900 font-semibold"
+                          : ""
                       )}
                       onClick={() => selectLang(opt.code)}
                     >
                       <span>{opt.label}</span>
-                      {currentLang === opt.label && <span className="text-blue-500">✓</span>}
+                      {currentLang === opt.label && (
+                        <span className="text-blue-500">✓</span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -207,31 +237,44 @@ export function NavBar() {
           <div className="h-16 flex items-center justify-between gap-8">
             {/* Logo */}
             <Link to="/home" className="flex items-center gap-3 shrink-0 group">
-              <img src="/favicon.svg" alt="Learnpathly" className="h-10 w-10 rounded-sm shadow-sm" />
+              <img
+                src="/favicon.svg"
+                alt="Learnpathly"
+                className="h-10 w-10 rounded-sm shadow-sm"
+              />
               <div className="flex flex-col leading-none">
                 <span className="text-base font-black tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors">
                   Learnpathly
                 </span>
-                <span className="text-[10px] font-medium tracking-widest text-stone-400 uppercase mt-0.5">Learning Platform</span>
+                <span className="text-[10px] font-medium tracking-widest text-stone-400 uppercase mt-0.5">
+                  Learning Platform
+                </span>
               </div>
             </Link>
 
             {/* Primary nav: desktop */}
-            <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
+            <nav
+              className="hidden md:flex items-center gap-1"
+              aria-label="Main navigation"
+            >
               {MAIN_NAV_LINKS.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
                   className={cn(
-                    'relative px-3 py-1.5 text-xs font-semibold uppercase tracking-widest transition-colors duration-150 group',
-                    isActivePath(link.to, pathname) ? 'text-blue-600' : 'text-slate-500 hover:text-slate-900'
+                    "relative px-3 py-1.5 text-xs font-semibold uppercase tracking-widest transition-colors duration-150 group",
+                    isActivePath(link.to, pathname)
+                      ? "text-blue-600"
+                      : "text-slate-500 hover:text-slate-900"
                   )}
                 >
                   {link.label}
                   <span
                     className={cn(
-                      'absolute bottom-0 left-3 right-3 h-px bg-blue-500 transition-all duration-300 origin-left',
-                      isActivePath(link.to, pathname) ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                      "absolute bottom-0 left-3 right-3 h-px bg-blue-500 transition-all duration-300 origin-left",
+                      isActivePath(link.to, pathname)
+                        ? "scale-x-100"
+                        : "scale-x-0 group-hover:scale-x-100"
                     )}
                   />
                 </Link>
@@ -253,8 +296,8 @@ export function NavBar() {
                     aria-label="Search"
                     className="w-24 sm:w-40 h-full text-xs text-slate-900 placeholder:text-slate-400 bg-transparent outline-none"
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') submitSearch()
-                      if (e.key === 'Escape') closeSearch()
+                      if (e.key === "Enter") submitSearch();
+                      if (e.key === "Escape") closeSearch();
                     }}
                   />
                   <button
@@ -290,18 +333,30 @@ export function NavBar() {
                     aria-expanded={desktopMenuOpen}
                     aria-haspopup="menu"
                     onKeyDown={(e) => {
-                      if (e.key === 'Escape') closeDesktopMenu()
+                      if (e.key === "Escape") closeDesktopMenu();
                     }}
                   >
                     <div className="h-6 w-6 shrink-0 overflow-hidden rounded-full bg-blue-500 flex items-center justify-center text-white text-[10px] font-bold">
                       {user?.avatar_url ? (
-                        <img src={user.avatar_url} alt={displayName} referrerPolicy="no-referrer" className="h-full w-full object-cover" />
+                        <img
+                          src={user.avatar_url}
+                          alt={displayName}
+                          referrerPolicy="no-referrer"
+                          className="h-full w-full object-cover"
+                        />
                       ) : (
                         userInitials
                       )}
                     </div>
-                    <span className="text-xs font-semibold text-slate-700 hidden lg:inline">{displayName}</span>
-                    <ChevronDown className={cn('w-3.5 h-3.5 text-slate-400 transition-transform', desktopMenuOpen ? 'rotate-180' : '')} />
+                    <span className="text-xs font-semibold text-slate-700 hidden lg:inline">
+                      {displayName}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        "w-3.5 h-3.5 text-slate-400 transition-transform",
+                        desktopMenuOpen ? "rotate-180" : ""
+                      )}
+                    />
                   </button>
 
                   {/* Dropdown menu */}
@@ -313,8 +368,12 @@ export function NavBar() {
                       onMouseLeave={scheduleDesktopMenuClose}
                     >
                       <div className="px-4 py-3 border-b border-slate-50 mb-1">
-                        <p className="text-sm font-semibold text-slate-900">{displayName}</p>
-                        <p className="text-xs text-slate-400 mt-0.5">{userEmail}</p>
+                        <p className="text-sm font-semibold text-slate-900">
+                          {displayName}
+                        </p>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          {userEmail}
+                        </p>
                       </div>
                       <div className="py-1">
                         {USER_MENU_ITEMS.map((item) => (
@@ -357,7 +416,12 @@ export function NavBar() {
                   >
                     <div className="h-7 w-7 shrink-0 overflow-hidden rounded-full bg-blue-500 flex items-center justify-center text-white text-[10px] font-bold">
                       {user?.avatar_url ? (
-                        <img src={user.avatar_url} alt={displayName} referrerPolicy="no-referrer" className="h-full w-full object-cover" />
+                        <img
+                          src={user.avatar_url}
+                          alt={displayName}
+                          referrerPolicy="no-referrer"
+                          className="h-full w-full object-cover"
+                        />
                       ) : (
                         userInitials
                       )}
@@ -372,8 +436,12 @@ export function NavBar() {
                       />
                       <div className="absolute right-0 top-full mt-2 w-56 rounded-md border border-slate-100 bg-white shadow-xl z-50 py-1">
                         <div className="px-4 py-3 border-b border-slate-50 mb-1">
-                          <p className="text-sm font-semibold text-slate-900">{displayName}</p>
-                          <p className="text-xs text-slate-400 mt-0.5">{userEmail}</p>
+                          <p className="text-sm font-semibold text-slate-900">
+                            {displayName}
+                          </p>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            {userEmail}
+                          </p>
                         </div>
                         <div className="py-1">
                           {USER_MENU_ITEMS.map((item) => (
@@ -454,10 +522,14 @@ export function NavBar() {
               <button
                 type="button"
                 className="inline-flex md:hidden h-9 w-9 items-center justify-center rounded-sm border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 transition-all"
-                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
-                {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                {mobileMenuOpen ? (
+                  <X className="w-4 h-4" />
+                ) : (
+                  <Menu className="w-4 h-4" />
+                )}
               </button>
             </div>
           </div>
@@ -473,10 +545,10 @@ export function NavBar() {
                     key={link.to}
                     to={link.to}
                     className={cn(
-                      'flex items-center justify-between px-3 py-2.5 rounded-sm text-sm font-semibold transition-colors',
+                      "flex items-center justify-between px-3 py-2.5 rounded-sm text-sm font-semibold transition-colors",
                       isActivePath(link.to, pathname)
-                        ? 'bg-slate-50 text-blue-600'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                        ? "bg-slate-50 text-blue-600"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     )}
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -522,5 +594,5 @@ export function NavBar() {
         )}
       </header>
     </>
-  )
+  );
 }
