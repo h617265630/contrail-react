@@ -238,9 +238,9 @@ export function NavBar() {
             {/* Logo */}
             <Link to="/home" className="flex items-center gap-3 shrink-0 group">
               <img
-                src="/favicon.svg"
+                src="/favicon.png"
                 alt="Learnpathly"
-                className="h-10 w-10 rounded-sm shadow-sm"
+                className="h-12 w-12"
               />
               <div className="flex flex-col leading-none">
                 <span className="text-base font-black tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors">
