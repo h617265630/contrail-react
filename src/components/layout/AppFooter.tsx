@@ -36,7 +36,7 @@ export function AppFooter() {
           <div className="col-span-12 md:col-span-4">
             <Link to="/home" className="flex items-center gap-2.5 group mb-4">
               <img
-                src="/favicon.svg"
+                src="/favicon.png"
                 alt="Learnpathly"
                 className="h-8 w-8 rounded-none"
               />
