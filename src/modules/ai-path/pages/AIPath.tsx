@@ -90,6 +90,7 @@ export default function AIPath() {
                 AI Path
                 <br />
                 <span className="text-amber-500">Generator.</span>
+                <span className="text-xs font-medium text-stone-400 ml-2">coming soon</span>
               </h1>
             </div>
             <p className="hidden max-w-sm text-sm leading-relaxed text-stone-500 md:block">

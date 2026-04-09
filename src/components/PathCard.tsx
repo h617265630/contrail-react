@@ -93,7 +93,7 @@ export function PathCard({
     >
       <div className="flex flex-col">
         {/* Thumbnail */}
-        <div className="relative bg-stone-100 overflow-hidden aspect-video">
+        <div className="relative bg-white overflow-hidden aspect-video p-3">
           {path.thumbnail ? (
             <img
               src={path.thumbnail}

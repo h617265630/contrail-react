@@ -265,7 +265,7 @@ export default function Home() {
             </h2>
           </div>
           <Link
-            to="/my-paths"
+            to="/learningpool"
             className="rounded-sm text-stone-500 hover:text-stone-800 text-xs font-semibold uppercase tracking-widest transition-colors"
           >
             View all →

@@ -8,6 +8,7 @@ import {
 } from "@/services/learningPath";
 import { Button } from "@/components/ui/Button";
 import { PathCard, type PoolPath } from "@/components/PathCard";
+import { PathTCard } from "@/components/PathTCard";
 
 const FALLBACK_THUMB =
   "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=900&h=506&fit=crop";
@@ -365,29 +366,13 @@ export default function LearningPool() {
           </div>
           <div className="flex gap-6 overflow-x-auto pb-3 -mx-4 px-4 scrollbar-hide">
             {hotPaths.map((p) => (
-              <Link
+              <PathTCard
                 key={p.id}
-                to={`/learningpath/${p.id}`}
-                className="group shrink-0 w-56 block hover:scale-105 transition-transform duration-300"
-              >
-                <div
-                  className="bg-stone-100 mb-3 shadow-md overflow-hidden"
-                  style={{ width: "14rem", aspectRatio: "16 / 9" }}
-                >
-                  <img
-                    src={p.thumbnail || FALLBACK_THUMB}
-                    alt={p.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-sm font-semibold text-stone-800 line-clamp-2 leading-snug group-hover:text-amber-600 transition-colors">
-                    {p.title}
-                  </h3>
-                  <p className="text-xs text-stone-400">{p.category}</p>
-                </div>
-              </Link>
+                id={String(p.id)}
+                title={p.title}
+                category={p.category}
+                thumbnail={p.thumbnail || FALLBACK_THUMB}
+              />
             ))}
           </div>
         </section>
