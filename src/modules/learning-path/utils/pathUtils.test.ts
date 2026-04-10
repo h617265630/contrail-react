@@ -370,7 +370,7 @@ describe('mapPublicLearningPathToDisplayBase', () => {
       is_active: true,
       cover_image_url: null,
       category_name: null,
-      fork_count: null,
+      fork_count: undefined,
     }
     const result = mapPublicLearningPathToDisplayBase(input)
     expect(result.description).toBe('')
