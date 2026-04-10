@@ -42,9 +42,11 @@ export default function ResourceManagement() {
     if (!window.confirm(`Delete "${resource.title}"?`)) return;
     try {
       await deleteAdminResource(resource.id);
+      alert("Resource deleted successfully");
       loadResources();
-    } catch (e) {
-      console.error("Failed to delete resource", e);
+    } catch (e: any) {
+      const msg = e?.response?.data?.detail || e?.message || "Delete failed";
+      alert(`Delete failed: ${msg}`);
     }
   };
 

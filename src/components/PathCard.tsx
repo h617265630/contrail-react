@@ -93,7 +93,7 @@ export function PathCard({
     >
       <div className="flex flex-col">
         {/* Thumbnail */}
-        <div className="relative bg-white overflow-hidden aspect-video p-3 flex items-center justify-center">
+        <div className="relative bg-white overflow-hidden aspect-video p-1 flex items-center justify-center">
           {path.thumbnail ? (
             <img
               src={path.thumbnail}
@@ -111,7 +111,7 @@ export function PathCard({
           )}
 
           {showTypeLabel && path.typeLabel && path.typeLabel !== "Path" && (
-            <div className="absolute top-3 right-3 z-10">
+            <div className="absolute top-1 right-1 z-10">
               <Badge
                 variant="outline"
                 className={`${typeBadgeBgColor(path.typeLabel)} ${typeTextColor(
@@ -122,7 +122,7 @@ export function PathCard({
               </Badge>
             </div>
           )}
-          <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+          <div className="absolute top-1 left-1 z-10 flex flex-col gap-1">
             {showSource && path.source && (
               <Badge
                 variant="outline"
@@ -145,7 +145,7 @@ export function PathCard({
 
           {/* Edit / Delete action row — only visible on hover */}
           {(onEdit || onDelete) && (
-            <div className="absolute bottom-3 right-3 flex items-center gap-1.5 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+            <div className="absolute bottom-1 right-1 flex items-center gap-1.5 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
               {onEdit && (
                 <button
                   type="button"
