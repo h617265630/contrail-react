@@ -7,7 +7,6 @@ import {
 import "@/components/card-ui.css";
 import {
   listMyResources,
-  createMyResourceFromUrl,
   type DbResource,
 } from "@/services/resource";
 import {
@@ -70,21 +69,11 @@ export default function LearningPathEdit() {
 
   // Resources
   const [allResources, setAllResources] = useState<UiResource[]>([]);
-  const [newResourceUrl, setNewResourceUrl] = useState("");
-  const [newResourceError, setNewResourceError] = useState("");
-  const [newResourceLoading, setNewResourceLoading] = useState(false);
 
   // Selected resources (already in the path)
   const [selected, setSelected] = useState<UiResource[]>([]);
   // Original path items from server (to track what to delete on save)
   const [originalItemIds, setOriginalItemIds] = useState<Set<number>>(new Set());
-
-  // Drag state
-  const [selectedDragState, setSelectedDragState] = useState({
-    draggingId: -1,
-    fromIndex: -1,
-    overIndex: -1,
-  });
 
   // Cover
   const [uploadedCoverUrl, setUploadedCoverUrl] = useState<string>("");
@@ -212,54 +201,6 @@ export default function LearningPathEdit() {
     reader.readAsDataURL(file);
   }
 
-  // Create resource from URL
-  async function createResourceFromUrl() {
-    setNewResourceError("");
-    const raw = newResourceUrl.trim();
-    if (!raw) return;
-    let parsed: URL;
-    try {
-      parsed = new URL(raw);
-    } catch {
-      setNewResourceError(
-        "Invalid URL format. Please enter a full http(s) URL."
-      );
-      return;
-    }
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      setNewResourceError("Only http(s) links are supported.");
-      return;
-    }
-    if (allResources.some((r) => (r.source_url || "") === parsed.toString())) {
-      setNewResourceError("This link already exists in your resource list.");
-      return;
-    }
-    if (pathMeta.categoryId == null) {
-      setNewResourceError("Please select a category first.");
-      return;
-    }
-    setNewResourceLoading(true);
-    setNewResourceError("");
-    try {
-      await createMyResourceFromUrl(parsed.toString(), {
-        category_id: pathMeta.categoryId,
-      });
-      setNewResourceUrl("");
-      const rows = await listMyResources();
-      setAllResources(Array.isArray(rows) ? rows.map(toUiResource) : []);
-    } catch (e: any) {
-      setNewResourceError(
-        String(
-          e?.response?.data?.detail ||
-            e?.message ||
-            "Failed to generate resource"
-        )
-      );
-    } finally {
-      setNewResourceLoading(false);
-    }
-  }
-
   // Selected resources
   function addResource(resource: UiResource) {
     if (selected.some((r) => r.id === resource.id)) return;
@@ -299,7 +240,6 @@ export default function LearningPathEdit() {
   }
 
   function onSelectedDragStart(e: React.DragEvent, id: number, idx: number) {
-    setSelectedDragState({ draggingId: id, fromIndex: idx, overIndex: idx });
     e.dataTransfer?.setData("application/x-selected-resource-id", String(id));
     e.dataTransfer?.setData(
       "application/x-selected-resource-from",
@@ -308,9 +248,7 @@ export default function LearningPathEdit() {
     if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
   }
 
-  function onSelectedDragOver(idx: number) {
-    setSelectedDragState((prev) => ({ ...prev, overIndex: idx }));
-  }
+  function onSelectedDragOver(_idx: number) {}
 
   function onSelectedDrop(e: React.DragEvent, dropIndex: number) {
     e.preventDefault();
@@ -321,9 +259,7 @@ export default function LearningPathEdit() {
     if (Number.isFinite(fromIndex)) moveSelected(fromIndex, dropIndex);
   }
 
-  function onSelectedDragEnd() {
-    setSelectedDragState({ draggingId: -1, fromIndex: -1, overIndex: -1 });
-  }
+  function onSelectedDragEnd() {}
 
   // Submit
   async function handleSubmit() {
@@ -654,11 +590,6 @@ export default function LearningPathEdit() {
           <ResourceList
             allResources={allResources}
             selected={selected}
-            newResourceUrl={newResourceUrl}
-            newResourceLoading={newResourceLoading}
-            newResourceError={newResourceError}
-            onNewResourceUrlChange={setNewResourceUrl}
-            onCreateResourceFromUrl={createResourceFromUrl}
             onAddResource={addResource}
             onDragStart={handleDragStart}
           />
