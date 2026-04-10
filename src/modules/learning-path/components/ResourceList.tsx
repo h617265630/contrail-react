@@ -21,12 +21,7 @@ export type ResourceListProps = {
   selected?: UiResource[];
   searchQuery?: string;
   filteredResources?: UiResource[];
-  newResourceUrl?: string;
-  newResourceLoading?: boolean;
-  newResourceError?: string;
   onSearchChange?: (query: string) => void;
-  onNewResourceUrlChange?: (url: string) => void;
-  onCreateResourceFromUrl?: () => void;
   onAddResource: (resource: UiResource) => void;
   onDragStart: (e: React.DragEvent, resource: UiResource) => void;
 };
@@ -36,12 +31,7 @@ export function ResourceList({
   selected = [],
   searchQuery = "",
   filteredResources: externalFiltered,
-  newResourceUrl = "",
-  newResourceLoading = false,
-  newResourceError = "",
   onSearchChange,
-  onNewResourceUrlChange,
-  onCreateResourceFromUrl,
   onAddResource,
   onDragStart,
 }: ResourceListProps) {
@@ -56,7 +46,6 @@ export function ResourceList({
   );
 
   const showSearch = onSearchChange !== undefined;
-  const showCreateUrl = onCreateResourceFromUrl !== undefined;
 
   return (
     <div className="col-span-12 lg:col-span-6">
@@ -84,37 +73,6 @@ export function ResourceList({
               placeholder="Search your resources..."
               className="h-10 w-full pl-10 pr-4 border border-stone-200 rounded-sm bg-white text-sm text-stone-900 placeholder:text-stone-400 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-colors"
             />
-          </div>
-        )}
-
-        {/* Create resource from URL */}
-        {showCreateUrl && (
-          <div className="rounded-sm border border-stone-100 bg-stone-50/50 p-3.5 mb-3">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-stone-500 mb-2">
-              Create from URL
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="url"
-                value={newResourceUrl}
-                onChange={(e) => onNewResourceUrlChange?.(e.target.value)}
-                placeholder="https://..."
-                className="h-9 flex-1 px-3 border border-stone-200 rounded-sm bg-white text-xs text-stone-900 placeholder:text-stone-400 outline-none focus:border-emerald-400 transition-colors"
-              />
-              <button
-                type="button"
-                className="h-9 px-3 rounded-sm bg-stone-800 text-white text-xs font-semibold hover:bg-stone-700 transition-colors disabled:opacity-50"
-                disabled={!newResourceUrl.trim() || newResourceLoading}
-                onClick={onCreateResourceFromUrl}
-              >
-                {newResourceLoading ? "…" : "Generate"}
-              </button>
-            </div>
-            {newResourceError && (
-              <p className="text-[10px] text-red-500 mt-1.5">
-                {newResourceError}
-              </p>
-            )}
           </div>
         )}
 

@@ -42,9 +42,11 @@ export default function LearningPathManagement() {
     if (!window.confirm(`Delete "${path.title}"?`)) return;
     try {
       await deleteAdminLearningPath(path.id);
+      alert("Learning path deleted successfully");
       loadPaths();
-    } catch (e) {
-      console.error("Failed to delete path", e);
+    } catch (e: any) {
+      const msg = e?.response?.data?.detail || e?.message || "Delete failed";
+      alert(`Delete failed: ${msg}`);
     }
   };
 

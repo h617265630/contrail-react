@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/Button";
 import "@/components/card-ui.css";
 import {
   listMyResources,
-  createMyResourceFromUrl,
   type DbResource,
 } from "@/services/resource";
 import {
@@ -102,9 +101,6 @@ export default function CreatePath() {
   // Resources
   const [allResources, setAllResources] = useState<UiResource[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [newResourceUrl, setNewResourceUrl] = useState("");
-  const [newResourceError, setNewResourceError] = useState("");
-  const [newResourceLoading, setNewResourceLoading] = useState(false);
 
   // Selected resources
   const [selected, setSelected] = useState<UiResource[]>([]);
@@ -215,54 +211,6 @@ export default function CreatePath() {
       }
     };
     reader.readAsDataURL(file);
-  }
-
-  // Create resource from URL
-  async function createResourceFromUrl() {
-    setNewResourceError("");
-    const raw = newResourceUrl.trim();
-    if (!raw) return;
-    let parsed: URL;
-    try {
-      parsed = new URL(raw);
-    } catch {
-      setNewResourceError(
-        "Invalid URL format. Please enter a full http(s) URL."
-      );
-      return;
-    }
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      setNewResourceError("Only http(s) links are supported.");
-      return;
-    }
-    if (allResources.some((r) => (r.source_url || "") === parsed.toString())) {
-      setNewResourceError("This link already exists in your resource list.");
-      return;
-    }
-    if (pathMeta.categoryId == null) {
-      setNewResourceError("Please select a category first.");
-      return;
-    }
-    setNewResourceLoading(true);
-    setNewResourceError("");
-    try {
-      await createMyResourceFromUrl(parsed.toString(), {
-        category_id: pathMeta.categoryId,
-      });
-      setNewResourceUrl("");
-      const rows = await listMyResources();
-      setAllResources(Array.isArray(rows) ? rows.map(toUiResource) : []);
-    } catch (e: any) {
-      setNewResourceError(
-        String(
-          e?.response?.data?.detail ||
-            e?.message ||
-            "Failed to generate resource"
-        )
-      );
-    } finally {
-      setNewResourceLoading(false);
-    }
   }
 
   // Selected resources
@@ -667,12 +615,7 @@ export default function CreatePath() {
             allResources={allResources}
             selected={selected}
             searchQuery={searchQuery}
-            newResourceUrl={newResourceUrl}
-            newResourceLoading={newResourceLoading}
-            newResourceError={newResourceError}
             onSearchChange={setSearchQuery}
-            onNewResourceUrlChange={setNewResourceUrl}
-            onCreateResourceFromUrl={createResourceFromUrl}
             onAddResource={addResource}
             onDragStart={handleDragStart}
           />
