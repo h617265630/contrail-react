@@ -385,9 +385,9 @@ export default function MyResourceEdit() {
                   Thumbnail
                 </label>
                 <div className="relative aspect-video w-full max-w-sm rounded-none overflow-hidden bg-stone-100">
-                  {thumbnail ? (
+                  {thumbnail && thumbnail.trim() ? (
                     <img
-                      src={thumbnail || FALLBACK_THUMB}
+                      src={thumbnail}
                       alt={title || "thumbnail"}
                       className="w-full h-full object-cover"
                     />

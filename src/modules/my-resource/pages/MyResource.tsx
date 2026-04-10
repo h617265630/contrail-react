@@ -601,7 +601,7 @@ export default function MyResource() {
                         }}
                       >
                         <div
-                          className="relative bg-stone-100 overflow-hidden"
+                          className="relative bg-stone-100 overflow-hidden z-10"
                           style={{ width: "100%", aspectRatio: "16 / 9" }}
                         >
                           <img
@@ -669,7 +669,7 @@ export default function MyResource() {
             onClick={(e) => e.stopPropagation()}
           >
             <div
-              className="relative bg-stone-100 overflow-hidden"
+              className="relative bg-stone-100 overflow-hidden z-10"
               style={{ width: "100%", aspectRatio: "16 / 9" }}
             >
               <img

@@ -166,7 +166,7 @@ export function ResourceCard({
             </div>
           </div>
           {/* Thumbnail */}
-          <div className="relative h-12 sm:h-16 bg-stone-100 overflow-hidden">
+          <div className="relative h-12 sm:h-16 bg-stone-100 overflow-hidden z-10">
             {resource.thumbnail ? (
               <img
                 src={resource.thumbnail}
@@ -236,7 +236,7 @@ export function ResourceCard({
           </div>
 
           {/* Thumbnail */}
-          <div className="relative h-32 bg-stone-100 overflow-hidden flex items-center justify-center">
+          <div className="relative h-32 bg-stone-100 overflow-hidden flex items-center justify-center z-10">
             {resource.thumbnail ? (
               <img
                 src={resource.thumbnail}
@@ -309,7 +309,7 @@ export function ResourceCard({
           </div>
 
           {/* Thumbnail */}
-          <div className="relative h-24 bg-stone-100 overflow-hidden flex items-center justify-center">
+          <div className="relative h-24 bg-stone-100 overflow-hidden flex items-center justify-center z-10">
             {resource.thumbnail ? (
               <img
                 src={resource.thumbnail}
