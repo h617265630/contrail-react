@@ -414,13 +414,12 @@ export default function AddResource() {
                   <label className="block text-[11px] font-bold uppercase tracking-widest text-stone-400 mb-2">
                     Thumbnail
                   </label>
-                  <div className="relative aspect-video w-full max-w-sm rounded-none overflow-hidden bg-stone-100">
+                  <div className="relative aspect-video w-full rounded-none overflow-hidden bg-stone-100">
                     {extractedMeta.thumbnail_url ? (
                       <img
                         src={extractedMeta.thumbnail_url}
                         alt={extractedMeta.title || "thumbnail"}
-                        className="w-full h-full object-contain bg-stone-50"
-                        style={{ objectFit: "contain" }}
+                        className="w-full h-full object-cover"
                       />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -603,6 +602,7 @@ export default function AddResource() {
                   saving={false}
                   saved={false}
                   weight={selectedWeight}
+                  size="lg"
                 />
               </div>
             </div>

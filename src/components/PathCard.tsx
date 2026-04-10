@@ -93,17 +93,17 @@ export function PathCard({
     >
       <div className="flex flex-col">
         {/* Thumbnail */}
-        <div className="relative bg-white overflow-hidden aspect-video p-3">
+        <div className="relative bg-white overflow-hidden aspect-video p-3 flex items-center justify-center">
           {path.thumbnail ? (
             <img
               src={path.thumbnail}
               alt={path.title}
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover"
+              className="max-w-full max-h-full object-contain"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-stone-100 to-stone-200 flex items-center justify-center">
+            <div className="w-full h-full bg-linear-to-br from-stone-100 to-stone-200 flex items-center justify-center">
               <span className="text-4xl font-black text-stone-300">
                 {path.title.charAt(0)}
               </span>
@@ -239,6 +239,18 @@ export function PathCard({
                     <path d="M6 3a1 1 0 0 0-2 0v2H2a1 1 0 0 0-1 1v10a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1h-2V3a1 1 0 0 0-2 0v2h-2V3a1 1 0 0 0-2 0v2H8V3a1 1 0 0 0-2 0zm10 4H8v2h8V7zM6 7H2v6h4V7zm8 0v6h4V7h-4z" />
                   </svg>
                   {path.forkCount}
+                </span>
+              )}
+              {path.items !== undefined && path.items > 0 && (
+                <span className="text-[11px] font-medium text-stone-400 flex items-center gap-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-3 h-3 fill-current"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z" />
+                  </svg>
+                  {path.items}
                 </span>
               )}
               {path.hotScore !== undefined && path.hotScore > 0 ? (

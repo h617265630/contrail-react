@@ -509,7 +509,13 @@ export default function MyResource() {
         {/* Empty */}
         {!loading && filteredResources.length === 0 && (
           <div className="py-20 text-center">
-            <div className="text-5xl mb-4">📚</div>
+             <div className="flex justify-center mb-4">
+              <img
+                src="/favicon.png"
+                alt="Learnpathly"
+                className="h-12 w-12"
+              />
+            </div>
             <h3 className="text-base font-semibold text-stone-700 mb-1">
               No resources yet
             </h3>

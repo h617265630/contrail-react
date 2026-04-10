@@ -564,14 +564,16 @@ export default function MyResourceEdit() {
                 className="flex items-center justify-center bg-white border border-stone-200 rounded-lg p-8"
                 style={{ minHeight: "560px" }}
               >
-                <ResourceCard
-                  resource={previewResource}
-                  onOpen={() => {}}
-                  onAdd={() => {}}
-                  saving={false}
-                  saved={false}
-                  weight={selectedWeight}
-                />
+                <div className="w-full max-w-64">
+                  <ResourceCard
+                    resource={previewResource}
+                    onOpen={() => {}}
+                    onAdd={() => {}}
+                    saving={false}
+                    saved={false}
+                    weight={selectedWeight}
+                  />
+                </div>
               </div>
             </div>
           </div>

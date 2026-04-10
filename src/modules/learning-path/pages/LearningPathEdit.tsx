@@ -13,6 +13,8 @@ import {
 import {
   getMyLearningPathDetail,
   updateMyLearningPath,
+  addResourceToMyLearningPath,
+  removeResourceFromMyLearningPath,
 } from "@/services/learningPath";
 import { listCategories, type Category } from "@/services/category";
 import { useAuth } from "@/stores/auth";
@@ -74,6 +76,8 @@ export default function LearningPathEdit() {
 
   // Selected resources (already in the path)
   const [selected, setSelected] = useState<UiResource[]>([]);
+  // Original path items from server (to track what to delete on save)
+  const [originalItemIds, setOriginalItemIds] = useState<Set<number>>(new Set());
 
   // Drag state
   const [selectedDragState, setSelectedDragState] = useState({
@@ -158,6 +162,7 @@ export default function LearningPathEdit() {
           return ia - ib;
         });
         setSelected(selectedRes);
+        setOriginalItemIds(new Set(items.map((it: any) => Number(it.resource_id))));
 
         // Load all user resources
         const rows = await listMyResources();
@@ -327,8 +332,9 @@ export default function LearningPathEdit() {
     setSaveError("");
     setSaving(true);
     try {
+      const lpId = Number(id);
       const coverUrl = String(pathMeta.coverImageUrl || "").trim() || null;
-      await updateMyLearningPath(Number(id), {
+      await updateMyLearningPath(lpId, {
         title: pathMeta.title,
         type: pathMeta.type,
         description: pathMeta.description,
@@ -336,6 +342,24 @@ export default function LearningPathEdit() {
         cover_image_url: coverUrl,
         manual_weight: toManualWeight(pathMeta.manualWeight),
       });
+
+      // Sync resources: delete original items then re-add all current selected
+      for (const resourceId of originalItemIds) {
+        try {
+          await removeResourceFromMyLearningPath(lpId, resourceId);
+        } catch {
+          // ignore if already removed
+        }
+      }
+      for (let i = 0; i < selected.length; i++) {
+        await addResourceToMyLearningPath(lpId, {
+          resource_id: selected[i].id,
+          order_index: i + 1,
+          is_optional: false,
+          manual_weight: toManualWeight(pathMeta.manualWeight),
+        });
+      }
+
       navigate("/my-paths");
     } catch (e: any) {
       setSaveError(

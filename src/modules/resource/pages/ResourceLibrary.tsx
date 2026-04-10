@@ -187,7 +187,7 @@ export default function ResourceLibrary() {
     try {
       const result = await addPublicResourceToMyResourcesWithStatusAndWeight(
         resource.id,
-        { manual_weight: 1 }
+        { manual_weight: 100 }
       );
       setAddedToMy((prev) => ({ ...prev, [resource.id]: true }));
       if (result?.already_exists) {

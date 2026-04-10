@@ -518,7 +518,7 @@ export default function LearningPathDetail() {
               <img
                 src={path.cover_image_url}
                 alt={path.title}
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-center"
               />
               {path.type && (
                 <span className="absolute right-3 top-3 px-2 py-1 rounded-full border border-stone-200 bg-white/90 text-[10px] font-semibold tracking-[0.14em] uppercase text-stone-700">

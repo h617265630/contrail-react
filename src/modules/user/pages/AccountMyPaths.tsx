@@ -6,8 +6,7 @@ import {
   type MyLearningPath,
 } from "@/services/learningPath";
 
-const FALLBACK_THUMB =
-  "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=225&fit=crop";
+const LOGO_FALLBACK_THUMB = "/favicon.png";
 
 type UiPath = {
   id: number;
@@ -28,7 +27,7 @@ function mapDb(p: MyLearningPath): UiPath {
     description: String(p.description || "").trim(),
     type: String(anyP.type || "").trim(),
     category: String(anyP.category_name || "").trim(),
-    thumbnail: String(anyP.cover_image_url || "").trim() || FALLBACK_THUMB,
+    thumbnail: String(anyP.cover_image_url || "").trim() || LOGO_FALLBACK_THUMB,
     status: anyP.status ?? null,
     forkCount:
       typeof anyP.fork_count === "number" ? anyP.fork_count : undefined,

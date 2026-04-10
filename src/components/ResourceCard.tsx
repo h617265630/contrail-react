@@ -46,7 +46,10 @@ interface ResourceCardProps {
   saving: boolean;
   saved: boolean;
   weight?: string; // e.g. 'default', 'tier-gold', 'gradient-emerald', 'glass-purple'
+  /** @deprecated Use size=\"sm\" instead. Kept for backward compatibility. */
   compact?: boolean;
+  /** Size variant: sm = selected panel, md = resource library, lg = live preview */
+  size?: "sm" | "md" | "lg";
   onRemove?: (id: number) => void;
 }
 
@@ -117,13 +120,15 @@ export function ResourceCard({
   saved,
   weight,
   compact,
+  size,
   onRemove,
 }: ResourceCardProps) {
+  const resolvedSize = compact ? "sm" : (size ?? "md");
   const weightClass = getCardWeightClass(weight);
   const isGradient = weight?.startsWith("gradient-");
   const title = displayTitle(resource.title, resource.platform);
 
-  if (compact) {
+  if (resolvedSize === "sm") {
     return (
       <article
         className={`w-full cursor-pointer overflow-hidden rounded-none ${weightClass} ${
@@ -171,7 +176,7 @@ export function ResourceCard({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-stone-100 to-stone-200 flex items-center justify-center">
+              <div className="w-full h-full bg-linear-to-br from-stone-100 to-stone-200 flex items-center justify-center">
                 <span className="text-2xl font-black text-stone-300">
                   {title.charAt(0)}
                 </span>
@@ -204,6 +209,78 @@ export function ResourceCard({
     );
   }
 
+  if (resolvedSize === "lg") {
+    return (
+      <article
+        className={`w-full h-80 ${
+          isGradient ? "rounded-lg" : "rounded-md"
+        } shadow-sm cursor-pointer transition-all duration-300 hover:scale-105 overflow-hidden ${weightClass} ${
+          isGradient ? "p-0.5" : ""
+        }`}
+        onClick={onOpen}
+      >
+        <div
+          className={`h-full flex flex-col overflow-hidden relative ${
+            isGradient ? "bg-white rounded-md" : ""
+          }`}
+          style={{ zIndex: 1 }}
+        >
+          {/* Header */}
+          <div className="px-4 py-2 flex items-center justify-between border-b border-black/10">
+            <span className="text-xs font-bold uppercase tracking-wider text-stone-600">
+              {resource.categoryLabel}
+            </span>
+            <span className="text-xs text-stone-400">
+              #{String(resource.id).padStart(3, "0")}
+            </span>
+          </div>
+
+          {/* Thumbnail */}
+          <div className="relative h-32 bg-stone-100 overflow-hidden flex items-center justify-center">
+            {resource.thumbnail ? (
+              <img
+                src={resource.thumbnail}
+                alt={resource.title}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-14 h-14 rounded-full bg-stone-200 flex items-center justify-center text-xl font-bold text-stone-500">
+                {title.charAt(0)}
+              </div>
+            )}
+          </div>
+
+          {/* Title */}
+          <div className="px-4 py-2 border-b border-black/10 bg-white">
+            <h3 className="text-base font-bold text-stone-900 truncate">
+              {title}
+            </h3>
+          </div>
+
+          {/* Summary */}
+          <div className="px-4 py-2 flex-1 overflow-hidden bg-stone-50">
+            <p className="text-sm text-stone-500 line-clamp-4">
+              {resource.summary || "No description available."}
+            </p>
+          </div>
+
+          {/* Footer */}
+          <div className="px-4 py-2 border-t border-black/10 flex items-center justify-between">
+            <span className="text-sm text-stone-400">
+              {resource.platformLabel}
+            </span>
+            <span className="text-sm font-medium text-stone-600">
+              {resource.typeLabel}
+            </span>
+          </div>
+        </div>
+      </article>
+    );
+  }
+
+  // md (default)
   return (
     <>
       <article

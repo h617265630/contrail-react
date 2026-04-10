@@ -22,13 +22,13 @@ export function PathTCard({
       data-discover="true"
     >
       <div
-        className="bg-white mb-3 overflow-hidden p-1"
+        className="bg-white mb-3 overflow-hidden p-1 flex items-center justify-center"
         style={{ width: "13rem", aspectRatio: "16 / 9" }}
       >
         <img
           alt={title}
           loading="lazy"
-          className="w-full h-full object-cover"
+          className="max-w-full max-h-full object-contain"
           src={thumbnail}
         />
       </div>

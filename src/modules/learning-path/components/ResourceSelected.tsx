@@ -120,7 +120,7 @@ export function ResourceSelected({
                     saving={false}
                     saved={false}
                     weight={weight}
-                    compact
+                    size="sm"
                     onRemove={onRemove}
                   />
                 </div>
