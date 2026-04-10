@@ -412,14 +412,13 @@ export default function ResourceLibrary() {
           >
             {/* Image header */}
             <div
-              className="relative bg-stone-100 overflow-hidden"
+              className="relative bg-white overflow-hidden p-2"
               style={{ width: "100%", aspectRatio: "16 / 9" }}
             >
               <img
                 src={activeResource.thumbnail || FALLBACK_THUMB}
                 alt={activeResource.title}
-                className="block w-full h-full object-contain"
-                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                className="block w-full h-full object-cover"
               />
               <button
                 className="absolute top-2 right-2 sm:top-3 sm:right-3 w-8 h-8 rounded-sm bg-white flex items-center justify-center text-stone-500 hover:text-stone-900 hover:bg-stone-50 transition"

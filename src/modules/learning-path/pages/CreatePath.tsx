@@ -1,15 +1,10 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   ChevronDown,
-  Search,
-  X,
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import {
-  ResourceCard,
-} from "@/components/ResourceCard";
 import "@/components/card-ui.css";
 import {
   listMyResources,
@@ -23,12 +18,14 @@ import {
 import { listCategories, type Category } from "@/services/category";
 import { useAuth } from "@/stores/auth";
 import { cn } from "@/lib/cn";
+import { ManualWeight } from "../components/ManualWeight";
+import { CoverPicker } from "../components/CoverPicker";
+import { ResourceList } from "../components/ResourceList";
+import { ResourceSelected } from "../components/ResourceSelected";
 import {
   toUiResource,
-  toCardResource,
   toAbsoluteImageUrl,
   USER_MENU_ITEMS,
-  WEIGHT_OPTIONS,
   toManualWeight,
   type UiResource,
   type ResourceType,
@@ -122,7 +119,6 @@ export default function CreatePath() {
   // Cover
   const [uploadedCoverUrl, setUploadedCoverUrl] = useState<string>("");
   const [defaultCoverUrls, setDefaultCoverUrls] = useState<string[]>([]);
-  const coverFileInputRef = useRef<HTMLInputElement>(null);
 
   // Weight
   const [selectedWeight, setSelectedWeight] = useState("default");
@@ -130,16 +126,6 @@ export default function CreatePath() {
   // Submit
   const [createError, setCreateError] = useState("");
   const [creating, setCreating] = useState(false);
-
-  // Filtered resources
-  const filteredResources = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return allResources;
-    return allResources.filter(
-      (r) =>
-        r.title.toLowerCase().includes(q) || r.summary.toLowerCase().includes(q)
-    );
-  }, [allResources, searchQuery]);
 
   // Load categories
   useEffect(() => {
@@ -215,10 +201,6 @@ export default function CreatePath() {
       ...prev,
       coverImageUrl: toAbsoluteImageUrl(url),
     }));
-  }
-
-  function openCoverFilePicker() {
-    coverFileInputRef.current?.click();
   }
 
   function onCoverFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -658,153 +640,21 @@ export default function CreatePath() {
 
             {/* Right: cover picker */}
             <div className="col-span-12 lg:col-span-5">
-              <label className="block text-[11px] font-bold uppercase tracking-widest text-stone-400 mb-2">
-                Cover
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {/* Preview */}
-                <div className="rounded-sm overflow-hidden border border-stone-100">
-                  <div className="aspect-video bg-stone-100">
-                    {pathMeta.coverImageUrl ? (
-                      <img
-                        src={pathMeta.coverImageUrl}
-                        alt="Cover preview"
-                        className="w-full h-full object-contain"
-                        style={{
-                          objectFit: "contain",
-                          backgroundColor: "#f7f7f7",
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          className="text-stone-300"
-                        >
-                          <rect x="3" y="3" width="18" height="18" rx="2" />
-                          <circle cx="8.5" cy="8.5" r="1.5" />
-                          <polyline points="21 15 16 10 5 21" />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-2 bg-stone-50/50 text-center">
-                    <p className="text-[10px] text-stone-400">Current cover</p>
-                  </div>
-                </div>
-                {/* Grid of defaults or uploaded */}
-                <div className="space-y-2">
-                  {uploadedCoverUrl ? (
-                    <div className="grid grid-cols-1 gap-2">
-                      <button
-                        type="button"
-                        className={`rounded-sm overflow-hidden border-2 transition-all ${
-                          pathMeta.coverImageUrl === uploadedCoverUrl
-                            ? "border-sky-500"
-                            : "border-stone-200 hover:border-stone-300"
-                        }`}
-                        onClick={() => selectCover(uploadedCoverUrl)}
-                      >
-                        <div className="aspect-video bg-stone-100">
-                          <img
-                            src={uploadedCoverUrl}
-                            alt="Uploaded"
-                            className="w-full h-full object-contain"
-                            style={{
-                              objectFit: "contain",
-                              backgroundColor: "#f7f7f7",
-                            }}
-                          />
-                        </div>
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-4 gap-1.5">
-                      {defaultCoverUrls.map((u, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          className={`rounded-sm overflow-hidden border-2 transition-all ${
-                            pathMeta.coverImageUrl === u
-                              ? "border-sky-500"
-                              : "border-stone-200 hover:border-stone-300"
-                          }`}
-                          onClick={() => selectCover(u)}
-                        >
-                          <div className="aspect-video bg-stone-100">
-                            <img
-                              src={u}
-                              alt={`Cover ${idx + 1}`}
-                              className="w-full h-full object-contain"
-                              style={{
-                                objectFit: "contain",
-                                backgroundColor: "#f7f7f7",
-                              }}
-                            />
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  <input
-                    ref={coverFileInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={onCoverFileChange}
-                  />
-                  <button
-                    type="button"
-                    className="w-full h-9 rounded-sm border border-dashed border-stone-300 bg-white text-xs font-semibold text-stone-500 hover:border-stone-400 hover:text-stone-700 transition-all flex items-center justify-center gap-1.5"
-                    onClick={openCoverFilePicker}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                      <polyline points="17 8 12 3 7 8" />
-                      <line x1="12" y1="3" x2="12" y2="15" />
-                    </svg>
-                    Upload image
-                  </button>
-                </div>
-              </div>
+              <CoverPicker
+                coverImageUrl={pathMeta.coverImageUrl}
+                defaultCoverUrls={defaultCoverUrls}
+                uploadedCoverUrl={uploadedCoverUrl}
+                accentColor="sky"
+                onSelectCover={selectCover}
+                onCoverFileChange={onCoverFileChange}
+              />
 
               {/* Weight below cover */}
               <div className="mt-4">
-                <label className="block text-[11px] font-bold uppercase tracking-widest text-stone-400 mb-2">
-                  Weight
-                </label>
-                <div className="flex gap-2 flex-wrap">
-                  {WEIGHT_OPTIONS.map((w) => (
-                    <button
-                      key={w.value}
-                      type="button"
-                      onClick={() => setSelectedWeight(w.value)}
-                      className={`h-8 px-3 rounded-full border text-[11px] font-bold uppercase tracking-wider transition-all ${
-                        selectedWeight === w.value
-                          ? "border-stone-900 bg-stone-900 text-white"
-                          : "border-stone-200 bg-white text-stone-500 hover:border-stone-400"
-                      }`}
-                    >
-                      {w.label}
-                    </button>
-                  ))}
-                </div>
+                <ManualWeight
+                  value={selectedWeight}
+                  onChange={setSelectedWeight}
+                />
               </div>
             </div>
           </div>
@@ -813,213 +663,32 @@ export default function CreatePath() {
         {/* Resources + Selected panels */}
         <div className="grid grid-cols-12 gap-6 mb-6">
           {/* Left: available resources */}
-          <div className="col-span-12 lg:col-span-6">
-            <div className="bg-white rounded-md border border-stone-100 p-5 h-full">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-5 bg-emerald-500 rounded-full" />
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-stone-700">
-                    Resources
-                  </h2>
-                </div>
-                <span className="text-xs text-stone-400">
-                  {filteredResources.length} available
-                </span>
-              </div>
-
-              {/* Search */}
-              <div className="relative mb-3">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search your resources..."
-                  className="h-10 w-full pl-10 pr-4 border border-stone-200 rounded-sm bg-white text-sm text-stone-900 placeholder:text-stone-400 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-colors"
-                />
-              </div>
-
-              {/* Create resource from URL */}
-              <div className="rounded-sm border border-stone-100 bg-stone-50/50 p-3.5 mb-3">
-                <p className="text-[11px] font-bold uppercase tracking-widest text-stone-500 mb-2">
-                  Create from URL
-                </p>
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    value={newResourceUrl}
-                    onChange={(e) => setNewResourceUrl(e.target.value)}
-                    placeholder="https://..."
-                    className="h-9 flex-1 px-3 border border-stone-200 rounded-sm bg-white text-xs text-stone-900 placeholder:text-stone-400 outline-none focus:border-emerald-400 transition-colors"
-                  />
-                  <button
-                    type="button"
-                    className="h-9 px-3 rounded-sm bg-stone-800 text-white text-xs font-semibold hover:bg-stone-700 transition-colors disabled:opacity-50"
-                    disabled={!newResourceUrl.trim() || newResourceLoading}
-                    onClick={createResourceFromUrl}
-                  >
-                    {newResourceLoading ? "…" : "Generate"}
-                  </button>
-                </div>
-                {newResourceError && (
-                  <p className="text-[10px] text-red-500 mt-1.5">
-                    {newResourceError}
-                  </p>
-                )}
-              </div>
-
-              {/* Resource list */}
-              <div className="max-h-105 overflow-y-auto space-y-2 pr-1 mb-3">
-                {filteredResources.map((r) => (
-                  <div
-                    key={r.id}
-                    className="group rounded-sm border border-stone-100 bg-white hover:border-stone-200 hover:shadow-sm transition-all cursor-pointer overflow-hidden"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, r)}
-                    onClick={() => addResource(r)}
-                  >
-                    <div className="flex gap-3 p-3">
-                      <div className="w-20 h-14 shrink-0 rounded-none overflow-hidden bg-stone-100">
-                        <img
-                          src={r.thumbnail}
-                          alt={r.title}
-                          className="w-full h-full object-contain"
-                          style={{
-                            objectFit: "contain",
-                            backgroundColor: "#f7f7f7",
-                          }}
-                          loading="lazy"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="text-xs font-bold text-stone-800 line-clamp-1 leading-snug">
-                            {r.title}
-                          </h3>
-                          <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-stone-100 text-stone-500">
-                            {r.type}
-                          </span>
-                        </div>
-                        <p className="text-[10px] text-stone-400 mt-1 line-clamp-2 leading-relaxed">
-                          {r.summary}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {filteredResources.length === 0 && (
-                  <p className="text-xs text-stone-400 text-center py-8">
-                    No resources found.
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
+          <ResourceList
+            allResources={allResources}
+            selected={selected}
+            searchQuery={searchQuery}
+            newResourceUrl={newResourceUrl}
+            newResourceLoading={newResourceLoading}
+            newResourceError={newResourceError}
+            onSearchChange={setSearchQuery}
+            onNewResourceUrlChange={setNewResourceUrl}
+            onCreateResourceFromUrl={createResourceFromUrl}
+            onAddResource={addResource}
+            onDragStart={handleDragStart}
+          />
 
           {/* Right: selected resources */}
-          <div className="col-span-12 lg:col-span-6">
-            <div
-              className={`bg-white rounded-md p-5 h-full ${
-                selected.length > 0
-                  ? "border border-stone-100"
-                  : "border border-dashed border-stone-100"
-              }`}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={onDrop}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-5 bg-sky-500 rounded-full" />
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-stone-700">
-                    Selected
-                  </h2>
-                  {selected.length > 0 && (
-                    <span className="text-xs text-stone-400">
-                      {selected.length} items
-                    </span>
-                  )}
-                </div>
-                {selected.length > 0 && (
-                  <button
-                    type="button"
-                    className="text-[10px] font-semibold uppercase tracking-wider text-stone-400 hover:text-red-500 transition-colors"
-                    onClick={clearSelected}
-                  >
-                    Clear all
-                  </button>
-                )}
-              </div>
-
-              {selected.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="32"
-                    height="32"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="8" y1="12" x2="16" y2="12" />
-                  </svg>
-                  <p className="text-sm text-stone-400 mt-2">
-                    Click a resource or drag it here
-                  </p>
-                </div>
-              ) : (
-                <div className="max-h-150 overflow-y-auto mb-3 grid grid-cols-3 gap-4">
-                  {selected.map((r, idx) => (
-                    <div
-                      key={r.id}
-                      className="relative group overflow-hidden rounded-md"
-                    >
-                      {/* Remove button */}
-                      <button
-                        type="button"
-                        className="absolute top-1 right-1 z-10 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeResource(r.id);
-                        }}
-                        aria-label="Remove"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                      {/* Order badge */}
-                      <div className="absolute top-1 left-1 z-10 w-5 h-5 rounded-full bg-stone-900/80 text-white flex items-center justify-center">
-                        <span className="text-[9px] font-bold">{idx + 1}</span>
-                      </div>
-                      {/* Card (draggable) */}
-                      <div
-                        draggable
-                        onDragStart={(e) => onSelectedDragStart(e, r.id, idx)}
-                        onDragEnd={onSelectedDragEnd}
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                          onSelectedDragOver(idx);
-                        }}
-                        onDrop={(e) => onSelectedDrop(e, idx)}
-                      >
-                        <ResourceCard
-                          resource={toCardResource(r)}
-                          onOpen={() => {}}
-                          onAdd={() => {}}
-                          saving={false}
-                          saved={false}
-                          weight={selectedWeight}
-                          compact
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          <ResourceSelected
+            selected={selected}
+            weight={selectedWeight}
+            onClearAll={clearSelected}
+            onRemove={removeResource}
+            onDrop={onDrop}
+            onDragStart={onSelectedDragStart}
+            onDragEnd={onSelectedDragEnd}
+            onDragOver={onSelectedDragOver}
+            onDropItem={onSelectedDrop}
+          />
         </div>
 
         {/* Submit */}

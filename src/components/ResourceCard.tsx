@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/Badge";
+import { X } from "lucide-react";
 import "./card-ui.css";
 
 const FALLBACK_THUMB =
@@ -46,6 +47,7 @@ interface ResourceCardProps {
   saved: boolean;
   weight?: string; // e.g. 'default', 'tier-gold', 'gradient-emerald', 'glass-purple'
   compact?: boolean;
+  onRemove?: (id: number) => void;
 }
 
 // Maps weight values to CardUI CSS classes
@@ -115,6 +117,7 @@ export function ResourceCard({
   saved,
   weight,
   compact,
+  onRemove,
 }: ResourceCardProps) {
   const weightClass = getCardWeightClass(weight);
   const isGradient = weight?.startsWith("gradient-");
@@ -134,13 +137,28 @@ export function ResourceCard({
           }`}
         >
           {/* Header */}
-          <div className="px-3 py-1.5 flex items-center justify-between border-b border-black/10">
+          <div className="px-3 py-1.5 flex items-center justify-between border-b border-black/10 relative">
             <span className="text-[10px] font-bold uppercase tracking-wider text-stone-600">
               {resource.categoryLabel}
             </span>
-            <span className="text-[10px] text-stone-400">
-              #{String(resource.id).padStart(3, "0")}
-            </span>
+            <div className="flex items-center gap-1">
+              <span className="text-[10px] text-stone-400">
+                #{String(resource.id).padStart(3, "0")}
+              </span>
+              {onRemove && (
+                <button
+                  type="button"
+                  className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove(resource.id);
+                  }}
+                  aria-label="Remove"
+                >
+                  <X className="w-2.5 h-2.5" />
+                </button>
+              )}
+            </div>
           </div>
           {/* Thumbnail */}
           <div className="relative h-16 bg-stone-100 overflow-hidden">

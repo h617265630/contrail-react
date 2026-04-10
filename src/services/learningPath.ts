@@ -127,6 +127,7 @@ export function updateMyLearningPath(
     is_public?: boolean;
     cover_image_url?: string | null;
     category_id?: number | null;
+    manual_weight?: number | null;
   }
 ): Promise<MyLearningPath> {
   return request.patch(`/learning-paths/${id}`, payload);
