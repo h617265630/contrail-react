@@ -364,7 +364,7 @@ export default function LearningPool() {
               {hotPaths.length} paths
             </span>
           </div>
-          <div className="flex gap-6 overflow-x-auto pb-3 -mx-4 px-4 scrollbar-hide">
+          <div className="flex gap-1 overflow-x-auto pb-3 -mx-4 px-4 scrollbar-hide">
             {hotPaths.map((p) => (
               <PathTCard
                 key={p.id}
