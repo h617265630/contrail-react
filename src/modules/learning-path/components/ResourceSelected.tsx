@@ -90,7 +90,7 @@ export function ResourceSelected({
             </p>
           </div>
         ) : (
-          <div className="max-h-150 overflow-y-auto mb-3 grid grid-cols-3 gap-4">
+          <div className="max-h-150 overflow-y-auto mb-3 grid grid-cols-3 gap-3">
             {selected.map((r, idx) => (
               <div
                 key={r.id}

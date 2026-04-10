@@ -137,31 +137,31 @@ export function ResourceCard({
           }`}
         >
           {/* Header */}
-          <div className="px-3 py-1.5 flex items-center justify-between border-b border-black/10 relative">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-stone-600">
+          <div className="px-2 sm:px-3 py-1 sm:py-1.5 flex items-center justify-between border-b border-black/10 relative">
+            <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-wider text-stone-600 truncate">
               {resource.categoryLabel}
             </span>
-            <div className="flex items-center gap-1">
-              <span className="text-[10px] text-stone-400">
+            <div className="flex items-center gap-0.5 sm:gap-1">
+              <span className="text-[8px] sm:text-[10px] text-stone-400">
                 #{String(resource.id).padStart(3, "0")}
               </span>
               {onRemove && (
                 <button
                   type="button"
-                  className="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
+                  className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
                     onRemove(resource.id);
                   }}
                   aria-label="Remove"
                 >
-                  <X className="w-2.5 h-2.5" />
+                  <X className="w-2 sm:w-2.5" />
                 </button>
               )}
             </div>
           </div>
           {/* Thumbnail */}
-          <div className="relative h-16 bg-stone-100 overflow-hidden">
+          <div className="relative h-12 sm:h-16 bg-stone-100 overflow-hidden">
             {resource.thumbnail ? (
               <img
                 src={resource.thumbnail}
@@ -179,23 +179,23 @@ export function ResourceCard({
             )}
           </div>
           {/* Title */}
-          <div className="px-3 py-1.5 border-b border-black/10 bg-white">
-            <h3 className="text-xs font-bold text-stone-900 truncate">
+          <div className="px-2 sm:px-3 py-1 sm:py-1.5 border-b border-black/10 bg-white">
+            <h3 className="text-[10px] sm:text-xs font-bold text-stone-900 truncate">
               {title}
             </h3>
           </div>
           {/* Summary */}
-          <div className="px-3 py-1.5 overflow-hidden bg-stone-50">
-            <p className="text-[10px] text-stone-400 line-clamp-3">
+          <div className="px-2 sm:px-3 py-1 sm:py-1.5 overflow-hidden bg-stone-50">
+            <p className="text-[9px] sm:text-[10px] text-stone-400 line-clamp-2 sm:line-clamp-3">
               {resource.summary || "No description available."}
             </p>
           </div>
           {/* Footer */}
-          <div className="px-3 py-1.5 border-t border-black/10 flex items-center justify-between">
-            <span className="text-[10px] text-stone-400">
+          <div className="px-2 sm:px-3 py-1 sm:py-1.5 border-t border-black/10 flex items-center justify-between">
+            <span className="text-[9px] sm:text-[10px] text-stone-400 truncate">
               {resource.platformLabel}
             </span>
-            <span className="text-[10px] font-medium text-stone-500">
+            <span className="text-[9px] sm:text-[10px] font-medium text-stone-500">
               {resource.typeLabel}
             </span>
           </div>
@@ -207,7 +207,7 @@ export function ResourceCard({
   return (
     <>
       <article
-        className={`shrink-0 w-56 h-72 ${
+        className={`w-full h-72 ${
           isGradient ? "rounded-lg" : "rounded-md"
         } shadow-sm cursor-pointer transition-all duration-300 hover:scale-105 overflow-hidden ${weightClass} ${
           isGradient ? "p-0.5" : ""
