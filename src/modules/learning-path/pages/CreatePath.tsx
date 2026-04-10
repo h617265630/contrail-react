@@ -650,7 +650,7 @@ export default function CreatePath() {
             disabled={!canSubmit}
             onClick={handleSubmit}
           >
-            {creating ? "Creating…" : "Create Learning Path →"}
+            {creating ? "Creating…" : pathMeta.isPublic ? "Publish Learning Path →" : "Create Learning Path →"}
           </button>
         </div>
         {createError && (

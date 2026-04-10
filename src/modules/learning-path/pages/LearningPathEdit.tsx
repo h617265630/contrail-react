@@ -40,6 +40,7 @@ type PathMeta = {
   categoryId: number | null;
   coverImageUrl: string;
   manualWeight: string;
+  isForked: boolean;
 };
 
 // ─── Component ─────────────────────────────────────────────────────────────────
@@ -60,6 +61,7 @@ export default function LearningPathEdit() {
     categoryId: null,
     coverImageUrl: "",
     manualWeight: "default",
+    isForked: false,
   });
 
   // Categories
@@ -129,6 +131,7 @@ export default function LearningPathEdit() {
           categoryId: (path as any).category_id ?? null,
           coverImageUrl: String((path as any).cover_image_url || "").trim(),
           manualWeight: String((path as any).manual_weight || "default").trim(),
+          isForked: Boolean((path as any).parent_id != null),
         });
 
         // Load existing path resources from path_items
@@ -617,7 +620,7 @@ export default function LearningPathEdit() {
             disabled={!canSubmit}
             onClick={handleSubmit}
           >
-            {saving ? "Saving…" : "Save Changes →"}
+            {saving ? "Saving…" : pathMeta.isForked ? "Publish →" : "Publish →"}
           </button>
         </div>
         {saveError && (

@@ -314,7 +314,7 @@ export default function MyLearningPath() {
               )}
               {createdPaths.length > 0 && (
                 <span className="text-xs text-amber-600">
-                  {createdPaths.length} created
+                  {createdPaths.length} published
                 </span>
               )}
               {forkedPaths.length > 0 && (
@@ -394,7 +394,7 @@ export default function MyLearningPath() {
               {[
                 {
                   key: "created" as const,
-                  label: "Created",
+                  label: "Published",
                   count: createdPaths.length,
                   accent: sourceAccent("created"),
                 },
@@ -524,7 +524,7 @@ export default function MyLearningPath() {
             )}
             {activeTab === "created" && createdPaths.length === 0 && (
               <div className="py-16 text-center text-sm text-stone-400">
-                No created paths yet.
+                No published paths yet.
               </div>
             )}
             {activeTab === "forked" && forkedPaths.length === 0 && (

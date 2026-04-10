@@ -69,6 +69,7 @@ export type PublicLearningPathDetail = PublicLearningPath & {
     purpose?: string | null;
     estimated_time?: number | null;
     is_optional: boolean;
+    manual_weight?: number | null;
     resource_data?: DbResource | null;
   }>;
 };
