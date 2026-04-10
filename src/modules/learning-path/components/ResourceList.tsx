@@ -1,5 +1,20 @@
 import { Search } from "lucide-react";
-import { type UiResource } from "@/components/ResourceCard";
+import {
+  type UiResource,
+  type ResourceType,
+} from "../utils/pathUtils";
+
+function displayType(t: ResourceType): string {
+  return t === "video"
+    ? "Video"
+    : t === "document"
+    ? "Doc"
+    : t === "article"
+    ? "Article"
+    : t === "clip"
+    ? "Clip"
+    : "Link";
+}
 
 export type ResourceListProps = {
   allResources: UiResource[];
@@ -82,7 +97,7 @@ export function ResourceList({
               <input
                 type="url"
                 value={newResourceUrl}
-                onChange={(e) => onNewResourceUrlChange(e.target.value)}
+                onChange={(e) => onNewResourceUrlChange?.(e.target.value)}
                 placeholder="https://..."
                 className="h-9 flex-1 px-3 border border-stone-200 rounded-sm bg-white text-xs text-stone-900 placeholder:text-stone-400 outline-none focus:border-emerald-400 transition-colors"
               />
@@ -141,7 +156,7 @@ export function ResourceList({
                       {r.title}
                     </h3>
                     <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-stone-100 text-stone-500">
-                      {r.type}
+                      {displayType(r.type)}
                     </span>
                   </div>
                   <p className="text-[10px] text-stone-400 mt-1 line-clamp-2 leading-relaxed">

@@ -1,8 +1,5 @@
-import {
-  ResourceCard,
-  type UiResource,
-} from "@/components/ResourceCard";
-import { toCardResource } from "../utils/pathUtils";
+import { ResourceCard } from "@/components/ResourceCard";
+import { type UiResource, toCardResource } from "../utils/pathUtils";
 
 export type ResourceSelectedProps = {
   selected: UiResource[];
