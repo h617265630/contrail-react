@@ -15,6 +15,8 @@ import {
   BookOpen,
   Settings,
   CreditCard,
+  Sparkles,
+  SearchCode,
 } from "lucide-react";
 import { useAuthStore } from "../../stores/auth";
 import { cn } from "../../utils/cn";
@@ -45,10 +47,15 @@ interface MenuItem {
 const MAIN_NAV_LINKS: NavLink[] = [
   { to: "/learningpool", label: "Pool" },
   { to: "/resources", label: "Resources" },
-  { to: "/ai-path", label: "AI Path" },
+  { to: "/ai-path", label: "AI" },
   { to: "/plan", label: "Plan" },
   { to: "/about", label: "About" },
-  { to: "/notification", label: "Updates" },
+  { to: "/updates", label: "Updates" },
+];
+
+const AI_MENU_ITEMS: MenuItem[] = [
+  { to: "/ai-path", label: "AI Path Generator", icon: Sparkles },
+  { to: "/ai-resource", label: "AI Resource Search", icon: SearchCode },
 ];
 
 const CREATE_MENU_ITEMS: MenuItem[] = [
@@ -79,6 +86,7 @@ export function NavBar() {
   const [createMenuOpen, setCreateMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
+  const [aiMenuOpen, setAiMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -257,28 +265,74 @@ export function NavBar() {
               className="hidden md:flex items-center gap-1"
               aria-label="Main navigation"
             >
-              {MAIN_NAV_LINKS.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={cn(
-                    "relative px-3 py-1.5 text-xs font-semibold uppercase tracking-widest transition-colors duration-150 group",
-                    isActivePath(link.to, pathname)
-                      ? "text-blue-600"
-                      : "text-slate-500 hover:text-slate-900"
-                  )}
-                >
-                  {link.label}
-                  <span
-                    className={cn(
-                      "absolute bottom-0 left-3 right-3 h-px bg-blue-500 transition-all duration-300 origin-left",
-                      isActivePath(link.to, pathname)
-                        ? "scale-x-100"
-                        : "scale-x-0 group-hover:scale-x-100"
+              {MAIN_NAV_LINKS.map((link) =>
+                link.to === "/ai-path" ? (
+                  /* AI dropdown */
+                  <div
+                    key={link.to}
+                    className="relative"
+                    onMouseEnter={() => setAiMenuOpen(true)}
+                    onMouseLeave={() => setAiMenuOpen(false)}
+                  >
+                    <button
+                      type="button"
+                      className={cn(
+                        "relative flex items-center gap-1 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest transition-colors duration-150 group",
+                        isActivePath("/ai-path", pathname) || isActivePath("/ai-resource", pathname)
+                          ? "text-blue-600"
+                          : "text-slate-500 hover:text-slate-900"
+                      )}
+                    >
+                      {link.label}
+                      <ChevronDown className="w-3 h-3" />
+                      <span
+                        className={cn(
+                          "absolute bottom-0 left-3 right-3 h-px bg-blue-500 transition-all duration-300 origin-left",
+                          isActivePath("/ai-path", pathname) || isActivePath("/ai-resource", pathname)
+                            ? "scale-x-100"
+                            : "scale-x-0 group-hover:scale-x-100"
+                        )}
+                      />
+                    </button>
+                    {aiMenuOpen && (
+                      <div className="absolute left-0 top-full mt-1 w-48 rounded-md border border-slate-100 bg-white shadow-xl z-50 py-1">
+                        {AI_MENU_ITEMS.map((item) => (
+                          <Link
+                            key={item.to}
+                            to={item.to}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                            onClick={() => setAiMenuOpen(false)}
+                          >
+                            <item.icon className="w-4 h-4 text-slate-400" />
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
                     )}
-                  />
-                </Link>
-              ))}
+                  </div>
+                ) : (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={cn(
+                      "relative px-3 py-1.5 text-xs font-semibold uppercase tracking-widest transition-colors duration-150 group",
+                      isActivePath(link.to, pathname)
+                        ? "text-blue-600"
+                        : "text-slate-500 hover:text-slate-900"
+                    )}
+                  >
+                    {link.label}
+                    <span
+                      className={cn(
+                        "absolute bottom-0 left-3 right-3 h-px bg-blue-500 transition-all duration-300 origin-left",
+                        isActivePath(link.to, pathname)
+                          ? "scale-x-100"
+                          : "scale-x-0 group-hover:scale-x-100"
+                      )}
+                    />
+                  </Link>
+                )
+              )}
             </nav>
 
             {/* Right actions */}
@@ -540,21 +594,45 @@ export function NavBar() {
           <div className="md:hidden border-t border-slate-100 bg-white">
             <div className="mx-auto max-w-7xl px-4 py-4 space-y-1">
               <div className="pt-3 mt-3">
-                {MAIN_NAV_LINKS.map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className={cn(
-                      "flex items-center justify-between px-3 py-2.5 rounded-sm text-sm font-semibold transition-colors",
-                      isActivePath(link.to, pathname)
-                        ? "bg-slate-50 text-blue-600"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                    )}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {MAIN_NAV_LINKS.map((link) =>
+                  link.to === "/ai-path" ? (
+                    <div key={link.to}>
+                      <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-stone-400">
+                        AI
+                      </p>
+                      {AI_MENU_ITEMS.map((item) => (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          className={cn(
+                            "flex items-center gap-3 pl-6 pr-3 py-2.5 rounded-sm text-sm transition-colors",
+                            isActivePath(item.to, pathname)
+                              ? "bg-slate-50 text-blue-600"
+                              : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                          )}
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <item.icon className="w-4 h-4 text-stone-400" />
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      className={cn(
+                        "flex items-center justify-between px-3 py-2.5 rounded-sm text-sm font-semibold transition-colors",
+                        isActivePath(link.to, pathname)
+                          ? "bg-slate-50 text-blue-600"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  )
+                )}
               </div>
 
               <div className="border-t border-slate-100 pt-3 mt-3">

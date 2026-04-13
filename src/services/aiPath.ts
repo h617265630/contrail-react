@@ -43,3 +43,42 @@ export function generateAiPath(query: string) {
     }
   );
 }
+
+// ── AI Resource search ──────────────────────────────────────────────────────────
+
+export interface AiResourceItem {
+  url: string;
+  title: string;
+  description: string;
+  key_points: string[];
+  difficulty: string;
+  resource_type: string;
+  learning_stage: string;
+  estimated_minutes: number;
+  image?: string | null;
+}
+
+export interface AiResourceSearchResponse {
+  data: AiResourceItem[];
+  topic: string;
+}
+
+export interface CachedResultsResponse {
+  data: AiResourceItem[];
+  topic: string;
+  cached_count: number;
+}
+
+export function searchAiResources(query: string) {
+  return request.post<AiResourceSearchResponse, AiResourceSearchResponse>(
+    "/ai-path/search-resources",
+    { query },
+    { timeout: 60000 }
+  );
+}
+
+export function getCachedResults(topic: string) {
+  return request.get<CachedResultsResponse, CachedResultsResponse>(
+    `/ai-path/cached-results/${encodeURIComponent(topic)}`
+  );
+}

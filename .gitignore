@@ -23,3 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Environment files - contains sensitive data
+.env
+.env.local
+.env.development
+.env.production
+.env.test

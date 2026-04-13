@@ -85,6 +85,22 @@ export function listResources(): Promise<DbResource[]> {
   return request.get("/resources");
 }
 
+export interface SearchResultItem {
+  title: string;
+  url: string;
+  description?: string | null;
+  source_score?: number | null;
+  type?: string | null;
+  thumbnail?: string | null;
+}
+
+export function searchResources(
+  q: string,
+  platform: "github" | "youtube" | "all" = "github"
+): Promise<{ results: SearchResultItem[]; platform: string }> {
+  return request.get("/resources/search", { params: { q, platform } });
+}
+
 export function createMyResourceFromUrl(
   url: string,
   payload?: { category_id: number; is_public?: boolean; manual_weight?: number }

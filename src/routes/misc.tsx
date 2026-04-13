@@ -9,6 +9,10 @@ const AboutProgress = lazy(() => import("@/modules/about/pages/AboutProgress"));
 const Tool = lazy(() => import("@/modules/tool/pages/Tool"));
 const Stack = lazy(() => import("@/modules/stack/pages/Stack"));
 const CardUI = lazy(() => import("@/modules/card-ui/pages/CardUI"));
+const AIPath = lazy(() => import("@/modules/ai-path/pages/AIPath"));
+const AIPathDetail = lazy(() => import("@/modules/ai-path/pages/AIPathDetail"));
+const AIRsource = lazy(() => import("@/modules/ai-path/pages/AIRsource"));
+const Updates = lazy(() => import("@/modules/updates/pages/Updates"));
 
 export const miscRoutes: RouteObject[] = [
   {
@@ -109,6 +113,62 @@ export const miscRoutes: RouteObject[] = [
             title: "Card UI - Learnpathly",
             description: "Card component showcase.",
             noindex: true,
+          }}
+        />
+      </RouteLoader>
+    ),
+  },
+  {
+    path: "/ai-path",
+    element: (
+      <RouteLoader>
+        <AIPath />
+        <DocumentTitle
+          seo={{
+            title: "AI Path Generator - Learnpathly",
+            description: "Generate personalized learning paths with AI.",
+          }}
+        />
+      </RouteLoader>
+    ),
+  },
+  {
+    path: "/ai-path-detail",
+    element: (
+      <RouteLoader>
+        <AIPathDetail />
+        <DocumentTitle
+          seo={{
+            title: "AI Path Detail - Learnpathly",
+            description: "View your generated AI learning path.",
+          }}
+        />
+      </RouteLoader>
+    ),
+  },
+  {
+    path: "/ai-resource",
+    element: (
+      <RouteLoader>
+        <AIRsource />
+        <DocumentTitle
+          seo={{
+            title: "AI Resource Search - Learnpathly",
+            description: "Search for curated learning resources on any topic.",
+          }}
+        />
+      </RouteLoader>
+    ),
+  },
+  {
+    path: "/updates",
+    element: (
+      <RouteLoader>
+        <Updates />
+        <DocumentTitle
+          seo={{
+            title: "Updates & Roadmap - Learnpathly",
+            description: "Latest updates and upcoming features for Learnpathly.",
           }}
         />
       </RouteLoader>

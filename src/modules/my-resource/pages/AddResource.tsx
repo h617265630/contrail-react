@@ -3,7 +3,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   createMyResourceFromUrl,
   extractVideoMetadata,
+  searchResources,
   type UrlExtractResponse,
+  type SearchResultItem,
 } from "@/services/resource";
 import { listCategories, type Category } from "@/services/category";
 import { Button } from "@/components/ui/Button";
@@ -191,6 +193,29 @@ export default function AddResource() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successToastText, setSuccessToastText] = useState("");
   const extractTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchPlatform, setSearchPlatform] = useState<"github" | "youtube">("github");
+  const [searching, setSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
+
+  const handleSearch = async () => {
+    const q = String(searchQuery || "").trim();
+    if (!q) return;
+    setSearching(true);
+    try {
+      const res = await searchResources(q, searchPlatform);
+      setSearchResults(res.results || []);
+    } catch {
+      setSearchResults([]);
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const handleSearchResultClick = (url: string) => {
+    setUrlInput(url);
+  };
 
   const selectedPlatformLabel =
     SUPPORTED_PLATFORMS.find((p) => p.key === selectedPlatform)?.label || "";
@@ -395,6 +420,93 @@ export default function AddResource() {
                 </div>
                 {extractError && (
                   <p className="mt-2 text-xs text-red-500">{extractError}</p>
+                )}
+              </div>
+
+              {/* Search resource to card */}
+              <div className="bg-white rounded-md border border-stone-100 p-4 space-y-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-1 h-5 bg-violet-500 rounded-full"></div>
+                  <h2 className="text-xs font-bold uppercase tracking-widest text-stone-700">
+                    Search resource to card
+                  </h2>
+                </div>
+
+                {/* Search input + button */}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    placeholder="Keyword (e.g. react hooks)"
+                    className="flex-1 h-9 px-3 border border-stone-200 rounded-sm bg-white text-xs text-stone-900 placeholder:text-stone-400 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSearch}
+                    disabled={searching}
+                    className="h-9 px-4 bg-violet-600 text-white text-xs font-semibold rounded-sm hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                  >
+                    {searching ? "…" : "Search"}
+                  </button>
+                </div>
+
+                {/* Platform tabs */}
+                <div className="flex gap-1">
+                  {(["github", "youtube"] as const).map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setSearchPlatform(p)}
+                      className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-sm transition-colors ${
+                        searchPlatform === p
+                          ? "bg-violet-600 text-white"
+                          : "bg-stone-100 text-stone-500 hover:bg-stone-200"
+                      }`}
+                    >
+                      {p === "github" ? "GitHub" : "YouTube"}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Results */}
+                {searchResults.length > 0 && (
+                  <div className="space-y-1 max-h-56 overflow-y-auto">
+                    {searchResults.map((r, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => handleSearchResultClick(r.url)}
+                        className="w-full text-left px-3 py-2 rounded-sm bg-stone-50 hover:bg-violet-50 border border-stone-100 hover:border-violet-200 transition-colors flex items-start gap-3"
+                      >
+                        {r.thumbnail && (
+                          <img
+                            src={r.thumbnail}
+                            alt=""
+                            className="w-12 h-12 rounded-sm object-cover shrink-0 bg-stone-200"
+                          />
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-bold text-stone-800 truncate">
+                            {r.title}
+                          </div>
+                          {r.description && (
+                            <div className="text-[10px] text-stone-400 mt-0.5 line-clamp-1">
+                              {r.description}
+                            </div>
+                          )}
+                          <div className="text-[10px] text-violet-500 mt-0.5 truncate">
+                            {r.url}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {searchQuery && !searching && searchResults.length === 0 && (
+                  <p className="text-xs text-stone-400">No results found.</p>
                 )}
               </div>
             </div>
