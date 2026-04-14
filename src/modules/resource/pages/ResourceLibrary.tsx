@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ResourceCard, type UiResource } from "@/components/ResourceCard";
+import { ResourceDetailModal } from "@/components/ui/ResourceDetailModal";
 import { CardHero } from "@/components/CardHero";
 import {
   listResources,
@@ -401,102 +402,13 @@ export default function ResourceLibrary() {
 
       {/* Detail modal */}
       {activeResource && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
-          onClick={closeActiveResource}
-        >
-          <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-sm"></div>
-          <div
-            className="relative w-full max-w-xs sm:max-w-sm md:max-w-md rounded-md overflow-hidden bg-white shadow-2xl border border-stone-100"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Image header */}
-            <div
-              className="relative bg-white overflow-hidden p-2"
-              style={{ width: "100%", aspectRatio: "16 / 9" }}
-            >
-              <img
-                src={activeResource.thumbnail || FALLBACK_THUMB}
-                alt={activeResource.title}
-                className="block w-full h-full object-cover"
-              />
-              <button
-                className="absolute top-2 right-2 sm:top-3 sm:right-3 w-8 h-8 rounded-sm bg-white flex items-center justify-center text-stone-500 hover:text-stone-900 hover:bg-stone-50 transition"
-                onClick={closeActiveResource}
-                aria-label="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="p-4 sm:p-6">
-              <div className="mb-2 sm:mb-3">
-                <div className="flex items-center gap-2 mb-1.5">
-                  {(() => {
-                    const catLabel =
-                      String(
-                        (activeResource as any).category_name || ""
-                      ).trim() || "Other";
-                    const catColor = getCategoryColor(catLabel);
-                    return (
-                      <span
-                        className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm"
-                        style={{
-                          backgroundColor: catColor + "18",
-                          color: catColor,
-                        }}
-                      >
-                        {catLabel}
-                      </span>
-                    );
-                  })()}
-                  <span className="text-[10px] text-stone-400">
-                    #{String(activeResource.id).padStart(3, "0")}
-                  </span>
-                </div>
-                <h2 className="text-base sm:text-lg md:text-xl font-bold text-stone-900 leading-tight line-clamp-4">
-                  {activeResource.title}
-                </h2>
-              </div>
-              <p className="text-xs sm:text-sm leading-relaxed text-stone-600 line-clamp-3 sm:line-clamp-none">
-                {activeResource.summary || "No description available."}
-              </p>
-
-              <div className="flex items-center gap-3 sm:gap-4 mt-3 sm:mt-4 text-xs text-stone-400">
-                <span>{formatPlatform((activeResource as any).platform)}</span>
-                <span className="text-stone-200">·</span>
-                <span className="font-medium text-stone-600 uppercase text-[10px] tracking-wider">
-                  {displayResourceType(activeResource)}
-                </span>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="px-4 pb-4 sm:px-6 sm:pb-6 flex flex-col gap-2">
-              <Button
-                onClick={() => seeDetail(mapDbToUi(activeResource))}
-                className="w-full rounded-sm bg-stone-900 text-white hover:bg-stone-800 font-semibold text-xs sm:text-sm transition-all"
-              >
-                View details
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => addToMyResources(mapDbToUi(activeResource))}
-                disabled={
-                  addingToMy[activeResource.id] || addedToMy[activeResource.id]
-                }
-                className="w-full rounded-sm border border-stone-200 text-stone-600 hover:border-stone-900 hover:text-stone-900 font-semibold text-xs sm:text-sm transition-all"
-              >
-                {addedToMy[activeResource.id]
-                  ? "Already saved"
-                  : addingToMy[activeResource.id]
-                  ? "Saving…"
-                  : "+ Save to my resources"}
-              </Button>
-            </div>
-          </div>
-        </div>
+        <ResourceDetailModal
+          resource={mapDbToUi(activeResource)}
+          onClose={closeActiveResource}
+          onSave={() => addToMyResources(mapDbToUi(activeResource))}
+          saving={addingToMy[activeResource.id] ?? false}
+          saved={addedToMy[activeResource.id] ?? false}
+        />
       )}
 
       {/* Toast */}

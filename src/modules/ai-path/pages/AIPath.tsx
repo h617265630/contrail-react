@@ -26,6 +26,30 @@ const steps = [
   },
 ];
 
+// ── Preference options ────────────────────────────────────────────────────────
+
+type Level = "beginner" | "intermediate" | "advanced";
+type Depth = "quick" | "standard" | "deep";
+type ContentType = "video" | "article" | "mixed";
+
+const LEVEL_OPTIONS: { value: Level; label: string }[] = [
+  { value: "beginner", label: "Beginner" },
+  { value: "intermediate", label: "Intermediate" },
+  { value: "advanced", label: "Advanced" },
+];
+
+const DEPTH_OPTIONS: { value: Depth; label: string }[] = [
+  { value: "quick", label: "Quick Overview (2-3 stages)" },
+  { value: "standard", label: "Standard (3-5 stages)" },
+  { value: "deep", label: "Deep Dive (5-7 stages)" },
+];
+
+const CONTENT_OPTIONS: { value: ContentType; label: string }[] = [
+  { value: "video", label: "Videos & Courses" },
+  { value: "article", label: "Articles & Tutorials" },
+  { value: "mixed", label: "Mix Both" },
+];
+
 function readLastResult(): AiPathGenerateResponse | null {
   try {
     const raw = window.sessionStorage.getItem(STORAGE_KEY);
@@ -43,6 +67,9 @@ export default function AIPath() {
   const [lastResult, setLastResult] = useState<AiPathGenerateResponse | null>(
     null
   );
+  const [level, setLevel] = useState<Level>("beginner");
+  const [depth, setDepth] = useState<Depth>("standard");
+  const [contentType, setContentType] = useState<ContentType>("mixed");
 
   useEffect(() => {
     setLastResult(readLastResult());
@@ -54,7 +81,11 @@ export default function AIPath() {
     setLoading(true);
     setError("");
     try {
-      const result = await generateAiPath(value);
+      const result = await generateAiPath(value, {
+        level,
+        learning_depth: depth,
+        content_type: contentType,
+      });
       window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(result));
       navigate("/ai-path-detail");
     } catch (e: unknown) {
@@ -72,7 +103,7 @@ export default function AIPath() {
     } finally {
       setLoading(false);
     }
-  }, [query, navigate]);
+  }, [query, navigate, level, depth, contentType]);
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -142,6 +173,46 @@ export default function AIPath() {
                   {preset}
                 </button>
               ))}
+            </div>
+
+            {/* Preferences */}
+            <div className="mt-5 grid grid-cols-3 gap-3">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Level</label>
+                <select
+                  value={level}
+                  onChange={(e) => setLevel(e.target.value as Level)}
+                  className="w-full rounded-sm border border-stone-200 bg-white px-3 py-2 text-xs text-stone-700 outline-none focus:border-amber-400"
+                >
+                  {LEVEL_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Depth</label>
+                <select
+                  value={depth}
+                  onChange={(e) => setDepth(e.target.value as Depth)}
+                  className="w-full rounded-sm border border-stone-200 bg-white px-3 py-2 text-xs text-stone-700 outline-none focus:border-amber-400"
+                >
+                  {DEPTH_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Format</label>
+                <select
+                  value={contentType}
+                  onChange={(e) => setContentType(e.target.value as ContentType)}
+                  className="w-full rounded-sm border border-stone-200 bg-white px-3 py-2 text-xs text-stone-700 outline-none focus:border-amber-400"
+                >
+                  {CONTENT_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

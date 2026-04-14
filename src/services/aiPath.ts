@@ -34,12 +34,19 @@ export interface AiPathGenerateResponse {
   warnings: string[];
 }
 
-export function generateAiPath(query: string) {
+export interface AiPathPreferences {
+  level?: "beginner" | "intermediate" | "advanced";
+  learning_depth?: "quick" | "standard" | "deep";
+  content_type?: "video" | "article" | "mixed";
+  practical_ratio?: "theory_first" | "balanced" | "practice_first";
+}
+
+export function generateAiPath(query: string, preferences?: AiPathPreferences) {
   return request.post<AiPathGenerateResponse, AiPathGenerateResponse>(
     "/ai-path/generate",
-    { query },
+    { query, ...preferences },
     {
-      timeout: 60000,
+      timeout: 120000,
     }
   );
 }
@@ -59,7 +66,8 @@ export interface AiResourceItem {
 }
 
 export interface AiResourceSearchResponse {
-  data: AiResourceItem[];
+  data: AiResourceItem[];          // web / Tavily results
+  github_results: AiResourceItem[]; // GitHub API results
   topic: string;
 }
 
@@ -69,10 +77,10 @@ export interface CachedResultsResponse {
   cached_count: number;
 }
 
-export function searchAiResources(query: string) {
+export function searchAiResources(query: string, excludeUrls: string[] = []) {
   return request.post<AiResourceSearchResponse, AiResourceSearchResponse>(
     "/ai-path/search-resources",
-    { query },
+    { query, exclude_urls: excludeUrls },
     { timeout: 60000 }
   );
 }

@@ -95,6 +95,8 @@ export function NavBar() {
   const desktopMenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
+  const aiMenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const createMenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const pathname = location.pathname;
 
@@ -131,6 +133,30 @@ export function NavBar() {
       desktopMenuTimerRef.current = null;
     }
     setDesktopMenuOpen(false);
+  }, []);
+
+  const openAiMenu = useCallback(() => {
+    if (aiMenuTimerRef.current) { clearTimeout(aiMenuTimerRef.current); aiMenuTimerRef.current = null; }
+    setAiMenuOpen(true);
+  }, []);
+
+  const scheduleAiMenuClose = useCallback(() => {
+    aiMenuTimerRef.current = setTimeout(() => {
+      setAiMenuOpen(false);
+      aiMenuTimerRef.current = null;
+    }, 200);
+  }, []);
+
+  const openCreateMenu = useCallback(() => {
+    if (createMenuTimerRef.current) { clearTimeout(createMenuTimerRef.current); createMenuTimerRef.current = null; }
+    setCreateMenuOpen(true);
+  }, []);
+
+  const scheduleCreateMenuClose = useCallback(() => {
+    createMenuTimerRef.current = setTimeout(() => {
+      setCreateMenuOpen(false);
+      createMenuTimerRef.current = null;
+    }, 200);
   }, []);
 
   const openSearch = useCallback(() => {
@@ -271,8 +297,8 @@ export function NavBar() {
                   <div
                     key={link.to}
                     className="relative"
-                    onMouseEnter={() => setAiMenuOpen(true)}
-                    onMouseLeave={() => setAiMenuOpen(false)}
+                    onMouseEnter={openAiMenu}
+                    onMouseLeave={scheduleAiMenuClose}
                   >
                     <button
                       type="button"
@@ -547,7 +573,11 @@ export function NavBar() {
               )}
 
               {/* CREATE button: desktop only */}
-              <div className="relative hidden md:inline-flex">
+              <div
+                className="relative hidden md:inline-flex"
+                onMouseEnter={openCreateMenu}
+                onMouseLeave={scheduleCreateMenuClose}
+              >
                 <button
                   type="button"
                   className="h-9 rounded-full bg-blue-500 text-white hover:bg-blue-600 px-4 text-xs font-semibold shadow-sm transition-all hover:-translate-y-px"

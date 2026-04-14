@@ -37,6 +37,7 @@ export type UiResource = {
   typeLabel: string;
   thumbnail: string;
   resource_type: string;
+  url?: string;
 };
 
 interface ResourceCardProps {
