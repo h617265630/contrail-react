@@ -13,6 +13,7 @@ import {
   updateUserResourceProfile,
   type DbResource,
 } from "@/services/resource";
+import { listCategories, type Category } from "@/services/category";
 import { formatPlatform } from "@/lib/platform";
 
 const FALLBACK_THUMB =
@@ -196,6 +197,7 @@ export default function MyResource() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<UiResource | null>(null);
   const [deleteError, setDeleteError] = useState("");
+  const [userCategories, setUserCategories] = useState<Category[]>([]);
 
   const activeResource = useMemo(() => {
     if (activeResourceId === null) return null;
@@ -251,23 +253,34 @@ export default function MyResource() {
       if (list) list.push(r);
       else map.set(key, [r]);
     }
+    // Add user-created categories that have no resources yet (empty decks)
+    for (const cat of userCategories) {
+      if (!cat.is_system && !map.has(cat.name)) {
+        map.set(cat.name, []);
+      }
+    }
     return Array.from(map.entries())
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map(([name, cards]) => ({ key: name, name, cards }));
-  }, [resources]);
+  }, [resources, userCategories]);
 
   const totalCards = useMemo(
     () => decks.reduce((sum, d) => sum + d.cards.length, 0),
     [decks]
   );
 
-  const load = useCallback(async () => {
+const load = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await listMyResources();
+      const [data, cats] = await Promise.all([
+        listMyResources(),
+        listCategories(),
+      ]);
       setResources((data || []).map(mapDbToUi));
+      setUserCategories(cats || []);
     } catch {
       setResources([]);
+      setUserCategories([]);
     } finally {
       setLoading(false);
     }

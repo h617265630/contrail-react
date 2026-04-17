@@ -253,7 +253,52 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Learning Paths: asymmetric editorial layout */}
+{/* How to use */}
+      <section className="mb-10">
+        <div className="flex items-center gap-3 p-1 flex-wrap">
+          {[
+            {
+              href: "/about",
+              icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              ),
+              label: "About",
+            },
+            {
+              href: "/learningpool",
+              icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              ),
+              label: "Browse",
+            },
+            {
+              href: "/createpath",
+              icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              ),
+              label: "Create",
+            },
+            {
+              href: "/account",
+              icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              ),
+              label: "My Paths",
+            },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              to={item.href}
+              className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-white border border-stone-200 text-stone-700 hover:border-amber-300 hover:text-amber-700 hover:shadow-sm transition-all text-sm font-medium"
+            >
+              <span className="text-stone-400">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Featured Resources */}
       <section className="mb-16">
         <div className="flex items-end justify-between mb-8">
           <div>
@@ -261,7 +306,7 @@ export default function Home() {
               Curated
             </span>
             <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-stone-900 leading-tight">
-              Featured Paths
+              Featured Resources
             </h2>
           </div>
           <Link
@@ -272,82 +317,14 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Loading skeleton */}
-        {loading && featuredPaths.length === 0 ? (
-          <FeaturedSkeleton />
-        ) : featuredPaths.length > 0 ? (
-          <div className="grid grid-cols-12 gap-4">
-            {/* Hero card: spans 8 cols */}
-            <Link
-              to={`/learningpath/${featuredPaths[0].id}`}
-              className="col-span-12 md:col-span-8 group block"
-            >
-              <div className="relative rounded-md overflow-hidden bg-white aspect-16/7">
-                <img
-                  src={featuredPaths[0].thumbnail || FALLBACK_THUMB}
-                  alt={featuredPaths[0].title}
-                  loading="lazy"
-                  decoding="async"
-                  className="block w-full h-full object-cover rounded-sm"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-stone-900/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 p-6 md:p-8">
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-amber-300 mb-2">
-                    {featuredPaths[0].level}
-                  </span>
-                  <h3 className="text-white text-xl md:text-2xl font-semibold leading-tight mb-1">
-                    {featuredPaths[0].title}
-                  </h3>
-                  <p className="text-white/60 text-sm line-clamp-1">
-                    {featuredPaths[0].description}
-                  </p>
-                </div>
-              </div>
-            </Link>
-
-            {/* Side stack: 4 cols */}
-            <div className="col-span-12 md:col-span-4 flex flex-col gap-4">
-              {featuredPaths.slice(1, 4).map((path) => (
-                <Link
-                  key={path.id}
-                  to={`/learningpath/${path.id}`}
-                  className="group flex overflow-hidden bg-white rounded-md border border-stone-100 hover:border-stone-200 hover:shadow-sm transition-all"
-                >
-                  <div className="w-36 shrink-0 bg-white overflow-hidden">
-                    <img
-                      src={path.thumbnail || FALLBACK_THUMB}
-                      alt={path.title}
-                      loading="lazy"
-                      className="block w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                      style={{ width: 144, height: 96 }}
-                    />
-                  </div>
-                  <div className="flex flex-col justify-center p-3 min-w-0">
-                    <h3 className="text-sm font-semibold text-stone-800 line-clamp-1 group-hover:text-amber-600 transition-colors">
-                      {path.title}
-                    </h3>
-                    <p className="text-xs text-stone-400 mt-1 line-clamp-2">
-                      {path.description}
-                    </p>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-500 mt-1">
-                      {path.level}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+        {!loadingPool && randomPoolPaths.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {randomPoolPaths.slice(0, 5).map((path, idx) => (
+              <PathCard key={`feat-${path.id}-${idx}`} path={path} />
+            ))}
           </div>
         ) : (
-          <div className="rounded-md border border-dashed border-stone-200 py-16 text-center">
-            <p className="text-sm text-stone-400">No paths published yet.</p>
-            <Link
-              to="/createpath"
-              className="mt-3 rounded-sm text-xs font-semibold text-amber-600 hover:text-amber-700 transition-colors inline-block"
-            >
-              Be the first to create one →
-            </Link>
-          </div>
+          <PoolSkeleton />
         )}
       </section>
 

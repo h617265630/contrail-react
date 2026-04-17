@@ -76,6 +76,17 @@ export interface GetAdminPathsParams {
   limit?: number;
 }
 
+export interface AdminCategory {
+  id: number;
+  name: string;
+  code: string;
+  description?: string | null;
+  is_system: boolean;
+  owner_user_id?: number | null;
+  level: number;
+  is_leaf: boolean;
+}
+
 export function getAdminStats(): Promise<AdminStats> {
   return request.get("/admin/stats");
 }
@@ -112,4 +123,21 @@ export function deleteAdminResource(resourceId: number) {
 
 export function deleteAdminLearningPath(pathId: number) {
   return request.delete(`/admin/learning-paths/${pathId}`);
+}
+
+// Category management
+export function getAdminCategories(): Promise<AdminCategory[]> {
+  return request.get("/admin/categories");
+}
+
+export function createAdminCategory(payload: {
+  name: string;
+  code?: string;
+  description?: string | null;
+}): Promise<AdminCategory> {
+  return request.post("/admin/categories", payload);
+}
+
+export function deleteAdminCategory(categoryId: number) {
+  return request.delete(`/admin/categories/${categoryId}`);
 }

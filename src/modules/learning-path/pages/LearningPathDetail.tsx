@@ -418,7 +418,7 @@ export default function LearningPathDetail() {
                 type="button"
                 size="lg"
                 className="shrink-0 bg-sky-500 text-white hover:bg-sky-600 shadow-lg shadow-sky-200/50 font-semibold"
-                onClick={fromMyPaths ? startLearning : startLearningFromPublic}
+                onClick={fromMyPaths || !isAuthed ? startLearning : startLearningFromPublic}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

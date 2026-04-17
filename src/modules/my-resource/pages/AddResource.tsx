@@ -9,6 +9,7 @@ import {
 } from "@/services/resource";
 import { listCategories, type Category } from "@/services/category";
 import { Button } from "@/components/ui/Button";
+import { CategoryCreateModal } from "@/components/ui/CategoryCreateModal";
 import {
   ResourceCard,
   type UiResource as RcResource,
@@ -192,6 +193,7 @@ export default function AddResource() {
 
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successToastText, setSuccessToastText] = useState("");
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const extractTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -216,6 +218,11 @@ export default function AddResource() {
   const handleSearchResultClick = (url: string) => {
     setUrlInput(url);
   };
+
+  function handleCategoryCreated(category: Category) {
+    setDbCategories((prev) => [...prev, category]);
+    setCategoryId(String(category.id));
+  }
 
   const selectedPlatformLabel =
     SUPPORTED_PLATFORMS.find((p) => p.key === selectedPlatform)?.label || "";
@@ -612,18 +619,28 @@ export default function AddResource() {
                   <label className="block text-[11px] font-bold uppercase tracking-widest text-stone-400 mb-2">
                     Category
                   </label>
-                  <select
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full h-10 px-3 border border-stone-200 rounded-sm bg-white text-sm text-stone-700 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 cursor-pointer"
-                  >
-                    <option value="">Select category</option>
-                    {dbCategories.map((c) => (
-                      <option key={c.id} value={String(c.id)}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex gap-2">
+                    <select
+                      value={categoryId}
+                      onChange={(e) => setCategoryId(e.target.value)}
+                      className="flex-1 h-10 px-3 border border-stone-200 rounded-sm bg-white text-sm text-stone-700 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 cursor-pointer"
+                    >
+                      <option value="">Select category</option>
+                      {dbCategories.map((c) => (
+                        <option key={c.id} value={String(c.id)}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => setShowCategoryModal(true)}
+                      className="h-10 w-10 border border-stone-200 rounded-sm bg-white text-stone-500 hover:text-violet-600 hover:border-violet-300 hover:bg-violet-50 transition-colors flex items-center justify-center"
+                      title="Create custom category"
+                    >
+                      <span className="text-lg font-medium leading-none">+</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Visibility */}
@@ -764,6 +781,13 @@ export default function AddResource() {
           </button>
         </div>
       )}
+
+      {/* Category Create Modal */}
+      <CategoryCreateModal
+        open={showCategoryModal}
+        onClose={() => setShowCategoryModal(false)}
+        onSuccess={handleCategoryCreated}
+      />
     </div>
   );
 }
