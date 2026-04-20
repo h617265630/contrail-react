@@ -28,17 +28,15 @@ function AppLayout() {
   }, [auth.user]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col">
       <NavBar />
-      <main className={`flex-1 ${isAuthPage ? "" : "pt-16 py-6"}`}>
+      <main className="flex-1">
         {isAuthPage ? (
           <div className="px-4 py-6">
             <Outlet />
           </div>
         ) : (
-          <div className="mx-auto w-full max-w-7xl 2xl:max-w-7xl px-4 sm:px-6 lg:px-8">
-            <Outlet />
-          </div>
+          <Outlet />
         )}
       </main>
       <AppFooter />

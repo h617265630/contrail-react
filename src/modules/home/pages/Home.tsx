@@ -1,42 +1,14 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   listPublicLearningPaths,
   type PublicLearningPath,
 } from "@/services/learningPath";
 import { PathCard, type PoolPath } from "@/components/PathCard";
-
-const FALLBACK_THUMB =
-  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=900&h=506&fit=crop";
-
-const BANNER_SLIDES = [
-  {
-    image:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&h=900&q=80",
-    title: "Structured Learning Paths",
-    description:
-      "A curriculum with modules and goals. Great for system-level skill building.",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1600&h=900&q=80",
-    title: "Linear Learning Paths",
-    description:
-      "Step-by-step, guided learning. Follow a clear sequence and finish with a complete outcome.",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=1600&h=900&q=80",
-    title: "Partical Pool",
-    description:
-      "A flexible pool of resources. Collect links, articles, and clips, then revisit anytime.",
-  },
-] as const;
+import { PopularPathCard } from "@/components/PopularPathCard";
 
 function mapDbToPool(p: PublicLearningPath): PoolPath {
-  const lpType = String(p.type || "")
-    .trim()
-    .toLowerCase();
+  const lpType = String(p.type || "").trim().toLowerCase();
   let typeLabel = "Path";
   if (lpType.includes("linear")) typeLabel = "Linear";
   else if (lpType.includes("struct")) typeLabel = "Structured";
@@ -47,7 +19,7 @@ function mapDbToPool(p: PublicLearningPath): PoolPath {
     id: String(p.id),
     title: p.title || `Path ${p.id}`,
     description: p.description || "",
-    thumbnail: p.cover_image_url || FALLBACK_THUMB,
+    thumbnail: p.cover_image_url || "",
     level: "Beginner",
     typeLabel,
     category: p.category_name || "General",
@@ -56,314 +28,409 @@ function mapDbToPool(p: PublicLearningPath): PoolPath {
   };
 }
 
-function pickRandom<T>(items: T[], count: number): T[] {
-  const arr = [...items];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr.slice(0, Math.min(count, arr.length));
-}
+// ─── Section label ───────────────────────────────────────────────────────────
 
-// Skeleton loaders
-function BannerSkeleton() {
+function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative overflow-hidden rounded-none mb-16 min-h-[380px] md:min-h-[440px] bg-stone-200 animate-pulse">
-      <div className="absolute inset-0 bg-gradient-to-r from-stone-900/60 via-stone-900/30 to-transparent" />
-    </div>
+    <span className="inline-block text-[10px] font-semibold tracking-[0.2em] uppercase text-amber-600 mb-4">
+      {children}
+    </span>
   );
 }
 
-function FeaturedSkeleton() {
-  return (
-    <div className="grid grid-cols-12 gap-4">
-      <div className="col-span-12 md:col-span-8 rounded-md bg-stone-200 animate-pulse aspect-[16/7]" />
-      <div className="col-span-12 md:col-span-4 flex flex-col gap-4">
-        <div className="h-20 rounded-md bg-stone-200 animate-pulse" />
-        <div className="h-20 rounded-md bg-stone-200 animate-pulse" />
-        <div className="h-20 rounded-md bg-stone-200 animate-pulse" />
-      </div>
-    </div>
-  );
-}
-
-function PoolSkeleton() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div
-          key={i}
-          className="rounded-md bg-stone-200 animate-pulse aspect-[4/5]"
-        />
-      ))}
-    </div>
-  );
-}
+// ─── Component ──────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const [activeBannerIndex, setActiveBannerIndex] = useState(0);
   const [featuredPaths, setFeaturedPaths] = useState<PoolPath[]>([]);
-  const [randomPoolPaths, setRandomPoolPaths] = useState<PoolPath[]>([]);
+  const [poolPaths, setPoolPaths] = useState<PoolPath[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingPool, setLoadingPool] = useState(true);
-  const [isPaused, setIsPaused] = useState(false);
-
-  useEffect(() => {
-    const prefersReducedMotion =
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
-
-    if (prefersReducedMotion) {
-      setIsPaused(true);
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setActiveBannerIndex((prev) => (prev + 1) % BANNER_SLIDES.length);
-    }, 6000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     async function fetchPaths() {
       setLoading(true);
-      setLoadingPool(true);
       try {
         const db = await listPublicLearningPaths();
         const mapped = (db || []).map(mapDbToPool);
-        setFeaturedPaths(mapped.slice(0, 4));
-        setRandomPoolPaths(pickRandom(mapped, 12));
+        setFeaturedPaths(mapped.slice(0, 3));
+        setPoolPaths(mapped.slice(3, 11));
       } catch {
         setFeaturedPaths([]);
-        setRandomPoolPaths([]);
+        setPoolPaths([]);
       } finally {
         setLoading(false);
-        setLoadingPool(false);
       }
     }
     void fetchPaths();
   }, []);
 
-  const isFirstSlide = activeBannerIndex === 0;
-
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 -mt-4 md:-mt-6">
-      {/* Hero Banner */}
-      <section
-        className="relative overflow-hidden rounded-none mb-16 min-h-[380px] md:min-h-[440px]"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        <img
-          src={BANNER_SLIDES[activeBannerIndex].image}
-          alt=""
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-900/80 via-stone-900/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent" />
-
-        <div className="relative h-full min-h-[380px] md:min-h-[440px] flex flex-col justify-end pb-10 px-8 md:px-12">
-          <div className="max-w-xl space-y-5">
-            {/* Tag */}
-            <div className="inline-flex items-center gap-2">
-              <span className="h-px w-8 bg-amber-400" />
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
-                Learnpathly
-              </span>
+    <div className="min-h-screen bg-stone-50">
+      {/* ── Hero ── */}
+      <section className="border-b border-stone-200">
+        <div className="grid md:grid-cols-2 min-h-[85vh]">
+          {/* Left: Content */}
+          <div className="flex flex-col justify-center px-6 lg:px-12 py-20 border-r-0 md:border-r border-stone-200">
+            <span className="text-sm font-medium tracking-[0.2em] uppercase mb-6 text-amber-600">
+              Learning Platform
+            </span>
+            <h1 className="font-serif text-display lg:text-hero font-bold leading-[0.92] tracking-tight mb-8">
+              Curated
+              <br />
+              Resources.
+              <br />
+              <span className="text-amber-500">Structured.</span>
+            </h1>
+            <p className="text-base text-stone-600 max-w-md mb-10 leading-relaxed">
+              Discover GitHub projects, AI tools, tutorials and articles — organized into learning paths you can follow or generate with AI.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Link
+                to="/learningpool"
+                className="btn-primary"
+              >
+                Explore Paths
+              </Link>
+              <Link
+                to="/ai-resource"
+                className="btn-outline"
+              >
+                Search Resources
+              </Link>
             </div>
+          </div>
 
-            {isFirstSlide ? (
-              <>
-                <h1 className="text-3xl md:text-4xl font-semibold tracking-tight leading-[1.1] text-white">
-                  Build system-level skills with structured learning paths
-                </h1>
-                <p className="text-sm text-white/70 leading-relaxed max-w-md">
-                  A Learning Path Platform: create and discover great learning
-                  paths, turn scattered knowledge into an actionable plan, and
-                  track progress as you improve over time.
-                </p>
-                <div className="flex flex-wrap items-center gap-3 pt-1">
-                  <Link
-                    to="/learningpool"
-                    className="rounded-full bg-amber-500 text-white hover:bg-amber-400 px-6 py-2.5 text-sm font-semibold shadow-lg shadow-amber-500/30 transition-all hover:-translate-y-px"
-                  >
-                    Start exploring
-                    <span aria-hidden> →</span>
-                  </Link>
-                  <Link
-                    to="/about"
-                    className="rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 px-6 py-2.5 text-sm font-semibold transition-all"
-                  >
-                    About
-                  </Link>
-                  <Link
-                    to="/createpath"
-                    className="rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 px-6 py-2.5 text-sm font-semibold transition-all"
-                  >
-                    Create path
-                  </Link>
+          {/* Right: Featured visual */}
+          <div className="relative bg-stone-900 text-stone-50 flex items-center">
+            <div className="absolute top-0 left-0 w-24 h-24 border-t border-l border-stone-700" />
+            <div className="absolute bottom-0 right-0 w-24 h-24 border-b border-r border-stone-700" />
+            <div className="p-8 lg:p-12">
+              <span className="text-xs font-medium tracking-[0.3em] uppercase text-stone-400">
+                Featured Path
+              </span>
+              <blockquote className="font-serif text-headline lg:text-display font-bold leading-tight mt-6 mb-8">
+                "Master AI tools and build real projects step by step."
+              </blockquote>
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium tracking-wide uppercase text-stone-400">
+                  {featuredPaths[0]?.category || "Machine Learning"}
+                </span>
+                <span className="w-2 h-2 bg-amber-500 rounded-full" />
+                <span className="text-sm font-medium tracking-wide uppercase text-stone-400">
+                  {featuredPaths[0]?.items || 12} items
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Pull Quote ── */}
+      <section className="py-24 px-6 lg:px-12 border-b border-stone-200">
+        <div className="max-w-4xl mx-auto">
+          <p className="pull-quote text-headline lg:text-display">
+            "Transform scattered resources into structured expertise."
+          </p>
+          <cite className="text-sm font-medium tracking-wide uppercase text-stone-400 not-italic mt-6 block">
+            — LearnPathly Philosophy
+          </cite>
+        </div>
+      </section>
+
+      {/* ── Featured Paths ── */}
+      <section className="py-20 px-6 lg:px-12 border-b border-stone-200">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <SectionLabel>Trending</SectionLabel>
+              <h2 className="font-serif text-headline lg:text-display font-bold tracking-tight">
+                Most Popular
+                <br />
+                Learning Paths
+              </h2>
+            </div>
+            <Link to="/learningpool" className="hidden md:block article-link">
+              View all paths
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {loading ? (
+              [...Array(3)].map((_, i) => (
+                <div key={i}>
+                  <div className="aspect-4/3 bg-stone-100 rounded-lg mb-4" />
+                  <div className="h-4 w-20 bg-stone-200 mb-2" />
+                  <div className="h-6 w-full bg-stone-200 mb-2" />
+                  <div className="h-4 w-32 bg-stone-200" />
                 </div>
-              </>
+              ))
+            ) : featuredPaths.length > 0 ? (
+              featuredPaths.map((path, idx) => (
+                <PopularPathCard key={path.id} path={path} index={idx} />
+              ))
             ) : (
-              <>
-                <h1 className="text-3xl md:text-4xl font-semibold tracking-tight leading-[1.1] text-white">
-                  {BANNER_SLIDES[activeBannerIndex].title}
-                </h1>
-                <p className="text-sm text-white/70 leading-relaxed max-w-md">
-                  {BANNER_SLIDES[activeBannerIndex].description}
+              <div className="col-span-full py-20 text-center">
+                <p className="text-sm font-medium uppercase tracking-wider text-stone-400">
+                  No paths yet.
                 </p>
-                <div className="flex flex-wrap items-center gap-3 pt-1">
-                  <Link
-                    to="/learningpool"
-                    className="rounded-full bg-amber-500 text-white hover:bg-amber-400 px-6 py-2.5 text-sm font-semibold shadow-lg shadow-amber-500/30 transition-all hover:-translate-y-px"
-                  >
-                    Explore
-                    <span aria-hidden> →</span>
-                  </Link>
-                  <Link
-                    to="/createpath"
-                    className="rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 px-6 py-2.5 text-sm font-semibold transition-all"
-                  >
-                    Create one
-                  </Link>
-                </div>
-              </>
+              </div>
             )}
           </div>
 
-          {/* Dot indicators */}
-          <div className="flex items-center gap-2 pt-8">
-            {BANNER_SLIDES.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                className={`transition-all duration-300 rounded-full ${
-                  i === activeBannerIndex
-                    ? "w-6 h-1.5 bg-white"
-                    : "w-1.5 h-1.5 bg-white/40"
-                }`}
-                aria-label={`Go to slide ${i + 1}`}
-                onClick={() => setActiveBannerIndex(i)}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-{/* How to use */}
-      <section className="mb-10">
-        <div className="flex items-center gap-3 p-1 flex-wrap">
-          {[
-            {
-              href: "/about",
-              icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              ),
-              label: "About",
-            },
-            {
-              href: "/learningpool",
-              icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-              ),
-              label: "Browse",
-            },
-            {
-              href: "/createpath",
-              icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              ),
-              label: "Create",
-            },
-            {
-              href: "/account",
-              icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              ),
-              label: "My Paths",
-            },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-white border border-stone-200 text-stone-700 hover:border-amber-300 hover:text-amber-700 hover:shadow-sm transition-all text-sm font-medium"
-            >
-              <span className="text-stone-400">{item.icon}</span>
-              <span>{item.label}</span>
+          <div className="mt-12 text-center md:hidden">
+            <Link to="/learningpool" className="btn-outline">
+              View all paths
             </Link>
-          ))}
+          </div>
         </div>
       </section>
 
-      {/* Featured Resources */}
-      <section className="mb-16">
-        <div className="flex items-end justify-between mb-8">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-500 mb-2 block">
-              Curated
+      {/* ── How to Use ── */}
+      <section className="py-20 px-6 lg:px-12 border-b border-stone-200">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-amber-600 mb-4 block">
+              Get Started
             </span>
-            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-stone-900 leading-tight">
-              Featured Resources
+            <h2 className="font-serif text-3xl lg:text-4xl font-bold tracking-tight">
+              How to Use LearnPathly
             </h2>
           </div>
-          <Link
-            to="/learningpool"
-            className="rounded-sm text-stone-500 hover:text-stone-800 text-xs font-semibold uppercase tracking-widest transition-colors"
-          >
-            View all →
-          </Link>
-        </div>
 
-        {!loadingPool && randomPoolPaths.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {randomPoolPaths.slice(0, 5).map((path, idx) => (
-              <PathCard key={`feat-${path.id}-${idx}`} path={path} />
-            ))}
+          <div className="grid md:grid-cols-3 gap-12">
+            {/* Step 1 */}
+            <div className="text-center">
+              <div className="w-14 h-14 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-6">
+                1
+              </div>
+              <h3 className="font-semibold text-lg text-stone-900 mb-3">Browse Learning Paths</h3>
+              <p className="text-sm text-stone-500 leading-relaxed">
+                Explore curated paths created by the community. Filter by technology, difficulty, or topic.
+              </p>
+              <Link to="/learningpool" className="inline-block mt-4 text-sm font-medium text-amber-600 hover:text-blue-700 transition-colors">
+                Explore paths →
+              </Link>
+            </div>
+
+            {/* Step 2 */}
+            <div className="text-center">
+              <div className="w-14 h-14 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-6">
+                2
+              </div>
+              <h3 className="font-semibold text-lg text-stone-900 mb-3">Generate with AI</h3>
+              <p className="text-sm text-stone-500 leading-relaxed">
+                Describe what you want to learn. AI generates a personalized path with the best resources.
+              </p>
+              <Link to="/ai-path" className="inline-block mt-4 text-sm font-medium text-amber-600 hover:text-blue-700 transition-colors">
+                Try AI generator →
+              </Link>
+            </div>
+
+            {/* Step 3 */}
+            <div className="text-center">
+              <div className="w-14 h-14 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-6">
+                3
+              </div>
+              <h3 className="font-semibold text-lg text-stone-900 mb-3">Track Your Progress</h3>
+              <p className="text-sm text-stone-500 leading-relaxed">
+                Save paths, mark resources as complete, and watch your progress as you build new skills.
+              </p>
+              <Link to="/register" className="inline-block mt-4 text-sm font-medium text-amber-600 hover:text-blue-700 transition-colors">
+                Create account →
+              </Link>
+            </div>
           </div>
-        ) : (
-          <PoolSkeleton />
-        )}
+        </div>
       </section>
 
-      {/* LearningPool Picks: masonry with editorial text */}
-      <section className="mb-16">
-        <div className="flex items-end justify-between mb-8">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-500 mb-2 block">
-              Discover
-            </span>
-            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-stone-900 leading-tight">
-              LearningPool Picks
-            </h2>
-            <p className="text-sm text-stone-500 mt-1">
-              A curated collection to explore freely.
-            </p>
-          </div>
-          <Link
-            to="/learningpool"
-            className="rounded-sm text-stone-500 hover:text-stone-800 text-xs font-semibold uppercase tracking-widest transition-colors"
-          >
-            Open pool →
-          </Link>
-        </div>
+      {/* ── Path Demo ── */}
+      <section className="py-20 px-6 lg:px-12 bg-stone-900 text-stone-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left: Content */}
+            <div>
+              <span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-amber-400 mb-4 block">
+                How it works
+              </span>
+              <h2 className="font-serif text-4xl lg:text-5xl font-bold tracking-tight mb-6 leading-tight">
+                Build your learning path in minutes
+              </h2>
+              <p className="text-stone-400 leading-relaxed mb-8">
+                Describe what you want to learn. Our AI analyzes the best resources across GitHub, tutorials, and courses — then organizes them into a structured path just for you.
+              </p>
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 bg-amber-500/20 rounded-full flex items-center justify-center shrink-0 mt-1">
+                    <span className="text-amber-400 font-bold text-sm">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-stone-50 mb-1">Describe your goal</h4>
+                    <p className="text-sm text-stone-400">Tell us what technology or skill you want to learn.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 bg-amber-500/20 rounded-full flex items-center justify-center shrink-0 mt-1">
+                    <span className="text-amber-400 font-bold text-sm">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-stone-50 mb-1">AI generates your path</h4>
+                    <p className="text-sm text-stone-400">Curated resources ranked by quality and relevance.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 bg-amber-500/20 rounded-full flex items-center justify-center shrink-0 mt-1">
+                    <span className="text-amber-400 font-bold text-sm">3</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-stone-50 mb-1">Track your progress</h4>
+                    <p className="text-sm text-stone-400">Mark resources as complete and see your growth.</p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-8">
+                <Link
+                  to="/ai-path"
+                  className="inline-flex items-center gap-2 bg-amber-500 text-stone-900 px-6 py-3 text-sm font-semibold hover:bg-amber-400 transition-colors duration-200"
+                >
+                  Try AI Path Generator
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
 
-        {/* Pool grid */}
-        {!loadingPool && randomPoolPaths.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {randomPoolPaths.map((path, idx) => (
-              <PathCard key={`${path.id}-${idx}`} path={path} />
-            ))}
+            {/* Right: Demo visualization */}
+            <div className="relative">
+              <div className="bg-stone-800 rounded-lg p-6 border border-stone-700">
+                {/* Demo path steps */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-3 bg-stone-700/50 rounded-lg">
+                    <div className="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-stone-900 text-xs font-bold">1</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-stone-200 truncate">Introduction to React</p>
+                      <p className="text-xs text-stone-500">Documentation · 30 min</p>
+                    </div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full" />
+                  </div>
+                  <div className="ml-3 w-0.5 h-4 bg-stone-600" />
+                  <div className="flex items-center gap-4 p-3 bg-stone-700/50 rounded-lg border-2 border-blue-500/50">
+                    <div className="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-stone-900 text-xs font-bold">2</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-stone-200 truncate">Build a Todo App</p>
+                      <p className="text-xs text-stone-500">Tutorial · 1 hour</p>
+                    </div>
+                    <div className="w-3 h-3 border-2 border-blue-500 rounded-full" />
+                  </div>
+                  <div className="ml-3 w-0.5 h-4 bg-stone-600" />
+                  <div className="flex items-center gap-4 p-3 bg-stone-700/50 rounded-lg">
+                    <div className="w-6 h-6 bg-stone-600 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-stone-400 text-xs font-bold">3</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-stone-400 truncate">Advanced Patterns</p>
+                      <p className="text-xs text-stone-500">Course · 2 hours</p>
+                    </div>
+                    <div className="w-3 h-3 border-2 border-stone-600 rounded-full" />
+                  </div>
+                  <div className="ml-3 w-0.5 h-4 bg-stone-600" />
+                  <div className="flex items-center gap-4 p-3 bg-stone-700/50 rounded-lg">
+                    <div className="w-6 h-6 bg-stone-600 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-stone-400 text-xs font-bold">4</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-stone-400 truncate">Deploy to Production</p>
+                      <p className="text-xs text-stone-500">Guide · 45 min</p>
+                    </div>
+                    <div className="w-3 h-3 border-2 border-stone-600 rounded-full" />
+                  </div>
+                </div>
+              </div>
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -right-4 w-24 h-24 border border-stone-700 rounded-lg" />
+              <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-amber-500/10 rounded-lg" />
+            </div>
           </div>
-        ) : !loadingPool ? (
-          <div className="rounded-md border border-dashed border-stone-200 py-16 text-center">
-            <p className="text-sm text-stone-400">Nothing in the pool yet.</p>
+        </div>
+      </section>
+
+      {/* ── The Pool ── */}
+      <section className="py-20 px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <SectionLabel>Collection</SectionLabel>
+              <h2 className="font-serif text-headline lg:text-display font-bold tracking-tight">
+                The Pool
+              </h2>
+            </div>
+            <Link to="/learningpool" className="hidden md:block article-link">
+              Open pool
+            </Link>
           </div>
-        ) : (
-          <PoolSkeleton />
-        )}
+
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {[...Array(8)].map((_, i) => (
+                <div key={i}>
+                  <div className="aspect-4/3 bg-stone-100 rounded-lg mb-4" />
+                  <div className="h-4 w-20 bg-stone-200 mb-2" />
+                  <div className="h-5 w-full bg-stone-200 mb-2" />
+                  <div className="h-3 w-24 bg-stone-200" />
+                </div>
+              ))}
+            </div>
+          ) : poolPaths.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {poolPaths.map((path, idx) => (
+                <PathCard key={path.id} path={path} index={idx} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-20 text-center">
+              <p className="text-sm font-medium uppercase tracking-wider text-stone-400">
+                Nothing in the pool yet.
+              </p>
+            </div>
+          )}
+
+          <div className="mt-12 text-center">
+            <Link to="/learningpool" className="btn-outline">
+              Open Pool →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Newsletter CTA ── */}
+      <section className="py-24 px-6 lg:px-12 bg-stone-900 text-stone-50">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="font-serif text-headline lg:text-display font-bold mb-6 tracking-tight">
+            Start Your Learning
+            <br />
+            <span className="text-amber-400">Journey Today</span>
+          </h2>
+          <p className="text-stone-400 mb-10 max-w-xl mx-auto leading-relaxed">
+            Join thousands of developers building real skills with curated resources and AI-generated paths.
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link
+              to="/register"
+              className="bg-amber-500 text-stone-900 px-8 py-4 text-base font-semibold hover:bg-amber-400 transition-colors duration-200 rounded-lg"
+            >
+              Get Started Free
+            </Link>
+            <Link
+              to="/ai-resource"
+              className="border border-stone-600 text-stone-50 px-8 py-4 text-base font-medium hover:bg-stone-800 hover:border-stone-500 transition-colors duration-200 rounded-lg"
+            >
+              Try AI Search
+            </Link>
+          </div>
+        </div>
       </section>
     </div>
   );

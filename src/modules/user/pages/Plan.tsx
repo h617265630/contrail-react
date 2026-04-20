@@ -1,20 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { Check, X, HelpCircle, CreditCard, Shield, Download, MessageCircle } from "lucide-react";
 
 type BillingCycle = "monthly" | "yearly";
-type Feature = { label: string };
-type PlanData = { features: Feature[] };
-
-interface SubscriptionMeResponse {
-  plan_code: string;
-  expire_date?: string;
-}
 
 const trustSignals = [
-  { icon: "🔒", label: "No lock-in", desc: "Cancel anytime" },
-  { icon: "💳", label: "Secure payment", desc: "Powered by Stripe" },
-  { icon: "📦", label: "Your data", desc: "Export anytime" },
-  { icon: "💬", label: "Get help", desc: "Support responds in 24h" },
+  { icon: Shield, label: "No lock-in", desc: "Cancel anytime" },
+  { icon: CreditCard, label: "Secure payment", desc: "Powered by Stripe" },
+  { icon: Download, label: "Your data", desc: "Export anytime" },
+  { icon: MessageCircle, label: "Get help", desc: "Support responds in 24h" },
 ];
 
 const faqs = [
@@ -34,22 +28,23 @@ const faqs = [
 
 function hasToken(): boolean {
   try {
-    const local = (globalThis as any).localStorage;
-    const session = (globalThis as any).sessionStorage;
     return Boolean(
-      local?.getItem?.("learnsmart_token") ||
-        session?.getItem?.("learnsmart_token")
+      localStorage?.getItem?.("learnsmart_token") ||
+        sessionStorage?.getItem?.("learnsmart_token")
     );
   } catch {
     return false;
   }
 }
 
+interface SubscriptionMeResponse {
+  plan_code: string;
+  expire_date?: string;
+}
+
 async function getMySubscription(): Promise<SubscriptionMeResponse | null> {
   try {
-    const token = hasToken();
-    if (!token) return null;
-
+    if (!hasToken()) return null;
     const response = await fetch("/api/subscription/me", {
       headers: {
         Authorization: `Bearer ${
@@ -58,7 +53,6 @@ async function getMySubscription(): Promise<SubscriptionMeResponse | null> {
         }`,
       },
     });
-
     if (!response.ok) return null;
     return response.json();
   } catch {
@@ -66,11 +60,221 @@ async function getMySubscription(): Promise<SubscriptionMeResponse | null> {
   }
 }
 
+// ─── Pricing tiers ────────────────────────────────────────────────────────────
+
+const TIERS = [
+  {
+    id: "free",
+    label: "Free",
+    badge: null,
+    price: { monthly: 0, yearly: 0 },
+    description: "For trying out the platform.",
+    features: [
+      "Browse public resources & paths",
+      "Create up to 2 learning paths",
+      "Add up to 80 resources",
+      "Track your progress anytime",
+    ],
+    cta: "Continue free",
+    highlight: false,
+  },
+  {
+    id: "pro",
+    label: "Pro",
+    badge: "Recommended",
+    price: { monthly: 12, yearly: 120 },
+    description: "For serious learners who want more.",
+    features: [
+      "Unlimited learning paths",
+      "Unlimited resources",
+      "Up to 5 private learning paths",
+      "Advanced progress insights & history",
+      "Priority support",
+    ],
+    cta: "Subscribe to Pro",
+    highlight: true,
+  },
+  {
+    id: "basic",
+    label: "Basic",
+    badge: null,
+    price: { monthly: 6, yearly: 60 },
+    description: "Pro features, simpler billing.",
+    features: [
+      "Unlimited learning paths",
+      "Unlimited resources",
+      "Up to 5 private learning paths",
+      "Advanced progress insights & history",
+      "Email support",
+    ],
+    cta: "Choose Basic",
+    highlight: false,
+  },
+] as const;
+
+const COMPARISON = [
+  { feature: "Public resources & paths", free: true, pro: true },
+  { feature: "Learning paths", free: "2", pro: "Unlimited" },
+  { feature: "Resources", free: "80", pro: "Unlimited" },
+  { feature: "Private learning paths", free: false, pro: "5" },
+  { feature: "Progress tracking", free: true, pro: true },
+  { feature: "Advanced progress insights", free: false, pro: true },
+  { feature: "Priority support", free: false, pro: true },
+];
+
+// ─── Feature icon ─────────────────────────────────────────────────────────────
+
+function FeatureCheck({ value }: { value: boolean | string }) {
+  if (value === true) {
+    return (
+      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-white">
+        <Check className="w-3 h-3" strokeWidth={3} />
+      </span>
+    );
+  }
+  if (value === false) {
+    return (
+      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-stone-100 text-stone-300">
+        <X className="w-3 h-3" strokeWidth={3} />
+      </span>
+    );
+  }
+  return <span className="text-xs font-semibold text-stone-600">{value}</span>;
+}
+
+// ─── Plan card ────────────────────────────────────────────────────────────────
+
+interface PlanCardProps {
+  tier: (typeof TIERS)[number];
+  billing: BillingCycle;
+  isCurrent: boolean;
+  onAction: () => void;
+}
+
+function PlanCard({ tier, billing, isCurrent, onAction }: PlanCardProps) {
+  const price = tier.price[billing];
+
+  return (
+    <div
+      className={`relative flex flex-col p-6 border-2 transition-all duration-200 ${
+        tier.highlight
+          ? "border-blue-500 bg-white"
+          : "border-stone-100 bg-white hover:border-stone-200"
+      }`}
+    >
+      {tier.highlight && (
+        <div className="absolute -top-3 left-6">
+          <span className="inline-flex items-center gap-1.5 bg-blue-500 text-white text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
+            {tier.badge}
+          </span>
+        </div>
+      )}
+
+      {/* Label */}
+      <div className="flex items-center gap-2 mb-4">
+        <div
+          className={`w-1 h-5 rounded-full ${
+            tier.id === "pro" ? "bg-blue-500" : tier.id === "basic" ? "bg-amber-500" : "bg-stone-300"
+          }`}
+        />
+        <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
+          {tier.label}
+        </span>
+        {isCurrent && (
+          <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 border border-blue-200 bg-blue-50 px-2 py-0.5 rounded-sm">
+            Current
+          </span>
+        )}
+      </div>
+
+      {/* Price */}
+      <div className="flex items-end gap-1 mb-1">
+        <span className="text-5xl font-black tracking-tight text-stone-900">
+          ${price}
+        </span>
+        <span className="text-sm text-stone-400 mb-2">
+          / {billing === "yearly" ? "year" : "month"}
+        </span>
+      </div>
+
+      {billing === "yearly" && tier.id !== "free" && (
+        <p className="text-xs text-stone-400 mb-4">
+          Billed annually · Save ${(tier.price.monthly * 12 - tier.price.yearly)}
+        </p>
+      )}
+      {tier.id === "free" && (
+        <p className="text-xs text-stone-400 mb-4">/ forever</p>
+      )}
+
+      <p className="text-sm text-stone-500 mb-6 leading-relaxed">
+        {tier.description}
+      </p>
+
+      {/* Features */}
+      <div className="space-y-2.5 mb-8">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-3">
+          {tier.id === "free" ? "What's included" : "Everything in Free, plus"}
+        </p>
+        <ul className="space-y-2.5">
+          {tier.features.map((feat) => (
+            <li key={feat} className="flex items-start gap-2.5">
+              <span className="mt-0.5 shrink-0 rounded-full bg-stone-50 p-0.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="9"
+                  height="9"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </span>
+              <span
+                className={`text-sm leading-snug ${
+                  tier.highlight ? "font-semibold text-stone-800" : "text-stone-600"
+                }`}
+              >
+                {feat}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* CTA */}
+      <button
+        type="button"
+        onClick={onAction}
+        disabled={isCurrent}
+        className={`w-full py-3 text-sm font-bold transition-all duration-150 rounded-sm mt-auto ${
+          tier.highlight
+            ? "bg-blue-500 text-white hover:bg-blue-600 active:scale-[0.98] shadow-lg shadow-blue-500/20"
+            : isCurrent
+            ? "border-2 border-blue-300 bg-blue-50 text-blue-500 cursor-default"
+            : "border-2 border-stone-200 text-stone-600 hover:border-stone-400 hover:bg-stone-50 active:scale-[0.98]"
+        }`}
+      >
+        {isCurrent ? "Current plan" : tier.cta}
+        {!isCurrent && tier.highlight && (
+          <span className="ml-1">→</span>
+        )}
+      </button>
+    </div>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
 export default function Plan() {
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("yearly");
-  const [subscription, setSubscription] =
-    useState<SubscriptionMeResponse | null>(null);
+  const [subscription, setSubscription] = useState<SubscriptionMeResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   useEffect(() => {
     async function fetchSubscription() {
@@ -89,79 +293,25 @@ export default function Plan() {
   }, []);
 
   const currentPlanId = useMemo(() => {
-    const code = String(subscription?.plan_code || "")
-      .trim()
-      .toLowerCase();
+    const code = String(subscription?.plan_code || "").trim().toLowerCase();
     if (!code) return "free";
-    if (code.startsWith("basic_yearly") || code.startsWith("basic"))
-      return "basic";
+    if (code.startsWith("basic_yearly") || code.startsWith("basic")) return "basic";
     if (code.startsWith("pro_")) return "pro";
     return "free";
   }, [subscription]);
 
-  const currentPlan = useMemo(() => {
+  const currentPlanName = useMemo(() => {
     if (currentPlanId === "pro") return "Pro";
     if (currentPlanId === "basic") return "Basic";
     return "Free";
   }, [currentPlanId]);
 
-  const freePlan = useMemo<PlanData>(
-    () => ({
-      features: [
-        { label: "Browse public resources & paths" },
-        { label: "Create up to 2 learning paths" },
-        { label: "Add up to 80 resources" },
-        { label: "Track your progress anytime" },
-      ],
-    }),
-    []
-  );
-
-  const proPlan = useMemo<PlanData>(
-    () => ({
-      features: [
-        { label: "Unlimited learning paths" },
-        { label: "Unlimited resources" },
-        { label: "Up to 5 private learning paths" },
-        { label: "Advanced progress insights & history" },
-        { label: "Priority support" },
-      ],
-    }),
-    []
-  );
-
-  const basicPlan = useMemo<PlanData>(
-    () => ({
-      features: [
-        { label: "Unlimited learning paths" },
-        { label: "Unlimited resources" },
-        { label: "Up to 5 private learning paths" },
-        { label: "Advanced progress insights & history" },
-        { label: "Email support" },
-      ],
-    }),
-    []
-  );
-
-  const comparisonRows = useMemo(
-    () => [
-      { feature: "Public resources & paths", free: true, pro: true },
-      { feature: "Learning paths", free: "2", pro: "Unlimited" },
-      { feature: "Resources", free: "80", pro: "Unlimited" },
-      { feature: "Private learning paths", free: false, pro: "5" },
-      { feature: "Progress tracking", free: true, pro: true },
-      { feature: "Advanced progress insights", free: false, pro: true },
-      { feature: "Priority support", free: false, pro: true },
-    ],
-    []
-  );
-
-  function isCurrent(planId: string) {
-    return currentPlanId === planId;
+  function isCurrent(tierId: string) {
+    return currentPlanId === tierId;
   }
 
-  function onAction(planId: string) {
-    if (isCurrent(planId) || loading) return;
+  function onAction(tierId: string) {
+    if (isCurrent(tierId) || loading) return;
     alert("Checkout is coming soon.");
   }
 
@@ -172,24 +322,24 @@ export default function Plan() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      {/* Masthead */}
+      {/* ── Masthead ───────────────────────────────────────────────────── */}
       <header className="border-b-2 border-stone-900 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-6 md:py-8">
-          <div className="flex items-end justify-between">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-8">
+          <div className="flex items-end justify-between gap-8">
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <span className="h-px w-8 bg-blue-600"></span>
+                <span className="h-px w-8 bg-blue-500" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400">
                   Pricing
                 </span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tight text-stone-900 leading-[0.9]">
+              <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-stone-900 leading-[0.9]">
                 Simple plans,
                 <br />
-                <span className="text-blue-600">serious learning.</span>
+                <span className="text-blue-500">serious learning.</span>
               </h1>
             </div>
-            <div className="hidden md:flex flex-col items-end gap-2">
+            <div className="hidden md:flex flex-col items-end gap-1">
               <span className="text-[10px] font-semibold uppercase tracking-widest text-stone-400">
                 Free · Basic · Pro
               </span>
@@ -198,9 +348,9 @@ export default function Plan() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8">
-        {/* Billing toggle */}
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-12">
+      <main className="max-w-7xl mx-auto px-6 lg:px-12 py-10">
+        {/* ── Billing toggle ───────────────────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-14">
           <div className="inline-flex rounded-sm border border-stone-200 bg-white p-1 shadow-sm">
             <button
               type="button"
@@ -228,272 +378,69 @@ export default function Plan() {
                   -17%
                 </span>
               ) : (
-                <span className="text-[10px] font-semibold text-amber-600">
-                  -17%
-                </span>
+                <span className="text-[10px] font-semibold text-amber-600">-17%</span>
               )}
             </button>
           </div>
           {subscription?.plan_code && (
             <div className="text-xs text-stone-400">
-              <span className="font-semibold text-stone-700">
-                {currentPlan}
-              </span>
-              · Renewal {formatDate(subscription.expire_date)}
+              <span className="font-semibold text-stone-700">{currentPlanName}</span>
+              {subscription.expire_date && (
+                <span className="mx-1">·</span>
+              )}
+              {subscription.expire_date && (
+                <span>Renewal {formatDate(subscription.expire_date)}</span>
+              )}
             </div>
           )}
         </div>
 
-        {/* Plans: numbered editorial layout */}
-        <section className="grid grid-cols-12 gap-5 mb-16">
-          {/* Free — 01 */}
-          <div className="col-span-12 lg:col-span-3 relative">
-            <div className="relative pt-4">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-1 h-5 bg-stone-300 rounded-full"></div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
-                  Free
-                </span>
-              </div>
-              <div className="flex items-end gap-1 mb-1">
-                <span className="text-5xl font-black tracking-tight text-stone-900">
-                  $0
-                </span>
-                <span className="text-sm text-stone-400 mb-2">/ forever</span>
-              </div>
-              <p className="text-xs text-stone-500 mb-6 leading-relaxed">
-                For trying out the platform.
-              </p>
-
-              <div className="space-y-2 mb-8">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-3">
-                  What's included
-                </p>
-                <ul className="space-y-2.5">
-                  {freePlan.features.map((feat) => (
-                    <li key={feat.label} className="flex items-start gap-2.5">
-                      <span className="mt-0.5 shrink-0 rounded-full bg-stone-100 p-0.5">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="9"
-                          height="9"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      </span>
-                      <span className="text-sm text-stone-600 leading-snug">
-                        {feat.label}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <button
-                type="button"
-                className={`w-full rounded-sm border-2 py-2.5 text-sm font-bold transition-all ${
-                  isCurrent("free")
-                    ? "border-blue-400 bg-blue-50 text-blue-600"
-                    : "border-stone-200 text-stone-600 hover:border-stone-400 hover:bg-stone-50"
-                }`}
-                onClick={() => onAction("free")}
-              >
-                {isCurrent("free") ? "Current plan" : "Continue free"}
-              </button>
-            </div>
-          </div>
-
-          {/* Pro — 02 (dominant) */}
-          <div className="col-span-12 lg:col-span-6 relative">
-            <div className="relative pt-4 rounded-md border-2 border-blue-500 bg-white shadow-xl shadow-blue-500/5 overflow-hidden">
-              <div className="relative p-8">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <div className="inline-flex items-center gap-1.5 rounded-sm border border-blue-200 bg-blue-50 px-2.5 py-1 mb-3">
-                      <span className="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
-                      <span className="text-[9px] font-bold uppercase tracking-widest text-blue-600">
-                        Recommended
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-1 h-5 bg-blue-500 rounded-full"></div>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600">
-                        Pro
-                      </span>
-                    </div>
-                  </div>
-                  {isCurrent("pro") && (
-                    <div className="rounded-sm border border-blue-200 bg-blue-50 px-3 py-1 text-[10px] font-bold text-blue-600 uppercase tracking-widest">
-                      Current
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-end gap-1 mb-1">
-                  <span className="text-6xl font-black tracking-tight text-stone-900">
-                    {billingCycle === "monthly" ? "$0" : "$0"}
-                  </span>
-                  <span className="text-sm text-stone-400 mb-2.5">
-                    {billingCycle === "monthly" ? "/ month" : "/ year"}
-                  </span>
-                </div>
-                <p className="text-xs text-stone-400 mb-8">
-                  {billingCycle === "yearly"
-                    ? "Billed annually · Save $0/year"
-                    : "Billed monthly · $0/year"}
-                </p>
-
-                <div className="space-y-2 mb-8">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-3">
-                    Everything in Free, plus
-                  </p>
-                  <ul className="space-y-2.5">
-                    {proPlan.features.map((feat) => (
-                      <li key={feat.label} className="flex items-start gap-2.5">
-                        <span className="mt-0.5 shrink-0 rounded-full bg-blue-50 p-0.5">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="9"
-                            height="9"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        </span>
-                        <span className="text-sm font-semibold text-stone-800 leading-snug">
-                          {feat.label}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <button
-                  type="button"
-                  className="w-full rounded-sm bg-blue-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0"
-                  onClick={() => onAction("pro")}
-                >
-                  Subscribe to Pro →
-                </button>
-                <p className="text-center text-[11px] text-stone-400 mt-2">
-                  No commitment · Cancel anytime
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Basic — 03 */}
-          <div className="col-span-12 lg:col-span-3 relative">
-            <div className="relative pt-4">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-1 h-5 bg-amber-500 rounded-full"></div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
-                  Basic
-                </span>
-              </div>
-              <div className="flex items-end gap-1 mb-1">
-                <span className="text-5xl font-black tracking-tight text-stone-900">
-                  $0
-                </span>
-                <span className="text-sm text-stone-400 mb-2">/ year</span>
-              </div>
-              <p className="text-xs text-stone-500 mb-6 leading-relaxed">
-                {billingCycle === "yearly"
-                  ? "Billed annually · Save $0/yr"
-                  : "$0/month"}{" "}
-                · Pro features, simpler billing
-              </p>
-
-              <div className="space-y-2 mb-8">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-3">
-                  Same as Pro, different cycle
-                </p>
-                <ul className="space-y-2.5">
-                  {basicPlan.features.map((feat) => (
-                    <li key={feat.label} className="flex items-start gap-2.5">
-                      <span className="mt-0.5 shrink-0 rounded-full bg-amber-50 p-0.5">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="9"
-                          height="9"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      </span>
-                      <span className="text-sm text-stone-600 leading-snug">
-                        {feat.label}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <button
-                type="button"
-                className={`w-full rounded-sm border-2 py-2.5 text-sm font-bold transition-all ${
-                  isCurrent("basic")
-                    ? "border-amber-400 bg-amber-50 text-amber-700"
-                    : "border-stone-200 text-stone-600 hover:border-stone-400 hover:bg-stone-50"
-                }`}
-                onClick={() => onAction("basic")}
-              >
-                {isCurrent("basic") ? "Current plan" : "Choose Basic"}
-              </button>
-            </div>
-          </div>
+        {/* ── Pricing cards ───────────────────────────────────────────── */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-20">
+          {TIERS.map((tier) => (
+            <PlanCard
+              key={tier.id}
+              tier={tier}
+              billing={billingCycle}
+              isCurrent={isCurrent(tier.id)}
+              onAction={() => onAction(tier.id)}
+            />
+          ))}
         </section>
 
-        {/* Feature comparison */}
-        <section className="mb-16">
-          {/* Section header */}
+        {/* ── Feature comparison ───────────────────────────────────────── */}
+        <section className="mb-20">
           <div className="flex items-center gap-4 mb-8">
             <div className="flex items-center gap-2">
-              <div className="w-1 h-6 bg-stone-900 rounded-full"></div>
+              <div className="w-1 h-6 bg-stone-900 rounded-full" />
               <span className="text-sm font-black uppercase tracking-widest text-stone-900">
                 Compare
               </span>
             </div>
-            <div className="flex-1 h-px bg-stone-200"></div>
+            <div className="flex-1 h-px bg-stone-200" />
           </div>
 
-          <div className="rounded-md border border-stone-100 bg-white overflow-hidden">
-            {/* Header row */}
+          <div className="rounded-sm border border-stone-100 bg-white overflow-hidden">
+            {/* Header */}
             <div className="grid grid-cols-12 gap-0 border-b border-stone-100 bg-stone-50/50">
               <div className="col-span-5 px-6 py-4">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
                   Feature
                 </span>
               </div>
-              <div className="col-span-2 px-4 py-4 text-center">
+              <div className="col-span-3 px-4 py-4 text-center">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
                   Free
                 </span>
               </div>
-              <div className="col-span-5 px-6 py-4 text-center">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600">
+              <div className="col-span-4 px-6 py-4 text-center">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-blue-500">
                   Pro
                 </span>
               </div>
             </div>
             {/* Data rows */}
-            {comparisonRows.map((row, i) => (
+            {COMPARISON.map((row, i) => (
               <div
                 key={row.feature}
                 className={`grid grid-cols-12 gap-0 border-b border-stone-50 transition-colors ${
@@ -501,135 +448,60 @@ export default function Plan() {
                 }`}
               >
                 <div className="col-span-5 px-6 py-4">
-                  <span className="text-sm text-stone-700 font-medium">
-                    {row.feature}
-                  </span>
+                  <span className="text-sm text-stone-700 font-medium">{row.feature}</span>
                 </div>
-                <div className="col-span-2 flex justify-center items-center py-4">
-                  {row.free === true ? (
-                    <span className="text-blue-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </span>
-                  ) : row.free === false ? (
-                    <span className="text-stone-200">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                    </span>
-                  ) : (
-                    <span className="text-xs font-semibold text-stone-500">
-                      {row.free}
-                    </span>
-                  )}
+                <div className="col-span-3 flex justify-center items-center py-4">
+                  <FeatureCheck value={row.free} />
                 </div>
-                <div className="col-span-5 flex justify-center items-center py-4">
-                  {row.pro === true ? (
-                    <span className="text-blue-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </span>
-                  ) : row.pro === false ? (
-                    <span className="text-stone-200">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                    </span>
-                  ) : (
-                    <span className="text-xs font-bold text-blue-600">
-                      {row.pro}
-                    </span>
-                  )}
+                <div className="col-span-4 flex justify-center items-center py-4">
+                  <FeatureCheck value={row.pro} />
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Trust signals */}
-        <section className="mb-16">
+        {/* ── Trust signals ────────────────────────────────────────────── */}
+        <section className="mb-20">
           <div className="flex items-center gap-4 mb-8">
             <div className="flex items-center gap-2">
-              <div className="w-1 h-6 bg-emerald-500 rounded-full"></div>
+              <div className="w-1 h-6 bg-emerald-500 rounded-full" />
               <span className="text-sm font-black uppercase tracking-widest text-stone-900">
                 Trust
               </span>
             </div>
-            <div className="flex-1 h-px bg-stone-200"></div>
+            <div className="flex-1 h-px bg-stone-200" />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {trustSignals.map((signal) => (
-              <div
-                key={signal.label}
-                className="rounded-md border border-stone-100 bg-white p-5 text-center hover:border-stone-200 hover:shadow-sm transition-all"
-              >
-                <div className="text-2xl mb-2">{signal.icon}</div>
-                <div className="text-sm font-bold text-stone-800">
-                  {signal.label}
+            {trustSignals.map((signal) => {
+              const Icon = signal.icon;
+              return (
+                <div
+                  key={signal.label}
+                  className="rounded-sm border border-stone-100 bg-white p-5 text-center hover:border-stone-200 hover:shadow-sm transition-all cursor-pointer"
+                >
+                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-stone-50 mb-3">
+                    <Icon className="w-4 h-4 text-stone-600" />
+                  </div>
+                  <div className="text-sm font-bold text-stone-800">{signal.label}</div>
+                  <div className="text-xs text-stone-400 mt-0.5">{signal.desc}</div>
                 </div>
-                <div className="text-xs text-stone-400 mt-0.5">
-                  {signal.desc}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="mb-12">
+        {/* ── FAQ ──────────────────────────────────────────────────────── */}
+        <section className="mb-16">
           <div className="flex items-center gap-4 mb-8">
             <div className="flex items-center gap-2">
-              <div className="w-1 h-6 bg-violet-500 rounded-full"></div>
+              <div className="w-1 h-6 bg-violet-500 rounded-full" />
               <span className="text-sm font-black uppercase tracking-widest text-stone-900">
                 FAQ
               </span>
             </div>
-            <div className="flex-1 h-px bg-stone-200"></div>
+            <div className="flex-1 h-px bg-stone-200" />
           </div>
 
           <div className="max-w-2xl space-y-0">
@@ -640,15 +512,54 @@ export default function Plan() {
                   i === 0 ? "border-t border-stone-100" : ""
                 }`}
               >
-                <p className="text-sm font-bold text-stone-800 leading-snug">
-                  {faq.q}
-                </p>
-                <p className="text-sm text-stone-500 mt-1.5 leading-relaxed">
-                  {faq.a}
-                </p>
+                <button
+                  type="button"
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="flex items-start gap-3 w-full text-left cursor-pointer"
+                >
+                  <span className="text-sm font-bold text-stone-800 leading-snug flex-1">
+                    {faq.q}
+                  </span>
+                  <HelpCircle
+                    className={`w-4 h-4 shrink-0 mt-0.5 transition-colors duration-150 ${
+                      openFaq === i ? "text-blue-500" : "text-stone-300"
+                    }`}
+                  />
+                </button>
+                {openFaq === i && (
+                  <p className="text-sm text-stone-500 mt-2 leading-relaxed pl-0">
+                    {faq.a}
+                  </p>
+                )}
               </div>
             ))}
           </div>
+        </section>
+
+        {/* ── CTA ──────────────────────────────────────────────────────── */}
+        <section className="py-12 text-center border-t border-stone-100">
+          <p className="text-sm text-stone-500 mb-4">
+            Questions? We're happy to help.
+          </p>
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-blue-500 hover:text-blue-600 transition-colors duration-150"
+          >
+            Contact support
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
+          </Link>
         </section>
       </main>
     </div>

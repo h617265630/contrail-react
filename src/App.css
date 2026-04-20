@@ -8,6 +8,6 @@
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background-color: var(--color-stone-50);
-  color: var(--color-stone-900);
+  background-color: #fafaf9;
+  color: #1c1917;
 }

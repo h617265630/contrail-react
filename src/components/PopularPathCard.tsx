@@ -13,14 +13,14 @@ export type PoolPath = {
   forkCount?: number;
 };
 
-interface PathCardProps {
+interface PopularPathCardProps {
   path: PoolPath;
   index?: number;
 }
 
-export function PathCard({ path, index = 0 }: PathCardProps) {
+export function PopularPathCard({ path, index = 0 }: PopularPathCardProps) {
   const num = String(index + 1).padStart(2, "0");
-  const imgSrc = path.thumbnail || `https://picsum.photos/seed/${path.id}/600/400`;
+  const imgSrc = path.thumbnail || `https://picsum.photos/seed/${path.id}/800/500`;
 
   return (
     <Link
@@ -35,7 +35,7 @@ export function PathCard({ path, index = 0 }: PathCardProps) {
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
         onError={(e) => {
-          (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${path.id}/600/400`;
+          (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${path.id}/800/500`;
         }}
       />
 
@@ -43,8 +43,8 @@ export function PathCard({ path, index = 0 }: PathCardProps) {
       <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
 
       {/* Number */}
-      <div className="absolute top-2 left-2">
-        <span className="text-lg font-bold text-white/60 tabular-nums tracking-tight">
+      <div className="absolute top-3 left-3">
+        <span className="text-2xl font-bold text-white/60 tabular-nums tracking-tight">
           {num}
         </span>
       </div>
@@ -57,9 +57,14 @@ export function PathCard({ path, index = 0 }: PathCardProps) {
         </span>
 
         {/* Title */}
-        <h3 className="font-semibold text-sm text-white leading-snug group-hover:text-amber-300 transition-colors duration-150 line-clamp-2 mb-1">
+        <h3 className="font-semibold text-sm text-white leading-snug group-hover:text-amber-300 transition-colors duration-150 line-clamp-2 mb-2">
           {path.title}
         </h3>
+
+        {/* Description */}
+        <p className="text-xs text-white/60 leading-relaxed line-clamp-2 mb-2">
+          {path.description || "Curated learning resources for your journey."}
+        </p>
 
         {/* Meta */}
         <div className="flex items-center gap-1 text-[10px] text-white/60">
