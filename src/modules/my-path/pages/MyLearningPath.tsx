@@ -11,7 +11,7 @@ import {
 import { getResourceDetail, type DbResource } from "@/services/resource";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { PathCard, type PoolPath } from "@/components/PathCard";
+import { MyPathCard, type PoolPath } from "@/components/MyPathCard";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -451,7 +451,7 @@ export default function MyLearningPath() {
             {activeTab === "drafts" && (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 items-start">
                 {draftPaths.map((path, idx) => (
-                  <PathCard
+                  <MyPathCard
                     key={path.id ?? `draft-${idx}`}
                     path={mapToPoolPath(path, idx)}
                     onClick={() =>
@@ -467,7 +467,7 @@ export default function MyLearningPath() {
             {activeTab === "created" && (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 items-start">
                 {createdPaths.map((path, idx) => (
-                  <PathCard
+                  <MyPathCard
                     key={path.id ?? `created-${idx}`}
                     path={mapToPoolPath(path, idx)}
                     onClick={() =>
@@ -483,7 +483,7 @@ export default function MyLearningPath() {
             {activeTab === "forked" && (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 items-start">
                 {forkedPaths.map((path, idx) => (
-                  <PathCard
+                  <MyPathCard
                     key={path.id ?? `forked-${idx}`}
                     path={mapToPoolPath(path, idx)}
                     onClick={() =>
@@ -501,7 +501,7 @@ export default function MyLearningPath() {
             {activeTab === "saved" && (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 items-start">
                 {savedPaths.map((path, idx) => (
-                  <PathCard
+                  <MyPathCard
                     key={path.id ?? `saved-${idx}`}
                     path={mapToPoolPath(path, idx)}
                     onClick={() =>
