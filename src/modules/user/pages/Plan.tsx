@@ -422,7 +422,7 @@ export default function Plan() {
 
           <div className="rounded-sm border border-stone-100 bg-white overflow-hidden">
             {/* Header */}
-            <div className="grid grid-cols-12 gap-0 border-b border-stone-100 bg-stone-50/50">
+            <div className="grid grid-cols-12 gap-0 border-b border-stone-100 bg-stone-50/0">
               <div className="col-span-5 px-6 py-4">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
                   Feature

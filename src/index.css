@@ -977,26 +977,26 @@
 
 /* ─── Memphis style ─── */
 .rounded-memphis {
-  border-radius: 12px;
+  border-radius: 0;
 }
 .border-memphis {
   border-width: 3px;
   border-style: solid;
 }
 .shadow-memphis {
-  box-shadow: 4px 4px 0 #0a0a0a;
+  box-shadow: 2px 2px 0 #0a0a0a;
 }
 .shadow-memphis-lg {
-  box-shadow: 6px 6px 0 #0a0a0a;
+  box-shadow: 4px 4px 0 #0a0a0a;
 }
 .hover\:shadow-memphis-lg:hover {
-  box-shadow: 8px 8px 0 #0a0a0a;
+  box-shadow: 6px 6px 0 #0a0a0a;
 }
 .hover\:-translate-x-1:hover {
-  transform: translateX(-4px);
+  transform: translateX(-2px);
 }
 .hover\:-translate-y-1:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
 }
 
 /* ─── Hide scrollbar ─── */

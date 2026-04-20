@@ -153,11 +153,11 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="flex gap-4 overflow-x-auto pb-4">
             {loading ? (
               [...Array(3)].map((_, i) => (
-                <div key={i}>
-                  <div className="aspect-4/3 bg-stone-100 rounded-lg mb-4" />
+                <div key={i} className="shrink-0 w-64">
+                  <div className="h-40 bg-stone-100 mb-4" />
                   <div className="h-4 w-20 bg-stone-200 mb-2" />
                   <div className="h-6 w-full bg-stone-200 mb-2" />
                   <div className="h-4 w-32 bg-stone-200" />
@@ -168,7 +168,7 @@ export default function Home() {
                 <PopularPathCard key={path.id} path={path} index={idx} />
               ))
             ) : (
-              <div className="col-span-full py-20 text-center">
+              <div className="shrink-0 py-20 text-center">
                 <p className="text-sm font-medium uppercase tracking-wider text-stone-400">
                   No paths yet.
                 </p>

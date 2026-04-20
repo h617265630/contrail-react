@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { generateAiPath, type AiPathGenerateResponse } from "@/services/aiPath";
-import { Button } from "@/components/ui/Button";
+import { ArrowRight, Sparkles, FileText, Eye } from "lucide-react";
 
 const STORAGE_KEY = "learnsmart_ai_path_result_v1";
 
@@ -12,42 +12,31 @@ const presets = [
 ];
 
 const steps = [
-  {
-    title: "Enter Goal",
-    text: "Tell AI your learning direction, current level, time commitment, and desired outcome.",
-  },
-  {
-    title: "Generate Path",
-    text: "AI calls LangChain to return a structured JSON learning path.",
-  },
-  {
-    title: "View Details",
-    text: "Check stage descriptions, step breakdowns, and recommended resources.",
-  },
+  { icon: FileText, title: "Enter Goal", text: "Tell AI your learning direction, current level, time commitment, and desired outcome." },
+  { icon: Sparkles, title: "Generate Path", text: "AI calls LangChain to return a structured JSON learning path." },
+  { icon: Eye, title: "View Details", text: "Check stage descriptions, step breakdowns, and recommended resources." },
 ];
-
-// ── Preference options ────────────────────────────────────────────────────────
 
 type Level = "beginner" | "intermediate" | "advanced";
 type Depth = "quick" | "standard" | "deep";
 type ContentType = "video" | "article" | "mixed";
 
-const LEVEL_OPTIONS: { value: Level; label: string }[] = [
-  { value: "beginner", label: "Beginner" },
-  { value: "intermediate", label: "Intermediate" },
-  { value: "advanced", label: "Advanced" },
+const LEVEL_OPTIONS = [
+  { value: "beginner", label: "Beginner", color: "#16a34a" },
+  { value: "intermediate", label: "Intermediate", color: "#ca8a04" },
+  { value: "advanced", label: "Advanced", color: "#dc2626" },
 ];
 
-const DEPTH_OPTIONS: { value: Depth; label: string }[] = [
-  { value: "quick", label: "Quick Overview (2-3 stages)" },
-  { value: "standard", label: "Standard (3-5 stages)" },
-  { value: "deep", label: "Deep Dive (5-7 stages)" },
+const DEPTH_OPTIONS = [
+  { value: "quick", label: "Quick (2-3 stages)", color: "#2563eb" },
+  { value: "standard", label: "Standard (3-5 stages)", color: "#7c3aed" },
+  { value: "deep", label: "Deep (5-7 stages)", color: "#0891b2" },
 ];
 
-const CONTENT_OPTIONS: { value: ContentType; label: string }[] = [
-  { value: "video", label: "Videos & Courses" },
-  { value: "article", label: "Articles & Tutorials" },
-  { value: "mixed", label: "Mix Both" },
+const CONTENT_OPTIONS = [
+  { value: "video", label: "Videos & Courses", color: "#ea580c" },
+  { value: "article", label: "Articles & Tutorials", color: "#7c3aed" },
+  { value: "mixed", label: "Mix Both", color: "#16a34a" },
 ];
 
 function readLastResult(): AiPathGenerateResponse | null {
@@ -64,9 +53,7 @@ export default function AIPath() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [lastResult, setLastResult] = useState<AiPathGenerateResponse | null>(
-    null
-  );
+  const [lastResult, setLastResult] = useState<AiPathGenerateResponse | null>(null);
   const [level, setLevel] = useState<Level>("beginner");
   const [depth, setDepth] = useState<Depth>("standard");
   const [contentType, setContentType] = useState<ContentType>("mixed");
@@ -89,17 +76,8 @@ export default function AIPath() {
       window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(result));
       navigate("/ai-path-detail");
     } catch (e: unknown) {
-      const err = e as {
-        response?: { data?: { detail?: string } };
-        message?: string;
-      };
-      setError(
-        String(
-          err.response?.data?.detail ||
-            err.message ||
-            "AI Path generation failed"
-        )
-      );
+      const err = e as { response?: { data?: { detail?: string } }; message?: string };
+      setError(String(err.response?.data?.detail || err.message || "AI Path generation failed"));
     } finally {
       setLoading(false);
     }
@@ -107,59 +85,60 @@ export default function AIPath() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
-          <div className="flex items-end justify-between gap-6">
+      {/* Header */}
+      <header className="border-b-4 border-black bg-white">
+        <div className="mx-auto max-w-6xl px-6 py-8">
+          <div className="grid md:grid-cols-2 gap-8 items-end">
             <div>
-              <div className="mb-3 flex items-center gap-2">
-                <span className="h-px w-8 bg-amber-500" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="h-1 w-8 bg-purple-500" />
+                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-purple-500">
                   AI Guided
                 </span>
               </div>
-              <h1 className="text-3xl font-black leading-[0.92] tracking-tight text-stone-900 md:text-5xl">
+              <h1 className="font-serif text-4xl md:text-5xl font-black tracking-tight text-stone-900 leading-[0.95]">
                 AI Path
                 <br />
-                <span className="text-amber-500">Generator.</span>
-                <span className="text-xs font-medium text-stone-400 ml-2">beta</span>
+                <span className="text-purple-500">Generator.</span>
+                <span className="text-xs font-bold text-stone-400 ml-3">beta</span>
               </h1>
             </div>
-            <p className="hidden max-w-sm text-sm leading-relaxed text-stone-500 md:block">
-              Enter your learning goal and let AI generate a structured learning
-              path. View stage descriptions, steps, and recommended resources
-              directly.
+            <p className="text-sm leading-relaxed text-stone-500 max-w-md">
+              Enter your learning goal and let AI generate a structured learning path.
+              View stage descriptions, steps, and recommended resources.
             </p>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-8">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-          <section className="lg:col-span-3 rounded-md border border-stone-200 bg-white p-6 shadow-sm md:p-8">
-            <div className="mb-6 flex items-center justify-between gap-4">
+      <main className="mx-auto max-w-6xl px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Main form */}
+          <section className="lg:col-span-3 bg-white border-4 border-black rounded-memphis shadow-memphis p-6 md:p-8">
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">
                   Prompt
                 </p>
-                <h2 className="mt-2 text-2xl font-black tracking-tight text-stone-900">
+                <h2 className="mt-1 text-xl font-black tracking-tight text-stone-900">
                   Describe what you want to learn
                 </h2>
               </div>
               <Link
                 to="/ai-path-detail"
-                className="text-xs font-semibold uppercase tracking-wider text-stone-400 transition-colors hover:text-amber-500"
+                className="text-xs font-bold uppercase tracking-wider text-purple-500 hover:text-purple-600 transition-colors"
               >
-                View recent results
+                View recent →
               </Link>
             </div>
 
             <textarea
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              rows={10}
+              rows={8}
               maxLength={2000}
-              placeholder="Example: I want to learn React full-stack development systematically, launch a production-ready project in 3 months, including basics, state management, routing, Node.js, database, and deployment."
-              className="w-full rounded-sm border border-stone-200 bg-stone-50 px-5 py-4 text-sm leading-7 text-stone-900 outline-none transition-colors placeholder:text-stone-400 focus:border-amber-400 focus:bg-white focus:ring-4 focus:ring-amber-50"
+              placeholder="Example: I want to learn React full-stack development systematically, launch a production-ready project in 3 months..."
+              className="w-full border-2 border-black rounded-memphis bg-stone-50 px-4 py-4 text-sm leading-relaxed text-stone-900 outline-none placeholder:text-stone-400 focus:border-purple-500 focus:bg-white transition-colors"
             />
 
             <div className="mt-4 flex flex-wrap gap-2">
@@ -168,21 +147,21 @@ export default function AIPath() {
                   key={preset}
                   type="button"
                   onClick={() => setQuery(preset)}
-                  className="rounded-sm border border-stone-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-stone-500 transition-colors hover:border-amber-200 hover:text-amber-700"
+                  className="rounded-memphis border-2 border-stone-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-stone-500 transition-all hover:border-purple-500 hover:text-purple-600"
                 >
-                  {preset}
+                  {preset.length > 40 ? preset.slice(0, 40) + "..." : preset}
                 </button>
               ))}
             </div>
 
             {/* Preferences */}
-            <div className="mt-5 grid grid-cols-3 gap-3">
+            <div className="mt-6 grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Level</label>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-stone-400 mb-2">Level</label>
                 <select
                   value={level}
                   onChange={(e) => setLevel(e.target.value as Level)}
-                  className="w-full rounded-sm border border-stone-200 bg-white px-3 py-2 text-xs text-stone-700 outline-none focus:border-amber-400"
+                  className="w-full border-2 border-black rounded-memphis bg-white px-3 py-2.5 text-xs font-semibold text-stone-700 outline-none focus:border-purple-500 transition-colors cursor-pointer"
                 >
                   {LEVEL_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -190,11 +169,11 @@ export default function AIPath() {
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Depth</label>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-stone-400 mb-2">Depth</label>
                 <select
                   value={depth}
                   onChange={(e) => setDepth(e.target.value as Depth)}
-                  className="w-full rounded-sm border border-stone-200 bg-white px-3 py-2 text-xs text-stone-700 outline-none focus:border-amber-400"
+                  className="w-full border-2 border-black rounded-memphis bg-white px-3 py-2.5 text-xs font-semibold text-stone-700 outline-none focus:border-purple-500 transition-colors cursor-pointer"
                 >
                   {DEPTH_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -202,11 +181,11 @@ export default function AIPath() {
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Format</label>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-stone-400 mb-2">Format</label>
                 <select
                   value={contentType}
                   onChange={(e) => setContentType(e.target.value as ContentType)}
-                  className="w-full rounded-sm border border-stone-200 bg-white px-3 py-2 text-xs text-stone-700 outline-none focus:border-amber-400"
+                  className="w-full border-2 border-black rounded-memphis bg-white px-3 py-2.5 text-xs font-semibold text-stone-700 outline-none focus:border-purple-500 transition-colors cursor-pointer"
                 >
                   {CONTENT_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -215,77 +194,89 @@ export default function AIPath() {
               </div>
             </div>
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-stone-400">
-                Tip: Include your goal direction, time frame, current level, and
-                desired outcome.
+            <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs text-stone-400">
+                Tip: Include your goal, time frame, current level, and desired outcome.
               </p>
-              <Button
+              <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading || !query.trim()}
-                className="rounded-sm bg-amber-500 px-6 py-2.5 text-sm font-bold text-white hover:bg-amber-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-purple-500 text-white px-6 py-3 text-sm font-black uppercase tracking-wider hover:bg-purple-600 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 border-black shadow-memphis rounded-memphis flex items-center gap-2"
               >
                 {loading ? (
                   "Generating..."
                 ) : (
                   <>
                     Generate
-                    <span className="ml-2">→</span>
+                    <ArrowRight className="w-4 h-4" />
                   </>
                 )}
-              </Button>
+              </button>
             </div>
 
-            {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
+            {error && (
+              <p className="mt-4 text-sm text-red-500 font-semibold">{error}</p>
+            )}
           </section>
 
+          {/* Sidebar */}
           <aside className="lg:col-span-2 space-y-5">
-            <section className="rounded-md border border-stone-200 bg-white p-6 shadow-sm">
-              <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400">
+            {/* How it works */}
+            <section className="bg-white border-4 border-black rounded-memphis shadow-memphis p-6">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">
                 How it works
               </p>
               <div className="mt-4 space-y-4">
-                {steps.map((step, idx) => (
-                  <div key={step.title} className="flex gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-50 text-xs font-black text-amber-600">
-                      {idx + 1}
+                {steps.map((step, idx) => {
+                  const Icon = step.icon;
+                  const colors = ["#7c3aed", "#2563eb", "#16a34a"];
+                  const color = colors[idx % colors.length];
+                  return (
+                    <div key={step.title} className="flex gap-4">
+                      <div
+                        className="w-10 h-10 shrink-0 flex items-center justify-center border-2 border-black rounded-memphis"
+                        style={{ backgroundColor: color + "20" }}
+                      >
+                        <Icon className="w-5 h-5" style={{ color }} />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black text-stone-900">
+                          {step.title}
+                        </h3>
+                        <p className="mt-1 text-xs leading-relaxed text-stone-500">
+                          {step.text}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-stone-900">
-                        {step.title}
-                      </h3>
-                      <p className="mt-1 text-sm leading-6 text-stone-500">
-                        {step.text}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 
+            {/* Last result */}
             {lastResult && (
-              <section className="rounded-md border border-stone-200 bg-white p-6 shadow-sm">
+              <section className="bg-white border-4 border-black rounded-memphis shadow-memphis p-6">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">
                       Latest
                     </p>
-                    <h3 className="mt-2 text-lg font-black tracking-tight text-stone-900">
+                    <h3 className="mt-1 text-base font-black tracking-tight text-stone-900 line-clamp-1">
                       {lastResult.data.title || "Latest AI Path"}
                     </h3>
                   </div>
                   <Link
                     to="/ai-path-detail"
-                    className="text-xs font-semibold uppercase tracking-wider text-amber-500"
+                    className="text-xs font-black uppercase tracking-wider text-purple-500 hover:text-purple-600"
                   >
-                    Open
+                    Open →
                   </Link>
                 </div>
-                <p className="mt-3 line-clamp-4 text-sm leading-6 text-stone-500">
+                <p className="mt-3 line-clamp-3 text-xs leading-relaxed text-stone-500">
                   {lastResult.data.summary}
                 </p>
-                <div className="mt-4 flex items-center gap-4 text-xs text-stone-400">
+                <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-stone-400">
                   <span>{lastResult.data.nodes?.length || 0} stages</span>
                   {lastResult.warnings?.length > 0 && (
                     <span>{lastResult.warnings.length} warnings</span>
@@ -295,6 +286,43 @@ export default function AIPath() {
             )}
           </aside>
         </div>
+
+        {/* Learning path preview placeholder */}
+        <section className="mt-10">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-1 h-6 bg-purple-500 rounded-full" />
+            <h2 className="text-lg font-black text-stone-900 uppercase tracking-wider">
+              Generated Path Preview
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="bg-white border-4 border-black rounded-memphis shadow-memphis p-5 hover:shadow-memphis-lg hover:-translate-x-1 hover:-translate-y-1 transition-all cursor-pointer"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div
+                    className="w-8 h-8 rounded-memphis flex items-center justify-center text-white text-xs font-black border-2 border-black"
+                    style={{ backgroundColor: ["#7c3aed", "#2563eb", "#16a34a"][i - 1] }}
+                  >
+                    {i}
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-stone-400">
+                    Stage {i}
+                  </span>
+                </div>
+                <div className="h-4 bg-stone-100 rounded-memphis mb-2 w-3/4" />
+                <div className="h-3 bg-stone-50 rounded-memphis mb-4 w-full" />
+                <div className="flex items-center gap-2">
+                  <div className="h-6 w-6 bg-stone-100 rounded-memphis" />
+                  <div className="h-3 bg-stone-50 rounded-memphis w-20" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
     </div>
   );

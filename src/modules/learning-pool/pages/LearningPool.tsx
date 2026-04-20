@@ -364,16 +364,44 @@ export default function LearningPool() {
               {hotPaths.length} paths
             </span>
           </div>
-          <div className="flex gap-1 overflow-x-auto pb-3 -mx-4 px-4 scrollbar-hide">
-            {hotPaths.map((p) => (
+          <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 scrollbar-hide">
+            {hotPaths.map((p, idx) => (
               <PathTCard
                 key={p.id}
                 id={String(p.id)}
                 title={p.title}
                 category={p.category}
                 thumbnail={p.thumbnail || FALLBACK_THUMB}
+                index={idx}
               />
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* Banner */}
+      {searchQuery === "" && (
+        <section className="mb-14">
+          <div className="relative h-48 md:h-64 bg-stone-900 rounded-memphis overflow-hidden border-4 border-black shadow-memphis">
+            <img
+              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=400&fit=crop"
+              alt="Learning banner"
+              className="w-full h-full object-cover opacity-60"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 font-serif">
+                Discover your learning path
+              </h2>
+              <p className="text-sm text-white/80 mb-4 max-w-md">
+                Browse curated paths or generate your own with AI
+              </p>
+              <Link
+                to="/ai-path"
+                className="inline-flex items-center gap-2 bg-blue-500 text-white px-6 py-3 text-sm font-bold rounded-memphis hover:bg-blue-400 transition-colors"
+              >
+                Try AI Path Generator
+              </Link>
+            </div>
           </div>
         </section>
       )}
@@ -449,8 +477,8 @@ export default function LearningPool() {
       {!loading && filteredPaths.length > 0 && (
         <section>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredPaths.map((p) => (
-              <PathCard key={`${p.id}-${p.category}`} path={p} />
+            {filteredPaths.map((p, idx) => (
+              <PathCard key={`${p.id}-${p.category}`} path={p} index={idx} />
             ))}
           </div>
         </section>

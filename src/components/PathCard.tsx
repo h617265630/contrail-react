@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ArrowUp } from "lucide-react";
 
 export type PoolPath = {
   id: string;
@@ -18,62 +19,109 @@ interface PathCardProps {
   index?: number;
 }
 
+// Memphis color palette
+const MEMPHIS_COLORS = [
+  "#7c3aed", // purple
+  "#2563eb", // blue
+  "#dc2626", // red
+  "#16a34a", // green
+  "#ca8a04", // yellow
+  "#ea580c", // orange
+  "#0891b2", // cyan
+];
+
+function getMemphisColor(index: number): string {
+  return MEMPHIS_COLORS[index % MEMPHIS_COLORS.length];
+}
+
 export function PathCard({ path, index = 0 }: PathCardProps) {
-  const num = String(index + 1).padStart(2, "0");
-  const imgSrc = path.thumbnail || `https://picsum.photos/seed/${path.id}/600/400`;
+  const color = getMemphisColor(index);
 
   return (
     <Link
       to={`/learningpath/${path.id}`}
-      className="group block relative rounded-sm overflow-hidden border border-stone-100 hover:border-stone-200 hover:shadow-sm transition-all duration-200 active:scale-[0.98]"
+      className="group block relative bg-white border-4 border-black rounded-memphis shadow-memphis hover:shadow-memphis-lg hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 overflow-hidden"
     >
-      {/* Background image - absolute positioned */}
-      <img
-        src={imgSrc}
-        alt={path.title}
-        loading="lazy"
-        decoding="async"
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${path.id}/600/400`;
-        }}
+      {/* Decorative corner square */}
+      <div
+        className="absolute top-0 right-0 w-16 h-16 -mr-8 -mt-8 rotate-45"
+        style={{ backgroundColor: color }}
       />
 
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
-
-      {/* Number */}
-      <div className="absolute top-2 left-2">
-        <span className="text-lg font-bold text-white/60 tabular-nums tracking-tight">
-          {num}
-        </span>
+      {/* Thumbnail area */}
+      <div className="relative h-40 overflow-hidden bg-stone-100">
+        {path.thumbnail ? (
+          <img
+            src={path.thumbnail}
+            alt={path.title}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${path.id}/600/400`;
+            }}
+          />
+        ) : (
+          <img
+            src={`https://picsum.photos/seed/${path.id}/600/400`}
+            alt={path.title}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+        )}
       </div>
 
-      {/* Content - relative z-10 */}
-      <div className="relative z-10 p-4 min-h-40 flex flex-col justify-end">
-        {/* Category */}
-        <span className="text-[9px] font-medium uppercase tracking-wider text-white/80 mb-1">
+      {/* Content */}
+      <div className="p-5 relative z-10">
+        {/* Category label */}
+        <span
+          className="inline-block px-3 py-1 text-xs font-black text-white rounded-memphis mb-3"
+          style={{ backgroundColor: color }}
+        >
           {path.category}
         </span>
 
         {/* Title */}
-        <h3 className="font-semibold text-sm text-white leading-snug group-hover:text-amber-300 transition-colors duration-150 line-clamp-2 mb-1">
+        <h3 className="text-base font-bold leading-snug text-black line-clamp-2 group-hover:underline decoration-2 underline-offset-2">
           {path.title}
         </h3>
 
-        {/* Meta */}
-        <div className="flex items-center gap-1 text-[10px] text-white/60">
-          <span>{path.level}</span>
-          <span>·</span>
-          <span>{path.items} items</span>
+        {/* Meta info */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm text-black/70">
+            <span className="font-medium">{path.level}</span>
+            <span className="text-black/30">·</span>
+            <span>{path.items} items</span>
+          </div>
+
           {path.hotScore !== undefined && path.hotScore > 0 && (
-            <>
-              <span>·</span>
-              <span className="text-amber-400">{path.hotScore}</span>
-            </>
+            <div className="flex items-center gap-1">
+              <ArrowUp
+                className="w-4 h-4 text-white p-0.5 rounded-sm"
+                style={{ backgroundColor: color }}
+              />
+              <span className="text-sm font-bold text-black/70">
+                {path.hotScore}
+              </span>
+            </div>
           )}
         </div>
       </div>
+
+      {/* Decorative wave line */}
+      <svg
+        className="absolute bottom-2 left-3 w-10 h-3"
+        viewBox="0 0 40 12"
+        style={{ opacity: 0.15 }}
+      >
+        <path
+          d="M0 6 Q 5 0, 10 6 T 20 6 T 30 6 T 40 6"
+          stroke="#0a0a0a"
+          strokeWidth="2"
+          fill="none"
+        />
+      </svg>
     </Link>
   );
 }
