@@ -40,7 +40,7 @@ export function PathCard({ path, index = 0 }: PathCardProps) {
   return (
     <Link
       to={`/learningpath/${path.id}`}
-      className="group block relative bg-white border-4 border-black rounded-memphis shadow-memphis hover:shadow-memphis-lg hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 overflow-hidden"
+      className="group block relative bg-white border-2 border-black rounded-memphis shadow-memphis hover:shadow-memphis-lg hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 overflow-hidden"
     >
       {/* Decorative corner square */}
       <div
@@ -49,7 +49,7 @@ export function PathCard({ path, index = 0 }: PathCardProps) {
       />
 
       {/* Thumbnail area */}
-      <div className="relative h-40 overflow-hidden bg-stone-100">
+      <div className="relative aspect-video overflow-hidden bg-stone-100">
         {path.thumbnail ? (
           <img
             src={path.thumbnail}

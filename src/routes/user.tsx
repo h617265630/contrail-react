@@ -93,6 +93,15 @@ export const authRoutes: RouteObject[] = [
           </RouteLoader>
         ),
       },
+      // Shortcut routes
+      {
+        path: "resources",
+        element: <Navigate to="/my-resources" replace />,
+      },
+      {
+        path: "paths",
+        element: <Navigate to="/my-paths" replace />,
+      },
       {
         path: "user-info",
         element: (

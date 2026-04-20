@@ -64,11 +64,7 @@ export default function AccountMyPaths() {
   }, [items, q]);
 
   const open = (id: number) => {
-    navigate({
-      name: "learningpath",
-      params: { id: String(id) },
-      query: { from: "my-paths" },
-    } as any);
+    navigate(`/learningpath/${id}?from=my-paths`);
   };
 
   if (loading) {

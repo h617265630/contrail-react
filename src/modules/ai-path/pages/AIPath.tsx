@@ -86,7 +86,7 @@ export default function AIPath() {
   return (
     <div className="min-h-screen bg-stone-50">
       {/* Header */}
-      <header className="border-b-4 border-black bg-white">
+      <header className="border-b-2 border-black bg-white">
         <div className="mx-auto max-w-6xl px-6 py-8">
           <div className="grid md:grid-cols-2 gap-8 items-end">
             <div>
@@ -114,7 +114,7 @@ export default function AIPath() {
       <main className="mx-auto max-w-6xl px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Main form */}
-          <section className="lg:col-span-3 bg-white border-4 border-black rounded-memphis shadow-memphis p-6 md:p-8">
+          <section className="lg:col-span-3 bg-white border-2 border-black rounded-memphis shadow-memphis p-6 md:p-8">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">
@@ -138,7 +138,7 @@ export default function AIPath() {
               rows={8}
               maxLength={2000}
               placeholder="Example: I want to learn React full-stack development systematically, launch a production-ready project in 3 months..."
-              className="w-full border-2 border-black rounded-memphis bg-stone-50 px-4 py-4 text-sm leading-relaxed text-stone-900 outline-none placeholder:text-stone-400 focus:border-purple-500 focus:bg-white transition-colors"
+              className="w-full border border-black rounded-memphis bg-stone-50 px-4 py-4 text-sm leading-relaxed text-stone-900 outline-none placeholder:text-stone-400 focus:border-purple-500 focus:bg-white transition-colors"
             />
 
             <div className="mt-4 flex flex-wrap gap-2">
@@ -147,7 +147,7 @@ export default function AIPath() {
                   key={preset}
                   type="button"
                   onClick={() => setQuery(preset)}
-                  className="rounded-memphis border-2 border-stone-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-stone-500 transition-all hover:border-purple-500 hover:text-purple-600"
+                  className="rounded-memphis border border-stone-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-stone-500 transition-all hover:border-purple-500 hover:text-purple-600"
                 >
                   {preset.length > 40 ? preset.slice(0, 40) + "..." : preset}
                 </button>
@@ -161,7 +161,7 @@ export default function AIPath() {
                 <select
                   value={level}
                   onChange={(e) => setLevel(e.target.value as Level)}
-                  className="w-full border-2 border-black rounded-memphis bg-white px-3 py-2.5 text-xs font-semibold text-stone-700 outline-none focus:border-purple-500 transition-colors cursor-pointer"
+                  className="w-full border border-black rounded-memphis bg-white px-3 py-2.5 text-xs font-semibold text-stone-700 outline-none focus:border-purple-500 transition-colors cursor-pointer"
                 >
                   {LEVEL_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -173,7 +173,7 @@ export default function AIPath() {
                 <select
                   value={depth}
                   onChange={(e) => setDepth(e.target.value as Depth)}
-                  className="w-full border-2 border-black rounded-memphis bg-white px-3 py-2.5 text-xs font-semibold text-stone-700 outline-none focus:border-purple-500 transition-colors cursor-pointer"
+                  className="w-full border border-black rounded-memphis bg-white px-3 py-2.5 text-xs font-semibold text-stone-700 outline-none focus:border-purple-500 transition-colors cursor-pointer"
                 >
                   {DEPTH_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -185,7 +185,7 @@ export default function AIPath() {
                 <select
                   value={contentType}
                   onChange={(e) => setContentType(e.target.value as ContentType)}
-                  className="w-full border-2 border-black rounded-memphis bg-white px-3 py-2.5 text-xs font-semibold text-stone-700 outline-none focus:border-purple-500 transition-colors cursor-pointer"
+                  className="w-full border border-black rounded-memphis bg-white px-3 py-2.5 text-xs font-semibold text-stone-700 outline-none focus:border-purple-500 transition-colors cursor-pointer"
                 >
                   {CONTENT_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -202,7 +202,7 @@ export default function AIPath() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading || !query.trim()}
-                className="bg-purple-500 text-white px-6 py-3 text-sm font-black uppercase tracking-wider hover:bg-purple-600 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 border-black shadow-memphis rounded-memphis flex items-center gap-2"
+                className="bg-purple-500 text-white px-6 py-3 text-sm font-black uppercase tracking-wider hover:bg-purple-600 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-black shadow-memphis rounded-memphis flex items-center gap-2"
               >
                 {loading ? (
                   "Generating..."
@@ -223,7 +223,7 @@ export default function AIPath() {
           {/* Sidebar */}
           <aside className="lg:col-span-2 space-y-5">
             {/* How it works */}
-            <section className="bg-white border-4 border-black rounded-memphis shadow-memphis p-6">
+            <section className="bg-white border-2 border-black rounded-memphis shadow-memphis p-6">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">
                 How it works
               </p>
@@ -235,7 +235,7 @@ export default function AIPath() {
                   return (
                     <div key={step.title} className="flex gap-4">
                       <div
-                        className="w-10 h-10 shrink-0 flex items-center justify-center border-2 border-black rounded-memphis"
+                        className="w-10 h-10 shrink-0 flex items-center justify-center border border-black rounded-memphis"
                         style={{ backgroundColor: color + "20" }}
                       >
                         <Icon className="w-5 h-5" style={{ color }} />
@@ -256,7 +256,7 @@ export default function AIPath() {
 
             {/* Last result */}
             {lastResult && (
-              <section className="bg-white border-4 border-black rounded-memphis shadow-memphis p-6">
+              <section className="bg-white border-2 border-black rounded-memphis shadow-memphis p-6">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">
@@ -300,11 +300,11 @@ export default function AIPath() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="bg-white border-4 border-black rounded-memphis shadow-memphis p-5 hover:shadow-memphis-lg hover:-translate-x-1 hover:-translate-y-1 transition-all cursor-pointer"
+                className="bg-white border-2 border-black rounded-memphis shadow-memphis p-5 hover:shadow-memphis-lg hover:-translate-x-1 hover:-translate-y-1 transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-2 mb-3">
                   <div
-                    className="w-8 h-8 rounded-memphis flex items-center justify-center text-white text-xs font-black border-2 border-black"
+                    className="w-8 h-8 rounded-memphis flex items-center justify-center text-white text-xs font-black border border-black"
                     style={{ backgroundColor: ["#7c3aed", "#2563eb", "#16a34a"][i - 1] }}
                   >
                     {i}

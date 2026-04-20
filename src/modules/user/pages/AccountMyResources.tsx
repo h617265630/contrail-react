@@ -56,7 +56,7 @@ export default function AccountMyResources() {
   }, [items, q]);
 
   const open = (id: number) => {
-    navigate({ name: "resource-video", params: { id: String(id) } } as any);
+    navigate(`/my-resources/video/${id}`);
   };
 
   if (loading) {
