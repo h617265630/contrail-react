@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useAuth } from "@/stores/auth";
 import {
   ArrowDown,
   Award,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 import {
   getMyLearningPathDetail,
+  getPublicLearningPathDetail,
   type MyLearningPathDetail,
 } from "@/services/learningPath";
 import {
@@ -115,6 +117,7 @@ export default function LearningPathLinear() {
   const [searchParams] = useSearchParams();
   const fromMyPaths = searchParams.get("from") === "my-paths";
   const navigate = useNavigate();
+  const { isAuthed } = useAuth();
 
   const learningPathId = (() => {
     const trimmed = String(id || "").trim();
@@ -182,7 +185,9 @@ export default function LearningPathLinear() {
     setError("");
     setLoading(true);
     try {
-      const detail = await getMyLearningPathDetail(lid);
+      const detail = isAuthed && !fromMyPaths
+        ? await getMyLearningPathDetail(lid)
+        : await getPublicLearningPathDetail(lid);
       setLp(detail);
 
       // Hydrate embedded resource_data / fetch missing
@@ -218,9 +223,11 @@ export default function LearningPathLinear() {
         return next;
       });
 
-      // Fetch progress and notes immediately
-      await refreshProgress();
-      await refreshNotes();
+      // Fetch progress and notes only when logged in
+      if (isAuthed) {
+        await refreshProgress();
+        await refreshNotes();
+      }
     } catch (e: any) {
       setError(
         String(
@@ -233,7 +240,7 @@ export default function LearningPathLinear() {
     } finally {
       setLoading(false);
     }
-  }, [learningPathId, refreshProgress, refreshNotes]);
+  }, [learningPathId, isAuthed, fromMyPaths, refreshProgress, refreshNotes]);
 
   // ── Lifecycle ────────────────────────────────────────────────────────────
 
@@ -252,7 +259,7 @@ export default function LearningPathLinear() {
       window.clearInterval(notesPollTimerRef.current);
       notesPollTimerRef.current = null;
     }
-    if (learningPathId !== null) {
+    if (learningPathId !== null && isAuthed) {
       pollTimerRef.current = window.setInterval(() => {
         void refreshProgress();
       }, 10_000);
@@ -270,7 +277,7 @@ export default function LearningPathLinear() {
         notesPollTimerRef.current = null;
       }
     };
-  }, [learningPathId, refreshProgress, refreshNotes]);
+  }, [learningPathId, isAuthed, refreshProgress, refreshNotes]);
 
   // ── Derived data ─────────────────────────────────────────────────────────
 

@@ -269,6 +269,12 @@ export default function LearningPathDetail() {
     if (usingThisPath || !id) return;
     if (!/^[0-9]+$/.test(id)) return;
 
+    // If already saved, go directly to linear view
+    if (isSaved) {
+      navigate({ pathname: `/learningpath/${id}/linear`, search: "" });
+      return;
+    }
+
     setUsingThisPath(true);
     try {
       const nid = Number(id);
