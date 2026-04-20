@@ -103,7 +103,7 @@ export function searchResources(
 
 export function createMyResourceFromUrl(
   url: string,
-  payload?: { category_id: number; is_public?: boolean; manual_weight?: number }
+  payload?: { category_id?: number | null; is_public?: boolean; manual_weight?: number }
 ): Promise<DbResource> {
   return request.post("/resources/me", { url, ...(payload || {}) });
 }
