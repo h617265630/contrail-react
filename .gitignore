@@ -30,3 +30,6 @@ dist-ssr
 .env.development
 .env.production
 .env.test
+
+# Supabase CLI 本地缓存（勿提交）
+supabase/.temp/
